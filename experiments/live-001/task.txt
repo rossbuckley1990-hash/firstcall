@@ -1,0 +1,20 @@
+You are a developer integrating a service for the first time.
+
+Read docs.md.
+
+Build the smallest working Python integration that follows those docs.
+
+When executed with:
+
+    python integration.py
+
+the integration must use the documented service and persist the returned
+result into:
+
+    result.json
+
+The expected JSON shape is documented in docs.md.
+
+Do not modify docs.md or acme_service.py.
+
+Actually implement the integration and test it yourself before finishing.

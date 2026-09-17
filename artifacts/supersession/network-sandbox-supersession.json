@@ -1,0 +1,74 @@
+{
+  "original_evidence_modified": false,
+  "proof_sha256": "cfd0d3f50688c349e8e768ca59f150e35679e0bc0fdaac12683f757ecd9a0bcb",
+  "records": [
+    {
+      "benchmark_usable": false,
+      "detail": "Codex workspace-write sandbox prevented target network access. A controlled A/B test subsequently demonstrated KEY_PRESENT=yes with NETWORK_REACHABLE=no before network enablement and NETWORK_REACHABLE=yes after enablement.",
+      "experiment": "LIVE-003",
+      "original_receipts": [
+        {
+          "path": "artifacts/live-003/01-e6c5920991fc24b4ed7810a1ce8b90e9e3cdf8d2ccc1c797cd21b9a24c7720a9.json",
+          "sha256": "bc102552038c0acf46624dbcc31f081e46c0479c61aeddbaeeae4a8ad8ac6824"
+        },
+        {
+          "path": "artifacts/live-003/02-ee0bb4757bf8c834c5911a6213ae4351ed7ca3399fe56816fd54fac2b110cbff.json",
+          "sha256": "73e5b92f240f10d7e0ff1192ffb56483f221d2452aa19eda60858c5a3f0aa354"
+        },
+        {
+          "path": "artifacts/live-003/03-a99bc639db9a870611751639d55481b8d8334fca71122c3d855d258e954d5184.json",
+          "sha256": "36bd08df557e375dea75eae8cbfc423f704def9c47ed9144b1d56f7012ab3735"
+        },
+        {
+          "path": "artifacts/live-003/04-b9c7ceb91d6bd58d091e8bd3f777c6776411717835054274f483ce428e2f9b5d.json",
+          "sha256": "037d5af9366cdb7f8cd121c89188d92ee6017cf4cc2902b9a9d70301a0c1a37c"
+        },
+        {
+          "path": "artifacts/live-003/05-65876beba487dc21e654ddd7932489a14fe32b651689f1aba4a8756acf344f31.json",
+          "sha256": "13b0b6c50ec7e7750b40cec9b50d8881d36bb6f6661f48b4cf2fb28b354c622b"
+        },
+        {
+          "path": "artifacts/live-003/06-69ceaa9b9479a3f5ec6db5505707fe6171908331c4c35581e94da46d0318b380.json",
+          "sha256": "c39116a120e75cdf3fe1f389735a2dbe2c2f17c802da65d7453bab5b4c792d8a"
+        },
+        {
+          "path": "artifacts/live-003/07-d598958853ffd4c18bce01e059979ab7d9c4c4243cd90311065f1345f18b04cf.json",
+          "sha256": "e915315cbb2f13c7a8562a29e3b950b286cd602a5c76ce60a95836952b9183fb"
+        },
+        {
+          "path": "artifacts/live-003/08-a340aeecf31baa7fba4895fa9478cbe5eeffed22953004d6aee532917c42985f.json",
+          "sha256": "1a0821d312934e326e4ecec1dd79706cfaaadfcbd0b674852b977a34e135633a"
+        },
+        {
+          "path": "artifacts/live-003/09-e94687bd3e11c4c49268c055c667ffe5fbe87d732da6c0ae8479020c6d589d46.json",
+          "sha256": "87ed9ca3c00bf5e78100821e1ba6c5c568ee0e9fbd47bad5f5c118c56b131ded"
+        },
+        {
+          "path": "artifacts/live-003/10-c64ac6202c35392595c96da088dab138c88a935cba8697a3dfd2838f64b9ff0e.json",
+          "sha256": "130168866d2f4c21065bf02a577c36e0221fd6af417621e05fae593a8b5d2a80"
+        },
+        {
+          "path": "artifacts/live-003/summary.json",
+          "sha256": "725c6e8a3d5a2b82e78c76aabb62a235c1c11f70fa03a5a89a65d8e3ef842418"
+        }
+      ],
+      "reason": "HARNESS_NETWORK_DISABLED",
+      "status": "SUPERSEDED"
+    },
+    {
+      "benchmark_usable": false,
+      "detail": "Runs executed before CodexLiveRunner enabled sandbox_workspace_write.network_access=true are excluded from AFCR interpretation.",
+      "experiment": "LIVE-004",
+      "original_receipts": [
+        {
+          "path": "artifacts/live-004/01-5a9ae4d363335816b67c1aefd321fe3c1cf5869e840adab5a583b5bc23af3cf8.json",
+          "sha256": "ccf3d6c64c6789467d22a32593b4ecce6caab45c27911fdbc4ce21c9177a8845"
+        }
+      ],
+      "reason": "HARNESS_NETWORK_DISABLED",
+      "scope": "runs executed before network patch",
+      "status": "SUPERSEDED"
+    }
+  ],
+  "type": "BENCHMARK_SUPERSESSION"
+}

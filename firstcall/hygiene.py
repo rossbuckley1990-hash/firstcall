@@ -7,7 +7,7 @@ from firstcall.model import HygieneFinding
 
 SECRET_PATTERNS = (
     re.compile(r"sk_(?:test|live)_[A-Za-z0-9_-]+"),
-    re.compile(r"re_[A-Za-z0-9_-]{12,}"),
+    re.compile(r"\bre_[A-Za-z0-9-]{20,}\b"),
 )
 
 

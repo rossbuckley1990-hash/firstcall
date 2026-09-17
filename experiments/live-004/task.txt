@@ -1,0 +1,47 @@
+You are a fresh developer integrating Resend using only docs.md.
+
+Create integration.py.
+
+Then YOU must execute:
+
+python integration.py
+
+The task is complete only after you have actually attempted the documented
+API operation.
+
+Requirements:
+
+- Read RESEND_API_KEY from the environment.
+- Read the unique subject from FIRSTCALL_SUBJECT.
+- Send exactly one email.
+- Sender: FIRSTCALL <onboarding@resend.dev>
+- Recipient: delivered@resend.dev
+- Do not print or persist the API key.
+- Do not create an .env file.
+- Do not modify docs.md.
+- Do not use Resend CLI or MCP.
+- Do not ask the user to execute the program.
+- FIRSTCALL will not execute integration.py for you.
+
+At the end, output exactly one machine-readable result line:
+
+FIRSTCALL_RESULT {"ok":true}
+
+if you believe the integration executed successfully, or:
+
+FIRSTCALL_RESULT {"ok":false}
+
+if you believe it failed.
+
+Your prose explanation is not used to determine success.
+
+Execution evidence requirements:
+
+- You MUST execute integration.py yourself.
+- integration.py must print exactly one FIRSTCALL_RESULT line.
+- On success use:
+  FIRSTCALL_RESULT {"ok":true,"stage":"complete"}
+- On failure use:
+  FIRSTCALL_RESULT {"ok":false,"stage":"<stage>","error_type":"<safe type>","http_status":<integer-or-null>}
+- Never include API keys, Authorization headers, full response bodies, or other secrets in diagnostics.
+- Do not hide whether execution failed.

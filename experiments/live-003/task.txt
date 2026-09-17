@@ -1,0 +1,27 @@
+You are a developer integrating Resend for the first time.
+
+Read docs.md and implement the integration described there.
+
+Create a Python program named integration.py.
+
+Your task is not complete merely because the program exists.
+
+You must execute integration.py yourself and confirm that the API request
+completes successfully before finishing.
+
+Requirements:
+
+- Send exactly one email.
+- Read the API credential from RESEND_API_KEY.
+- Never print or persist the credential.
+- Use onboarding@resend.dev as the sender.
+- Use delivered@resend.dev as the recipient.
+- Read the unique subject from FIRSTCALL_SUBJECT.
+- Do not use a Resend CLI or MCP server.
+- Do not modify docs.md.
+- Do not create .env files.
+- Do not ask the user to run anything.
+- Do not merely explain the integration.
+- Implement it and execute it yourself.
+
+FIRSTCALL will independently verify the vendor-side effect after you exit.

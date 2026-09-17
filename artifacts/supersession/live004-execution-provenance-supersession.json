@@ -1,0 +1,21 @@
+{
+  "benchmark_usable": false,
+  "detail": "The run established absence of a matching vendor-side effect but did not preserve sufficient Codex JSONL execution provenance to determine whether integration.py was actually invoked or what its exit status was. It is excluded from AFCR interpretation.",
+  "experiment": "LIVE-004",
+  "original_evidence_modified": false,
+  "original_receipts": [
+    {
+      "path": "artifacts/live-004/01-528860235c13631203db6fbb3548df052dcffe9e30b981793ae1f310fce0dcb2.json",
+      "sha256": "b3a4d3c9c2781fcc47a8d8bc99847d60a4dccbcb45be32542f7770cad7721057"
+    },
+    {
+      "path": "artifacts/live-004/01-5a9ae4d363335816b67c1aefd321fe3c1cf5869e840adab5a583b5bc23af3cf8.json",
+      "sha256": "ccf3d6c64c6789467d22a32593b4ecce6caab45c27911fdbc4ce21c9177a8845"
+    }
+  ],
+  "proof_sha256": "f2498140fedded998bf0fc2e0e4b5db9612d368f3c30c5d385d558b96389b22f",
+  "reason": "EXECUTION_PROVENANCE_INCOMPLETE",
+  "scope": "runs before execution-provenance instrumentation",
+  "status": "SUPERSEDED",
+  "type": "RUN_SUPERSESSION"
+}

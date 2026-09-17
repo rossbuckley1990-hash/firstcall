@@ -1,0 +1,15 @@
+{
+  "afcr": 1.0,
+  "determinate": 1,
+  "experiment": "LIVE-005",
+  "false_success": 0,
+  "proof_sha256": "1ed12cef036d794c7ebb8bc2816d642be557f89d84f846f46b3f8f2e2268084c",
+  "proven_success": 1,
+  "run_proofs": [
+    "f50f580ae6546c71c3b49b3ebd3f6891134871e40d6f48ac4e4553cbe394e540"
+  ],
+  "runs": 1,
+  "unknown": 0,
+  "wilson_high": 1.0,
+  "wilson_low": 0.20654931437723745
+}

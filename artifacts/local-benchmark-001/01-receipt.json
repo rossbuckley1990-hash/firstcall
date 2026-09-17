@@ -1,0 +1,64 @@
+{
+  "agent": {
+    "model": null,
+    "model_identity_status": "unknown",
+    "version": "local-control"
+  },
+  "claim": {
+    "found": true,
+    "ok": true,
+    "payload": {
+      "ok": true,
+      "stage": "complete"
+    }
+  },
+  "controls": {
+    "firstcall_executes_candidate": false,
+    "fresh_workspace": true,
+    "independent_vendor_check": true,
+    "structured_claim": true
+  },
+  "execution": {
+    "candidate_commands": [
+      {
+        "command": "python integration.py",
+        "exit_code": 0,
+        "output": "FIRSTCALL_RESULT {\"ok\":true,\"stage\":\"complete\"}\n",
+        "source": "local_control"
+      }
+    ],
+    "candidate_execution_observed": true,
+    "candidate_exit_code": 0
+  },
+  "experiment": "LOCAL-BENCHMARK-001",
+  "integrity": {
+    "docs_unchanged": true,
+    "forbidden_files": [],
+    "secret_leaked": false
+  },
+  "manifest": {
+    "controls": {
+      "firstcall_executes_candidate": false,
+      "fresh_workspace": true,
+      "independent_vendor_check": true,
+      "structured_claim_required": true
+    },
+    "docs_sha256": "0be3c4ac027f85506ea6bfb9837c0b0015a4b43b3aab40b88a02b1f28ccf3ea4",
+    "experiment": "LOCAL-BENCHMARK-001",
+    "provider": "local",
+    "runs": 1,
+    "schema": "firstcall.experiment-manifest.v1",
+    "task_sha256": "e376375f32240e168b58bb5eed0954ed4c5fd15ec5de4e947dd61cab9b6982a7",
+    "verifier": "local-file-effect"
+  },
+  "manifest_sha256": "dcc8ec23396c344863b71ff0f61aa3ebc95c58c3cd7859723b2a74c6f77911ae",
+  "proof_sha256": "0627f8b0331e19efdece8c1f3a29787d19c07f4e45ebc56ad9604f9b411f0467",
+  "run_number": 1,
+  "schema": "firstcall.benchmark-receipt.v1",
+  "verdict": "PROVEN_SUCCESS",
+  "verification": {
+    "effect_id": "local-effect-42",
+    "observed": true,
+    "reason": null
+  }
+}
