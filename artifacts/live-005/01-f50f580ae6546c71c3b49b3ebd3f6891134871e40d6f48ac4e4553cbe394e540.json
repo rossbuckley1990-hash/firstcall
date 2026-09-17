@@ -1,0 +1,49 @@
+{
+  "agent": {
+    "candidate_commands": [
+      {
+        "command": "/bin/zsh -lc 'python3 integration.py'",
+        "exit_code": 0,
+        "output": "FIRSTCALL_RESULT {\"ok\":true,\"stage\":\"complete\"}\n",
+        "source": "codex_jsonl:item.completed"
+      }
+    ],
+    "candidate_execution_observed": true,
+    "candidate_exit_code": 0,
+    "claim_error": null,
+    "claim_found": true,
+    "claim_ok": true,
+    "duration_ms": 46552,
+    "exit_code": 0
+  },
+  "agent_version": "codex-cli 0.154.0",
+  "controls": {
+    "firstcall_executes_candidate": false,
+    "fresh_workspace": true,
+    "independent_vendor_check": true,
+    "structured_claim": true
+  },
+  "docs_sha256": "73f4440835668c72820afd20f04d8cc21f81be2271cf6477abc848fdf19bb9dc",
+  "experiment": "LIVE-005",
+  "generated_files": {
+    "docs.md": "# Resend \u2014 Send Email\n\nSend an email with the Resend HTTP API.\n\nEndpoint:\n\nPOST https://api.resend.com/emails\n\nAuthentication:\n\nAuthorization: Bearer $RESEND_API_KEY\n\nContent-Type:\n\napplication/json\n\nExample request body:\n\n{\n  \"from\": \"FIRSTCALL <onboarding@resend.dev>\",\n  \"to\": [\"delivered@resend.dev\"],\n  \"subject\": \"Hello World\",\n  \"html\": \"<strong>It works</strong>\"\n}\n\nThe API key is available at runtime in the RESEND_API_KEY environment\nvariable.\n\nA successful request returns JSON containing the created email id.\n\nFor this test, use onboarding@resend.dev as the sender and\ndelivered@resend.dev as the recipient.\n",
+    "integration.py": "import http.client\nimport json\nimport os\n\n\ndef main():\n    stage = \"configuration\"\n    status = None\n    connection = None\n    result = None\n    try:\n        api_key = os.environ.get(\"RESEND_API_KEY\")\n        subject = os.environ.get(\"FIRSTCALL_SUBJECT\")\n        if not api_key or not subject:\n            result = {\n                \"ok\": False,\n                \"stage\": stage,\n                \"error_type\": \"MissingEnvironmentVariable\",\n                \"http_status\": None,\n            }\n        else:\n            payload = json.dumps({\n                \"from\": \"FIRSTCALL <onboarding@resend.dev>\",\n                \"to\": [\"delivered@resend.dev\"],\n                \"subject\": subject,\n                \"html\": \"<strong>It works</strong>\",\n            }).encode(\"utf-8\")\n            stage = \"request\"\n            connection = http.client.HTTPSConnection(\"api.resend.com\", timeout=30)\n            connection.request(\n                \"POST\",\n                \"/emails\",\n                body=payload,\n                headers={\n                    \"Authorization\": \"Bearer \" + api_key,\n                    \"Content-Type\": \"application/json\",\n                },\n            )\n            response = connection.getresponse()\n            status = response.status\n            stage = \"response\"\n            if not 200 <= status < 300:\n                result = {\n                    \"ok\": False,\n                    \"stage\": stage,\n                    \"error_type\": \"HTTPError\",\n                    \"http_status\": status,\n                }\n            else:\n                data = json.loads(response.read())\n                if isinstance(data, dict) and isinstance(data.get(\"id\"), str) and data[\"id\"].strip():\n                    result = {\"ok\": True, \"stage\": \"complete\"}\n                else:\n                    result = {\n                        \"ok\": False,\n                        \"stage\": stage,\n                        \"error_type\": \"InvalidResponse\",\n                        \"http_status\": status,\n                    }\n    except Exception:\n        result = {\n            \"ok\": False,\n            \"stage\": stage,\n            \"error_type\": \"IntegrationError\",\n            \"http_status\": status,\n        }\n    finally:\n        if connection is not None:\n            try:\n                connection.close()\n            except Exception:\n                pass\n    print(\"FIRSTCALL_RESULT \" + json.dumps(result, separators=(\",\", \":\")))\n\n\nif __name__ == \"__main__\":\n    main()\n"
+  },
+  "integrity": {
+    "docs_unchanged": true,
+    "forbidden_files": [],
+    "secret_leaked": false
+  },
+  "prompt_sha256": "7b57e96afec93d2862fe5994481dd8635ca813dacc50ca68e8938acd5f64e785",
+  "proof_sha256": "f50f580ae6546c71c3b49b3ebd3f6891134871e40d6f48ac4e4553cbe394e540",
+  "run_id": "ad5b2d43d4114628b661d636a40c816f",
+  "run_number": 1,
+  "subject": "FIRSTCALL-LIVE-005-01-ad5b2d43d4114628b661d636a40c816f",
+  "verdict": "PROVEN_SUCCESS",
+  "verification": {
+    "email_id": "01a0b0ee-c7c3-7188-a342-8624097440f1",
+    "last_event": "delivered",
+    "observed": true,
+    "reason": null
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "agent": {
+    "cli_version": "codex-cli 0.154.0",
+    "model": "unknown_until_observed",
+    "provider": "Codex"
+  },
+  "agent_visible": {
+    "baseline_docs_sha256": "370e124ed12477a95d5aa007738561a027e8d69922fbfd329c0eed05ac5174df",
+    "task_sha256": "370ce122aa74e9405931385fc5e29e7b2713a2d29caedc585d385f122ce6ddba"
+  },
+  "agent_workspace": "fresh_per_run",
+  "controls": {
+    "exactly_one_effect_required": true,
+    "independent_effect_readback": true,
+    "verifier_hidden_from_agent": true
+  },
+  "environment": {
+    "platform": "macOS-26.4.1-arm64-arm-64bit-Mach-O",
+    "python": "3.14.6"
+  },
+  "experiment": "CF-001",
+  "hidden_apparatus": {
+    "service_sha256": "a580809e9f3b0c81c2f3107179b1131bf92609dba0b637f7b0d8db463dcd9379",
+    "verifier_sha256": "765f4ec927095dafb756bc5bde090879e0014bf1668196bcddc393a9d2edcbc6"
+  },
+  "manifest_sha256": "59c9d739bd02401aadad85f866c96fdaafb17be9564c8ce01d72cd9be6c79e87",
+  "phase": "baseline",
+  "planned_runs": 3,
+  "rerun_policy": "none",
+  "rescue_execution": false,
+  "schema": "firstcall.counterfactual-experiment.v1",
+  "unknown_policy": "exclude_from_afcr_denominator"
+}

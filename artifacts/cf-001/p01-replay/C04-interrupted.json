@@ -1,0 +1,10 @@
+{
+  "afcr_eligible": false,
+  "evidence": "C03 completed successfully as an observation. Runner received KeyboardInterrupt while C04 subprocess was active. No C04 receipt or retained completed trace exists.",
+  "experiment": "CF-001",
+  "intervention": "P01",
+  "reason": "operator_interrupt_during_agent_execution",
+  "recorded_at": "2026-09-17T20:39:03.950339+00:00",
+  "run_id": "C04",
+  "schema": "firstcall.invalid-run.v1"
+}

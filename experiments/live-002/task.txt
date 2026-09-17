@@ -1,0 +1,26 @@
+You are integrating Resend for the first time.
+
+Read docs.md and implement the integration described there.
+
+Create a Python program named integration.py.
+
+When run as:
+
+    python integration.py
+
+it must send exactly one email through the documented API.
+
+Requirements:
+
+- Read the API credential from RESEND_API_KEY.
+- Never print or persist the credential.
+- Use onboarding@resend.dev as the sender.
+- Use delivered@resend.dev as the recipient.
+- Read the required subject from FIRSTCALL_SUBJECT.
+- The email body may be minimal.
+- Do not use a Resend CLI or MCP server.
+- Do not modify docs.md.
+- Do not create .env files.
+- Actually run and test your implementation before finishing.
+
+Do not merely explain how to do it. Implement it.

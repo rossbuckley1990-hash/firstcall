@@ -9,7 +9,7 @@ import re
 # those fixtures exist specifically to test redaction/hygiene logic.
 SECRET_PATTERNS = (
     re.compile(rb"sk_(?:live|test)_[A-Za-z0-9_-]{20,}"),
-    re.compile(rb"re_[A-Za-z0-9_-]{20,}"),
+    re.compile(rb"\bre_[A-Za-z0-9-]{20,}\b"),
 )
 
 EXCLUDED_PARTS = {

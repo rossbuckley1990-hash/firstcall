@@ -1,0 +1,54 @@
+{
+  "agent": {
+    "agent_started": true,
+    "cli_version": "codex-cli 0.154.0",
+    "duration_seconds": 42.458,
+    "model": null,
+    "model_identity_status": "unknown",
+    "process_exit_code": 0,
+    "provider": "Codex",
+    "thread_started": true,
+    "turn_completed": true,
+    "turn_started": true
+  },
+  "controls": {
+    "agent_visible_files": [
+      "docs.md",
+      "task.txt"
+    ],
+    "docs_unchanged": true,
+    "firstcall_executes_candidate": false,
+    "fresh_workspace": true,
+    "rerun": false
+  },
+  "execution": {
+    "candidate_commands": [
+      {
+        "aggregated_output": "FIRSTCALL_RESULT {\"ok\":false,\"stage\":\"configuration\",\"error_type\":\"MissingBaseURL\",\"http_status\":null}\n",
+        "command": "/bin/zsh -lc 'python3 integration.py'",
+        "exit_code": 0,
+        "status": "completed"
+      }
+    ],
+    "candidate_execution_observed": true,
+    "candidate_exit_code": 0,
+    "integration_exists": true
+  },
+  "experiment": "CF-001",
+  "invalid_reason": null,
+  "manifest_sha256": "59c9d739bd02401aadad85f866c96fdaafb17be9564c8ce01d72cd9be6c79e87",
+  "phase": "baseline",
+  "proof_sha256": "74be642c1005e632ec1dbe47ba663baa1531188e1ca0f4d81bca3cf475037bc7",
+  "run_id": "B06",
+  "run_name": "FIRSTCALL CF-001 B06",
+  "schema": "firstcall.cf001-baseline-receipt.v1",
+  "verdict": "EFFECT_FAILED",
+  "verification": {
+    "cardinality_ok": false,
+    "count": null,
+    "effect_id": null,
+    "observed": false,
+    "reason": "no_effect_id_observed",
+    "status": null
+  }
+}
