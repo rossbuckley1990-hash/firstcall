@@ -9,11 +9,11 @@ import tempfile
 import time
 from pathlib import Path
 
-from firstcall.verifiers.cf001 import discover_and_verify_exactly_one_event
+from firstcall.verifiers.cf001 import verify_exactly_one_event
 
 ROOT = Path(__file__).resolve().parents[1]
 EXP = ROOT / "experiments" / "cf-001"
-ART = ROOT / "artifacts" / "cf-001" / "baseline"
+ART = ROOT / "artifacts" / "cf-001" / "p02-replay"
 BASE_URL = "http://127.0.0.1:8765"
 
 def sha256_bytes(data: bytes) -> str:
@@ -80,7 +80,7 @@ def run_one(run_id: str) -> dict:
             text=True,
         )
 
-        docs = (EXP / "baseline-docs.md").read_text()
+        docs = (EXP / "p02-docs.md").read_text()
         base_task = (EXP / "task.txt").read_text()
 
         task = base_task.replace(
@@ -167,10 +167,21 @@ def run_one(run_id: str) -> dict:
 
         event_id = extract_event_id(all_output)
 
-        verification = discover_and_verify_exactly_one_event(
-            BASE_URL,
-            run_name,
-        )
+        if event_id:
+            verification = verify_exactly_one_event(
+                BASE_URL,
+                event_id,
+                run_name,
+            )
+        else:
+            verification = {
+                "observed": False,
+                "status": None,
+                "effect_id": None,
+                "count": None,
+                "cardinality_ok": False,
+                "reason": "no_effect_id_observed",
+            }
 
         integration = workspace / "integration.py"
         integration_exists = integration.exists()
@@ -194,9 +205,6 @@ def run_one(run_id: str) -> dict:
         if not agent_started:
             verdict = "UNKNOWN"
             invalid_reason = "agent_launch_failed"
-        elif verification.get("observed") is None:
-            verdict = "UNKNOWN"
-            invalid_reason = "verifier_unavailable"
         elif verification.get("observed") is True and candidate_executed and candidate_exit == 0 and docs_unchanged:
             verdict = "PROVEN_SUCCESS"
             invalid_reason = None
@@ -307,7 +315,7 @@ def main():
 
     results = []
 
-    for run_id in ("B01", "B02", "B03"):
+    for run_id in ("D01", "D02", "D03"):
         results.append(run_one(run_id))
 
     determinate = [

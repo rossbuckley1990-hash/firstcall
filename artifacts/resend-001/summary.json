@@ -1,0 +1,17 @@
+{
+  "afcr": 1.0,
+  "determinate": 3,
+  "experiment": "RESEND-001",
+  "false_success": 0,
+  "proof_sha256": "d4a23d91655399b83aa058c3757811248f4d4025f9ef999a1c63bab8e2e8421a",
+  "proven_success": 3,
+  "run_proofs": [
+    "073713d78504d53d7cc2c83d155e393b1aa38cf37c97a0f561975cf54d62ecf4",
+    "2866e7cbec5375f34a1ae05f83ce29e7b02dcd3002be32f75c0347a418ee9089",
+    "4ef5f79b0037240b1ec49aa12e5003e8ae6f393e9791801753f088fbb60f1359"
+  ],
+  "runs": 3,
+  "unknown": 0,
+  "wilson_high": 1.0,
+  "wilson_low": 0.4385029682449546
+}

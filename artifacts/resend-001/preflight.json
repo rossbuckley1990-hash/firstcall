@@ -1,0 +1,9 @@
+{
+  "agent_exit_code": 0,
+  "agent_target_reachable": true,
+  "credential_present": true,
+  "reason": null,
+  "valid": true,
+  "verifier_reachable": true,
+  "workspace_writable": true
+}

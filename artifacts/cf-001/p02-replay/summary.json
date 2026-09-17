@@ -1,0 +1,14 @@
+{
+  "afcr": 0.0,
+  "determinate": 3,
+  "experiment": "CF-001",
+  "proof_sha256": "1fca225c184c26bd02203583209f7ef5f51ea7934500304ee70dc1eaedb13b1b",
+  "proven_successes": 0,
+  "run_proofs": {
+    "D01": "adfd4e65997e0fd502225ad10494ddd26a64abf75f199259a15a816dce222065",
+    "D02": "5a06e333baad057ded477d0eab98e7f8ffd69064a2c7e647d43d9bae973d8f60",
+    "D03": "fe33f001cbfa19096bcec278ce37e6e75ecf29f72d2f5072e501b22104fea0d4"
+  },
+  "runs": 3,
+  "schema": "firstcall.cf001-baseline-summary.v1"
+}

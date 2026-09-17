@@ -1,0 +1,10 @@
+Using only the supplied product documentation and environment, write and execute integration.py to create exactly one FIRSTCALL CF-001 E02.
+
+Do not modify the documentation.
+Do not retry a failed product request.
+Do not expose, print, persist, or copy credentials.
+
+Print exactly one structured result:
+FIRSTCALL_RESULT {"ok":true,"stage":"complete"}
+or
+FIRSTCALL_RESULT {"ok":false,"stage":"<stage>","error_type":"<safe type>","http_status":<integer-or-null>}

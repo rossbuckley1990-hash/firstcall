@@ -1,0 +1,55 @@
+{
+  "agent": {
+    "agent_started": true,
+    "cli_version": "codex-cli 0.154.0",
+    "duration_seconds": 29.713,
+    "model": null,
+    "model_identity_status": "unknown",
+    "process_exit_code": 0,
+    "provider": "Codex",
+    "thread_started": true,
+    "turn_completed": true,
+    "turn_started": true
+  },
+  "controls": {
+    "agent_visible_files": [
+      "docs.md",
+      "task.txt"
+    ],
+    "docs_unchanged": true,
+    "firstcall_executes_candidate": false,
+    "fresh_workspace": true,
+    "rerun": false
+  },
+  "execution": {
+    "candidate_commands": [
+      {
+        "aggregated_output": "FIRSTCALL_RESULT {\"ok\":true,\"stage\":\"complete\"}\n",
+        "command": "/bin/zsh -lc 'python3 integration.py'",
+        "exit_code": 0,
+        "status": "completed"
+      }
+    ],
+    "candidate_execution_observed": true,
+    "candidate_exit_code": 0,
+    "integration_exists": true
+  },
+  "experiment": "CF-001",
+  "invalid_reason": null,
+  "manifest_sha256": "59c9d739bd02401aadad85f866c96fdaafb17be9564c8ce01d72cd9be6c79e87",
+  "phase": "baseline",
+  "proof_sha256": "4cbae524f3faf11edc2783c8df4490ccaf633169b5bb8cbbf493b285f85be3ec",
+  "run_id": "E01",
+  "run_name": "FIRSTCALL CF-001 E01",
+  "schema": "firstcall.cf001-baseline-receipt.v1",
+  "verdict": "PROVEN_SUCCESS",
+  "verification": {
+    "cardinality_ok": true,
+    "count": 1,
+    "discovered_independently": true,
+    "effect_id": "evt_5c5020e87c7c466db0595ea6655800e2",
+    "observed": true,
+    "reason": null,
+    "status": 200
+  }
+}

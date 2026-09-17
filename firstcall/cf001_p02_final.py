@@ -13,7 +13,7 @@ from firstcall.verifiers.cf001 import discover_and_verify_exactly_one_event
 
 ROOT = Path(__file__).resolve().parents[1]
 EXP = ROOT / "experiments" / "cf-001"
-ART = ROOT / "artifacts" / "cf-001" / "baseline"
+ART = ROOT / "artifacts" / "cf-001" / "p02-final"
 BASE_URL = "http://127.0.0.1:8765"
 
 def sha256_bytes(data: bytes) -> str:
@@ -80,7 +80,7 @@ def run_one(run_id: str) -> dict:
             text=True,
         )
 
-        docs = (EXP / "baseline-docs.md").read_text()
+        docs = (EXP / "p02-docs.md").read_text()
         base_task = (EXP / "task.txt").read_text()
 
         task = base_task.replace(
@@ -307,7 +307,7 @@ def main():
 
     results = []
 
-    for run_id in ("B01", "B02", "B03"):
+    for run_id in ("E01", "E02", "E03"):
         results.append(run_one(run_id))
 
     determinate = [

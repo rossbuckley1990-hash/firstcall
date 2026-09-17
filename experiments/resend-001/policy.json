@@ -1,0 +1,16 @@
+{
+  "schema": "firstcall.external-experiment.v1",
+  "experiment": "RESEND-001",
+  "baseline": true,
+  "planned_runs": 3,
+  "fresh_agent_workspace": true,
+  "firstcall_rescue": false,
+  "official_product_docs_only": true,
+  "planted_defect": false,
+  "recipient": "delivered@resend.dev",
+  "send_cardinality": 1,
+  "intervention_preselected": false,
+  "agent_self_report_is_proof": false,
+  "independent_vendor_verification_required": true,
+  "unknown_excluded_from_afcr": true
+}

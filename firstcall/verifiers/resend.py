@@ -3,8 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 import json
 import time
-import urllib.error
-import urllib.request
+import subprocess
 
 
 @dataclass(frozen=True)
@@ -30,22 +29,29 @@ class ResendVerifier:
         self.recipient = recipient
 
     def _list(self) -> dict:
-        req = urllib.request.Request(
-            "https://api.resend.com/emails?limit=100",
-            headers={
-                "Authorization": f"Bearer {self.api_key}",
-                "Accept": "application/json",
-                "User-Agent": "firstcall-verifier/0.2",
-            },
+        result = subprocess.run(
+            [
+                "curl",
+                "-sS",
+                "--fail-with-body",
+                "--max-time", "30",
+                "-H",
+                f"Authorization: Bearer {self.api_key}",
+                "-H",
+                "Accept: application/json",
+                "https://api.resend.com/emails?limit=100",
+            ],
+            capture_output=True,
+            text=True,
+            timeout=35,
         )
 
-        with urllib.request.urlopen(
-            req,
-            timeout=30,
-        ) as response:
-            return json.loads(
-                response.read().decode("utf-8")
+        if result.returncode != 0:
+            raise RuntimeError(
+                f"Resend verifier curl failed: {result.returncode}"
             )
+
+        return json.loads(result.stdout)
 
     def verify(
         self,
@@ -59,9 +65,8 @@ class ResendVerifier:
             try:
                 payload = self._list()
             except (
-                urllib.error.URLError,
-                urllib.error.HTTPError,
-                TimeoutError,
+                RuntimeError,
+                subprocess.TimeoutExpired,
                 json.JSONDecodeError,
             ) as exc:
                 last_reason = (
