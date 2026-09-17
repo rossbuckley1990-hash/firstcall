@@ -1,0 +1,33 @@
+{
+  "derived_from": [
+    "C01",
+    "C03"
+  ],
+  "experiment": "CF-001",
+  "gap_id": "P02-GAP",
+  "known": [
+    "P01 removed MissingBaseURL sufficiently for fresh agents to issue the product request.",
+    "The product rejected both requests with HTTP 401.",
+    "A credential named ACME_API_KEY is available in the candidate environment."
+  ],
+  "observations": {
+    "frequency": "2/2",
+    "http_status": 401,
+    "valid_runs": 2
+  },
+  "prior_intervention": "P01",
+  "proof_sha256": "5d9b5b204a1a0f84142a0bbbc6f36280ac543c3a5a1ca60514484aa1055f053a",
+  "required_product_input": "Declare how ACME_API_KEY must be transmitted when calling the API.",
+  "schema": "firstcall.contract-gap.v1",
+  "status": "BLOCKED_ON_PRODUCT_CONTRACT",
+  "unknown": [
+    "HTTP authentication scheme",
+    "credential transport location/header format"
+  ],
+  "unsafe_inferences": [
+    "Authorization: Bearer",
+    "X-API-Key",
+    "Basic authentication",
+    "query-string credential"
+  ]
+}

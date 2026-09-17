@@ -1,0 +1,10 @@
+{
+  "afcr_eligible": false,
+  "evidence": "C01 completed. Runner received KeyboardInterrupt while C02 subprocess was active. C02 produced no completed receipt. C03 was never started in this batch.",
+  "experiment": "CF-001",
+  "intervention": "P01",
+  "reason": "operator_interrupt_during_agent_execution",
+  "recorded_at": "2026-09-17T20:35:36.271353+00:00",
+  "run_id": "C02",
+  "schema": "firstcall.invalid-run.v1"
+}
