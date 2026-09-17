@@ -1,0 +1,30 @@
+{
+  "afcr_eligible": false,
+  "benchmark_interpretation": "INVALID",
+  "correction": "Fresh workspaces are initialized as isolated Git repositories. Agent launch requires thread.started and turn.started. Pre-agent launch failures classify as UNKNOWN/INVALID.",
+  "evidence": {
+    "diagnostic_stderr_sha256": "dd701e712037bba81445e9a92376e3d3af69acac5f0187ec904e9ed3c401324d",
+    "diagnostic_stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "runs": {
+      "B01": {
+        "receipt_sha256": "b298295bd1e682d48e5e49d3a4ac0e32f714e716a0b643fc7cb3742bf4baaed8"
+      },
+      "B02": {
+        "receipt_sha256": "566413dae3dfdfd4695a7f0af3db9a63966601132f7bdd45d05d6081dc08176c"
+      },
+      "B03": {
+        "receipt_sha256": "c40c0ce9108d2efcf3c21c06689050f21fd368526007bbb8b83cede8e790d302"
+      }
+    }
+  },
+  "experiment": "CF-001",
+  "original_observed_summary": "0/3 PROVEN_SUCCESS",
+  "proof_sha256": "6ae4c1707f175f2a13177b91da49cff131246d59748f5c4404a3bbc12ca9aeba",
+  "reason": "Codex rejected each fresh temporary workspace before agent start because it was not a trusted Git repository.",
+  "schema": "firstcall.supersession.v1",
+  "supersedes": [
+    "B01",
+    "B02",
+    "B03"
+  ]
+}

@@ -1,0 +1,4 @@
+{"type":"thread.started","thread_id":"01a0b107-bc8b-7c53-ad76-2cc35eb22569"}
+{"type":"turn.started"}
+{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"FIRSTCALL_FRESH_WORKSPACE_OK"}}
+{"type":"turn.completed","usage":{"input_tokens":17212,"cached_input_tokens":12928,"cache_write_input_tokens":0,"output_tokens":11,"reasoning_output_tokens":0}}
