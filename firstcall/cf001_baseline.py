@@ -9,7 +9,7 @@ import tempfile
 import time
 from pathlib import Path
 
-from firstcall.verifiers.cf001 import verify_exactly_one_event
+from firstcall.verifiers.cf001 import discover_and_verify_exactly_one_event
 
 ROOT = Path(__file__).resolve().parents[1]
 EXP = ROOT / "experiments" / "cf-001"
@@ -167,21 +167,10 @@ def run_one(run_id: str) -> dict:
 
         event_id = extract_event_id(all_output)
 
-        if event_id:
-            verification = verify_exactly_one_event(
-                BASE_URL,
-                event_id,
-                run_name,
-            )
-        else:
-            verification = {
-                "observed": False,
-                "status": None,
-                "effect_id": None,
-                "count": None,
-                "cardinality_ok": False,
-                "reason": "no_effect_id_observed",
-            }
+        verification = discover_and_verify_exactly_one_event(
+            BASE_URL,
+            run_name,
+        )
 
         integration = workspace / "integration.py"
         integration_exists = integration.exists()
@@ -205,6 +194,9 @@ def run_one(run_id: str) -> dict:
         if not agent_started:
             verdict = "UNKNOWN"
             invalid_reason = "agent_launch_failed"
+        elif verification.get("observed") is None:
+            verdict = "UNKNOWN"
+            invalid_reason = "verifier_unavailable"
         elif verification.get("observed") is True and candidate_executed and candidate_exit == 0 and docs_unchanged:
             verdict = "PROVEN_SUCCESS"
             invalid_reason = None

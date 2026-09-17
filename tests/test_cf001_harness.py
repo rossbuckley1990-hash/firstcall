@@ -14,3 +14,9 @@ def test_runner_hardening_is_present():
     ]
     for check in checks:
         assert check in source
+
+
+def test_verifier_unavailable_maps_to_unknown():
+    source = Path("firstcall/cf001_baseline.py").read_text()
+    assert 'verification.get("observed") is None' in source
+    assert 'invalid_reason = "verifier_unavailable"' in source

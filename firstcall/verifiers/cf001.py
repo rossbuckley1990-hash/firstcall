@@ -114,3 +114,82 @@ def verify_exactly_one_event(base_url: str, event_id: str, expected_name: str) -
         "cardinality_ok": cardinality_ok,
         "reason": None if cardinality_ok else "duplicate_or_ambiguous_effect",
     }
+
+def discover_and_verify_exactly_one_event(
+    base_url: str,
+    expected_name: str,
+) -> dict:
+    from urllib.parse import quote
+    import json
+    import urllib.error
+    import urllib.request
+
+    url = (
+        f"{base_url}/_firstcall/verify-count"
+        f"?name={quote(expected_name, safe='')}"
+    )
+
+    request = urllib.request.Request(
+        url,
+        headers={"X-Firstcall-Verifier": VERIFY_TOKEN},
+        method="GET",
+    )
+
+    try:
+        with urllib.request.urlopen(request, timeout=5) as response:
+            payload = json.load(response)
+            status = response.status
+    except urllib.error.HTTPError as error:
+        return {
+            "observed": None,
+            "status": error.code,
+            "effect_id": None,
+            "count": None,
+            "cardinality_ok": False,
+            "reason": "discovery_verifier_http_error",
+        }
+    except Exception:
+        return {
+            "observed": None,
+            "status": None,
+            "effect_id": None,
+            "count": None,
+            "cardinality_ok": False,
+            "reason": "discovery_verifier_transport_error",
+        }
+
+    count = payload.get("count")
+    ids = payload.get("event_ids", [])
+
+    if status != 200:
+        return {
+            "observed": None,
+            "status": status,
+            "effect_id": None,
+            "count": count,
+            "cardinality_ok": False,
+            "reason": "discovery_verifier_bad_status",
+        }
+
+    if count != 1 or len(ids) != 1:
+        return {
+            "observed": False,
+            "status": status,
+            "effect_id": None,
+            "count": count,
+            "cardinality_ok": False,
+            "reason": "duplicate_or_ambiguous_effect"
+            if count and count > 1
+            else "no_matching_effect",
+        }
+
+    event_id = ids[0]
+
+    result = verify_exactly_one_event(
+        base_url,
+        event_id,
+        expected_name,
+    )
+
+    result["discovered_independently"] = True
+    return result
