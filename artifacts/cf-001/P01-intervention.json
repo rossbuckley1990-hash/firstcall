@@ -1,0 +1,25 @@
+{
+  "baseline_afcr": "0/3",
+  "baseline_docs_sha256": "370e124ed12477a95d5aa007738561a027e8d69922fbfd329c0eed05ac5174df",
+  "derived_from": [
+    "B04",
+    "B06",
+    "B08"
+  ],
+  "excluded_from_intervention": [
+    "authentication mechanism",
+    "credential transmission"
+  ],
+  "experiment": "CF-001",
+  "intervention": "Document the absolute API base URL.",
+  "intervention_id": "P01",
+  "observed_cluster": {
+    "error_type": "MissingBaseURL",
+    "frequency": "3/3",
+    "stage": "configuration"
+  },
+  "patched_docs_sha256": "559ed30fe916163655e17533e618188b50af5ba5a93edcb7ded1c13aa069c3d8",
+  "prediction": "Fresh autonomous customers should progress beyond MissingBaseURL. This intervention alone is not predicted to guarantee a successful effect.",
+  "proof_sha256": "5f9c0f0097de644174d9531ba901d010c7822829ae1765210f1a77c5dcb140b7",
+  "schema": "firstcall.intervention.v1"
+}
