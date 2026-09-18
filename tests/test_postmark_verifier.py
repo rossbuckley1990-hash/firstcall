@@ -37,6 +37,7 @@ def test_accepts_exactly_one_current_effect(
                     "ReceivedAt":
                         "2026-09-18T07:00:01+00:00",
                     "Status": "Sent",
+                    "Sandboxed": True,
                 }
             ]
         },
@@ -66,6 +67,7 @@ def test_rejects_historical_matching_effect(
                     ],
                     "ReceivedAt":
                         "2026-09-18T06:59:59+00:00",
+                    "Sandboxed": True,
                 }
             ]
         },
@@ -94,6 +96,7 @@ def test_selects_current_not_historical(
                     ],
                     "ReceivedAt":
                         "2026-09-18T06:00:00+00:00",
+                    "Sandboxed": True,
                 },
                 {
                     "MessageID": "pm-new",
@@ -103,6 +106,7 @@ def test_selects_current_not_historical(
                     ],
                     "ReceivedAt":
                         "2026-09-18T07:01:00+00:00",
+                    "Sandboxed": True,
                 },
             ]
         },
@@ -132,6 +136,7 @@ def test_rejects_duplicate_current_effects(
                     ],
                     "ReceivedAt":
                         "2026-09-18T07:01:00+00:00",
+                    "Sandboxed": True,
                 },
                 {
                     "MessageID": "pm-two",
@@ -141,6 +146,7 @@ def test_rejects_duplicate_current_effects(
                     ],
                     "ReceivedAt":
                         "2026-09-18T07:02:00+00:00",
+                    "Sandboxed": True,
                 },
             ]
         },
@@ -173,6 +179,7 @@ def test_rejects_wrong_recipient(
                     ],
                     "ReceivedAt":
                         "2026-09-18T07:01:00+00:00",
+                    "Sandboxed": True,
                 }
             ]
         },
@@ -199,6 +206,7 @@ def test_rejects_wrong_subject(
                     ],
                     "ReceivedAt":
                         "2026-09-18T07:01:00+00:00",
+                    "Sandboxed": True,
                 }
             ]
         },
@@ -224,3 +232,38 @@ def test_malformed_vendor_response_fails_closed(
 
     assert result.observed is False
     assert "malformed" in result.reason
+
+
+def test_rejects_matching_live_effect(
+    monkeypatch,
+):
+    v = verifier()
+
+    monkeypatch.setattr(
+        v,
+        "_list",
+        lambda: {
+            "Messages": [
+                {
+                    "MessageID": "pm-live",
+                    "Subject": SUBJECT,
+                    "Recipients": [
+                        RECIPIENT,
+                    ],
+                    "ReceivedAt":
+                        "2026-09-18T07:03:00+00:00",
+                    "Status": "Sent",
+                    "Sandboxed": False,
+                }
+            ]
+        },
+    )
+
+    result = v.verify()
+
+    assert result.observed is False
+    assert result.message_id == "pm-live"
+    assert result.reason == (
+        "matching vendor-side message "
+        "was not sandboxed"
+    )

@@ -159,6 +159,22 @@ class PostmarkVerifier:
                 if observed_at < boundary:
                     continue
 
+                # MULTI-001 prohibits live delivery. A matching
+                # vendor effect is eligible only when Postmark
+                # independently marks it as sandboxed.
+                if item.get("Sandboxed") is not True:
+                    return PostmarkObservation(
+                        observed=False,
+                        message_id=item.get("MessageID"),
+                        subject=self.subject,
+                        recipient=self.recipient,
+                        status=item.get("Status"),
+                        reason=(
+                            "matching vendor-side message "
+                            "was not sandboxed"
+                        ),
+                    )
+
                 matches.append(item)
 
                 if len(matches) > 1:
