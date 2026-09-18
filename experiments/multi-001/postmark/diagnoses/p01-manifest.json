@@ -1,0 +1,9 @@
+{
+  "experiment": "MULTI-001",
+  "product": "POSTMARK",
+  "baseline_cohort": "d0bd8c7ade2b",
+  "diagnosis_file": "experiments/multi-001/postmark/diagnoses/p01.json",
+  "diagnosis_sha256": "8e3669969f77db0fbb39d51d3e38e05748a7576b8194ef8c2e6d5479b4543df3",
+  "intervention_applied": false,
+  "counterfactual_runs_executed": 0
+}
