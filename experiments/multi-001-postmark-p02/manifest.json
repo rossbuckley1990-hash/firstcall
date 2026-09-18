@@ -1,0 +1,143 @@
+{
+  "experiment": "MULTI-001",
+  "files": {
+    "docs/multi001-postmark-p01.md": {
+      "bytes": 3511,
+      "sha256": "803c2b669216b91c4a144330cf23c89cf01a9311168e3d0db8642972ec405d5d"
+    },
+    "experiments/multi-001-postmark-p02/diagnosis.json": {
+      "bytes": 2428,
+      "sha256": "7e7ce8952b5827107a030d51b7ea1bdfac0533fb98b7861ac87b092ce6f928f3"
+    },
+    "experiments/multi-001-postmark-p02/get-started.html": {
+      "bytes": 115343,
+      "sha256": "823dbea537294f9fd89a18ed779f50be4eeea423dac5da366c991fdf841555af"
+    },
+    "experiments/multi-001/README.md": {
+      "bytes": 553,
+      "sha256": "732e2584bf65b8f0bacef07c0f08c8e2216d06a3b19479a8e74655e414f50f29"
+    },
+    "experiments/multi-001/candidates.json": {
+      "bytes": 1162,
+      "sha256": "85f78fb75aedebfccc4cb380c3de5ac87d40bc0380ae36953180cfec49677012"
+    },
+    "experiments/multi-001/intent-manifest.json": {
+      "bytes": 474,
+      "sha256": "1b73a8b764e95fd157e4302da15577d6eb8ce7ae5eb8cd6b89516634083e44db"
+    },
+    "experiments/multi-001/postmark/apparatus-manifest.json": {
+      "bytes": 613,
+      "sha256": "7bb258f82058346b9d85a88ba11fa1d70eddb113ef5c8a9ba623368f486ea4e6"
+    },
+    "experiments/multi-001/postmark/diagnoses/p01-manifest.json": {
+      "bytes": 327,
+      "sha256": "b2823ba3207bb2e623818a92bca4dc634481f1ff9ad0a997939fecdd69765a0a"
+    },
+    "experiments/multi-001/postmark/diagnoses/p01.json": {
+      "bytes": 2175,
+      "sha256": "8e3669969f77db0fbb39d51d3e38e05748a7576b8194ef8c2e6d5479b4543df3"
+    },
+    "experiments/multi-001/postmark/invalidations/d631d6344557.json": {
+      "bytes": 1077,
+      "sha256": "e3e985b20a118a8cc4c29f61b6815e451bea3a1cd754341faa3cd677f0a348d9"
+    },
+    "experiments/multi-001/postmark/official-onboarding/get-started.html": {
+      "bytes": 115244,
+      "sha256": "8410998e0f53c0d56b8804fab215dce9955dbcb6a81d70b2bd88a39cee2ca4cc"
+    },
+    "experiments/multi-001/postmark/official-onboarding/manifest.json": {
+      "bytes": 288,
+      "sha256": "383b9a382a0b49352696c5c5083fec3222c0df27497eeda3efb0b4da7adf9021"
+    },
+    "experiments/multi-001/postmark/policy.json": {
+      "bytes": 402,
+      "sha256": "01a69e8c3ec080ef0802d33096e903db4563f3fab20316fdb0d1f88bef68206e"
+    },
+    "experiments/multi-001/postmark/subject-contract.json": {
+      "bytes": 328,
+      "sha256": "244732f4518aa18261656ec9c2fe48da10436d73607ac7efd09cf3a5a26351e7"
+    },
+    "experiments/multi-001/postmark/task.txt": {
+      "bytes": 701,
+      "sha256": "168eb6ae140021c001ca9802f43a6ba4649bc737189d422fef256b1b3e3e7456"
+    },
+    "experiments/multi-001/protocol.md": {
+      "bytes": 5075,
+      "sha256": "634b10f94d8a82ce23548aedac955ffa09cfa1cca231922ac5006b9eb28afc07"
+    },
+    "firstcall/agents/codex_events.py": {
+      "bytes": 6559,
+      "sha256": "c61e063a85499e2a46b26df4e4d580590bf43aab8fa2b5edcb9500a297f2eb9c"
+    },
+    "firstcall/agents/codex_live.py": {
+      "bytes": 3597,
+      "sha256": "1265f353e531c7940e09203ea6a63e5ed76d63a4a9da79ee3f1a7cc84b2c79e0"
+    },
+    "firstcall/grade.py": {
+      "bytes": 826,
+      "sha256": "4ba7304bc5f1ffa79f4500cfc0145c7cabb5535842bee5cff6ba9e3bc0e72244"
+    },
+    "firstcall/journey_evidence.py": {
+      "bytes": 7150,
+      "sha256": "2cab91da7fcdf34c70d02061174560ea6443147ba39eeba8abcc237e55c400bb"
+    },
+    "firstcall/model.py": {
+      "bytes": 1163,
+      "sha256": "32e99a10c6c12dd509588b72f61ac02baa0cab61f26005a35c416264ad87a275"
+    },
+    "firstcall/multi001_postmark.py": {
+      "bytes": 11809,
+      "sha256": "47557898ff255d8d244971194a51ff8b1cf4494b851affea1f6832c373e705e3"
+    },
+    "firstcall/multi001_postmark_p01.py": {
+      "bytes": 13542,
+      "sha256": "55e1c3d05ead64847dea14e71d52d090230e017ae1bfce63078b57d41dd520b3"
+    },
+    "firstcall/postmark_preflight.py": {
+      "bytes": 2474,
+      "sha256": "967f92f90dc49cb87ed52056d14e32203624fffc0cfa81dbbcc63ee547570ddc"
+    },
+    "firstcall/repo_security.py": {
+      "bytes": 1294,
+      "sha256": "66cf5aef954c6a3b0eb14cd49f79f9dfd19c1d6177dee14d3f5e849cc44f2ccc"
+    },
+    "firstcall/resend001.py": {
+      "bytes": 15418,
+      "sha256": "7e43ee229945843e9093c98cb3f4e1f16b7df7f0af2b1a72ef0ac939a801d29b"
+    },
+    "firstcall/runtime/workspace.py": {
+      "bytes": 481,
+      "sha256": "ba42b6b63deb9667c37ea5139359ca901ad0b0d98b5e531cc37cb18664e4dfaf"
+    },
+    "firstcall/stats.py": {
+      "bytes": 1300,
+      "sha256": "8cc5902a61d84f0c9c07177dcbc6cf0d17270fe57d1e72603ae9f3078aae32fd"
+    },
+    "firstcall/verifiers/postmark.py": {
+      "bytes": 6388,
+      "sha256": "7ac6b91fc78190e566e887e7bfaf6e105b049f676919c77e4b81eaa350ef9cf6"
+    },
+    "tests/test_multi001_postmark_p01.py": {
+      "bytes": 25466,
+      "sha256": "993b4c94cbb489a3811fc37fdd54f3e8dc3c605c45618de3d013a917e165fea0"
+    }
+  },
+  "frozen_baseline": {
+    "cohort": "d0bd8c7ade2b",
+    "commit": "ce95ed52ec9b728d43d8247ef3f2df53fee61ab1",
+    "evidence_tree_sha256": "40289fdcf64dc5c8073ed90b22a698cd6897d9a7fc118fa51c6e5add8d9087f7",
+    "tag": "multi-001-postmark-valid-baseline"
+  },
+  "frozen_p01": {
+    "apparatus_tag": "multi-001-postmark-p01-apparatus",
+    "canonical_evidence": "artifacts/multi-001/postmark/p01-counterfactual/ca116baa8519",
+    "canonical_evidence_tree_sha256": "6a975b16d84227d7cd5c23372f02fe43e3d167f6c68ea2a262f696f7b7989e34",
+    "commit": "9015c333080c4e192d680d6f88ce9360d74353c5",
+    "diagnosis_commit": "530351d120bac32b066aa70cbf8646387668cdac",
+    "diagnosis_sha256": "8e3669969f77db0fbb39d51d3e38e05748a7576b8194ef8c2e6d5479b4543df3",
+    "diagnosis_tag": "multi-001-postmark-p01-diagnosis",
+    "onboarding_sha256": "8410998e0f53c0d56b8804fab215dce9955dbcb6a81d70b2bd88a39cee2ca4cc",
+    "runner_sha256": "55e1c3d05ead64847dea14e71d52d090230e017ae1bfce63078b57d41dd520b3"
+  },
+  "phase": "P02_COUNTERFACTUAL"
+}
