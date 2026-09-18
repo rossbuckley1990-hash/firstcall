@@ -1,0 +1,34 @@
+{
+  "schema": "firstcall.programmeA.documentary_scheduler_registration.v1",
+  "freeze": "1.2",
+  "status": "UNFILLED_AND_BLOCKED_ON_ACCESS_BASIS",
+  "controlling_clauses": [
+    "Freeze-1.1 §3 para 2",
+    "§4 para 3",
+    "§8.3 para 1"
+  ],
+  "meaning": "The 'registered scheduler' is software that alone decides the order and timing of every post-capture retrieval (source metadata pages, identity-stage lead groups, eligibility-stage units). A human may start it but not choose URLs, order or retries. It never schedules vendor API calls, accounts or agent runs.",
+  "frozen_requirement": {
+    "source_metadata_stage": "for GitHub-hosted discovered sources, metadata (repository, licence, commits <=T0, default-branch tree) is retrieved only through the GitHub REST API or git over HTTPS, which GitHub's terms permit for research; off-GitHub officially linked pages are fetched only if robots.txt (RFC 9309) permits the path. Otherwise Freeze-1.1 limits apply: at most four pages per source (landing, about/governance, data-format/export, revision/history), one request plus one retry on transient failure, 30 s timeout. The three non-landing URLs come only from the two adjudicators' agreed selection of raw landing links (byte-smallest where several qualify); disagreement => SOURCE_UNRESOLVED.",
+    "identity_stage": "lead groups in byte order of canonical JSON lead sets; BFS over first-party links whose path contains a frozen term; max depth 2; max 16 distinct pages; 2 MiB per page; 30 s per request; one retry only on timeout/429/5xx after 30 s; redirects max 3; fragments and utm_*/gclid/fbclid removed",
+    "eligibility_stage": "same BFS parameters per canonical unit in canonical-ID byte order",
+    "cache": "mandatory shared cache of identical response bytes; each unit charged a slot per use",
+    "no_discretion": "no search engines, no archive search, no script execution, no guessed URLs, no extra pages",
+    "clock": "system UTC corrected by SNTP as in the capture runner; every request logs scheduled and actual time",
+    "window": "identity and eligibility capture within the seven-calendar-day window starting 00:00 UTC the day after source lock; a missed deadline blocks the whole batch",
+    "failure": "failed, blocked, oversized or unsupported pages consume a slot and are recorded; no rolling extension",
+    "audit_log": "append-only JSONL with request, response metadata, byte sha256 and budget consumption per unit; hashed at stage end",
+    "access_policy": "RFC 9309 robots.txt is honoured for every host; a disallowed or robots-unverifiable page consumes its slot and is an evidence gap (Freeze 1.1 'blocked pages'), never circumvented. OPEN QUESTION (blocks registration of this role): the terms basis for automated retrieval and retention of vendor documentation pages in the identity/eligibility stages has not been established. It is the same class of concern that withdrew Bing, and it must be resolved by a prospective rule before G3."
+  },
+  "registrant": null,
+  "registration_required_fields": [
+    "code_path",
+    "code_sha256",
+    "runtime_digest",
+    "offline_test_sha256",
+    "user_agent",
+    "egress_method"
+  ],
+  "required_before": "G3_POST_CAPTURE_RETRIEVAL",
+  "revision": 2
+}

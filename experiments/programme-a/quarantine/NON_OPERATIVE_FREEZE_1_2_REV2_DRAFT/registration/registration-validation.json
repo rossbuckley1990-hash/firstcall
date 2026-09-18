@@ -1,0 +1,83 @@
+{
+  "activity": {
+    "candidate_observations": 0,
+    "entropy": "NONE",
+    "outcome_observations": 0,
+    "random_draw": "NONE",
+    "real_vendor_runs": 0,
+    "selected_vendors": 0,
+    "source_searches": 0,
+    "source_snapshots": 0
+  },
+  "anchor": {
+    "freeze_1_2_tag_local": null,
+    "remote_anchor": "NOT_TAGGED"
+  },
+  "capture_gate": "CAPTURE_REGISTRATION_COMPLETE_PENDING_REMOTE_ANCHOR",
+  "capture_roles_filled": true,
+  "decision": "SEALABLE_BUT_REGISTRATIONS_INCOMPLETE",
+  "errors": [],
+  "freeze": "1.2",
+  "freeze_1": {
+    "files": 10,
+    "mismatched": [],
+    "pass": true,
+    "tag_peels": true
+  },
+  "freeze_1_1": {
+    "clean_clone_effective_sha256": "13f9e400661f6d2cf1af45cf15e56940ec532a0f8a3ff78b146c9a76edd4c29f",
+    "clean_clone_tests_rc": 0,
+    "pass": true,
+    "repair_pointer_tests": {
+      "/amendment/rules/source_universe/capture/authority": true,
+      "/amendment/rules/source_universe/capture/start": true,
+      "/amendment/rules/source_universe/discovery_day": true,
+      "/amendment/rules/source_universe/engine": true,
+      "/effective_json_documents/experiments~1programme-a~1sample-frame.config.json/freeze_1_1_rules/source_universe/capture/authority": true,
+      "/effective_json_documents/experiments~1programme-a~1sample-frame.config.json/freeze_1_1_rules/source_universe/engine": true,
+      "/effective_json_documents/experiments~1programme-a~1sample-frame.config.json/frozen_snapshot/capture/authority": true
+    },
+    "tag_peels": true,
+    "tracked_changes_since_tag": []
+  },
+  "protected": {
+    "helpers": 5,
+    "helpers_mismatched": [],
+    "multi_files": 145,
+    "multi_mismatched": [],
+    "pass": true
+  },
+  "role_status": {
+    "R01": "FILLED",
+    "R02": "FILLED",
+    "R03": "FILLED",
+    "R04": "FILLED_METHOD_VALUE_AT_PREFLIGHT",
+    "R05": "FILLED",
+    "R06": "UNFILLED",
+    "R07": "UNFILLED",
+    "R08": "UNFILLED",
+    "R09": "UNFILLED",
+    "R10": "UNFILLED",
+    "R11": "UNFILLED",
+    "R12": "FUTURE_STAGE",
+    "R13": "FILLED",
+    "R14": "UNFILLED",
+    "R15": "UNFILLED",
+    "R16": "UNFILLED",
+    "R17": "FUTURE_STAGE"
+  },
+  "schema": "firstcall.programmeA.registration_validation.v1",
+  "unfilled": [
+    "R06",
+    "R07",
+    "R08",
+    "R09",
+    "R10",
+    "R11",
+    "R12",
+    "R14",
+    "R15",
+    "R16",
+    "R17"
+  ]
+}

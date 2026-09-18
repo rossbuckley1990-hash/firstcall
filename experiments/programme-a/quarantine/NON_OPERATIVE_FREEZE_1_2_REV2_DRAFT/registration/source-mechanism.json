@@ -1,0 +1,102 @@
+{
+  "schema": "firstcall.programmeA.source_mechanism.v1",
+  "freeze": "1.2",
+  "revision": 2,
+  "status": "PROPOSED_BINDING_ON_REMOTE_ANCHOR",
+  "replaces": "Freeze-1.1 §3 para 1 and §8.2 discovery index (public Bing web-search result HTML), and the Freeze-1.2 rev-1 Bing runner",
+  "reason": "External review found material uncertainty over whether automated retrieval, parsing and archival of Bing search-result HTML is permitted under Microsoft's public terms. Technical accessibility is not permission. Withdrawn before any Bing or other discovery request.",
+  "design_inputs_examined": {
+    "terms_and_policy_documents_only": [
+      "https://docs.github.com/en/site-policy/acceptable-use-policies/github-acceptable-use-policies",
+      "https://docs.github.com/en/site-policy/github-terms/github-terms-of-service",
+      "https://docs.github.com/en/rest/search/search",
+      "https://docs.github.com/en/search-github/searching-on-github/searching-for-repositories",
+      "https://api.github.com/robots.txt (HTTP 404)",
+      "https://about.zenodo.org/policies/",
+      "https://about.zenodo.org/terms/",
+      "https://developers.zenodo.org/",
+      "https://zenodo.org/robots.txt"
+    ],
+    "search_requests": 0,
+    "result_pages_or_catalog_contents_viewed": 0,
+    "note": "No discovery endpoint was queried. No catalog, repository or vendor listing was opened."
+  },
+  "evaluated_classes": [
+    {"class": "search-engine result HTML (Bing, any engine)", "decision": "REJECTED", "basis": "terms uncertainty (external review); not permitted merely because accessible"},
+    {"class": "commercial official web-search APIs", "decision": "REJECTED", "basis": "require account creation and an API credential, which this protocol stage forbids; retention/publication rights would need a paid plan. Their terms were not relied on and no request was made."},
+    {"class": "Zenodo REST search API", "decision": "REJECTED", "basis": "zenodo.org/robots.txt: 'User-agent: * Disallow: /search Disallow: /api'. The policy/robots basis for automated search is ambiguous, even though its metadata is CC0."},
+    {"class": "Zenodo OAI-PMH full metadata harvest", "decision": "NOT_ADOPTED", "basis": "Policy permits harvesting ('All metadata is exported via OAI-PMH and can be harvested', CC0), but discovery would need a full-repository harvest (millions of records at 30 req/min) plus an untested local query semantics. Recorded as a possible future preregistered addition; not a silent substitute."},
+    {"class": "general knowledge bases (e.g. Wikidata)", "decision": "REJECTED", "basis": "a single maintainer cannot meet >=2 independently controlled maintainers; enumerating by chosen ontology classes/properties is discretionary"},
+    {"class": "package registries (npm, PyPI, ...)", "decision": "REJECTED", "basis": "they enumerate packages, not vendor platforms; restricting to SDK-publishing vendors would change the target population"},
+    {"class": "named public API catalogues chosen by the researchers", "decision": "REJECTED", "basis": "choosing named catalogs from researcher memory reintroduces the discretionary source choice that Freeze 1.1 repaired"},
+    {"class": "GitHub REST API repository search", "decision": "ADOPTED", "basis": "see automated_access_basis"}
+  ],
+  "rule": {
+    "discovery_index": "GitHub REST API, GET https://api.github.com/search/repositories, unauthenticated, no account, no credential",
+    "queries": [
+      "public API directory downloadable dataset",
+      "open software API catalog CSV JSON",
+      "public developer platform registry bulk export",
+      "open API index data repository"
+    ],
+    "query_construction": "q = '<frozen Freeze-1.1 query verbatim> in:name,description,topics,readme'; per_page=20; page=1; no sort parameter (API default best match); no other qualifiers",
+    "query_rationale": "Same four Freeze-1.1 query strings, not tuned. 'in:...readme' is added because the default searches only name/description/topics, and a README is the repository's landing text (the analogue of the page a web engine indexes). Not tested against live results.",
+    "positions": "items 1..min(20,total_count) of each response, in response order",
+    "complete_response": "incomplete_results=false and item count == min(20,total_count); total_count below 20 is a complete (short) result, not a failure",
+    "union": "discovered-source set = union over the four queries, keyed by repository id; every (query, position) occurrence recorded; forks and mirrors resolved to canonical upstream during screening (Freeze 1.1 §3)",
+    "t0_utc": "2026-09-17T00:00:00Z (unchanged)",
+    "screening": "Freeze-1.1 §3/§8.2 source checklist unchanged, applied in normalized html_url byte order by the two registered adjudicators, plus S-LIC and S-ACCESS below",
+    "additional_source_criteria": {
+      "S-LIC": "The enumeration's repository or distribution carries an explicit licence or public-domain dedication permitting reproduction and redistribution for research (OSI-approved software licence, CC0, CC BY, CC BY-SA, ODbL/ODC-By, or explicit public-domain statement). TRUE if one is present in the repository root LICENSE*/COPYING*, README or data-file metadata at the T0 version; FALSE if none of these contains any licence statement; UNRESOLVED if the licence is non-standard, non-commercial, no-derivatives, contradictory or unreadable.",
+      "S-ACCESS": "The complete enumeration version <=T0 is retrievable by a permitted automated mechanism: TRUE if it is an immutable data file in the public GitHub repository (git over HTTPS or the GitHub REST API); for an off-GitHub official distribution, TRUE only with an explicit licence/terms grant covering automated retrieval, FALSE if its robots.txt disallows the path or its terms prohibit automated access, otherwise UNRESOLVED.",
+      "precedence": "Freeze-1.1 precedence applies: any affirmative FALSE => SOURCE_INELIGIBLE; all TRUE => SOURCE_ELIGIBLE; otherwise SOURCE_UNRESOLVED, which blocks source lock"
+    },
+    "minimum_sources": "all qualifying upstream enumerations, with >=2 independently controlled maintainers (Freeze 1.1, unchanged); fewer halts the frame; no substitute catalog"
+  },
+  "automated_access_basis": {
+    "github_aup_section_7_verbatim": [
+      "You may use information from our Service for the following reasons, regardless of whether the information was scraped, collected through our API, or obtained otherwise:",
+      "Researchers may use public, non-personal information from the Service for research purposes, only if any publications resulting from that research are open access.",
+      "Scraping does not refer to the collection of information through our API. Please see Section H of our Terms of Service for our API Terms.",
+      "Your use of information from the Service must comply with the GitHub Privacy Statement."
+    ],
+    "github_tos_section_h_verbatim": [
+      "Abuse or excessively frequent requests to GitHub via the API may result in the temporary or permanent suspension of your Account's access to the API.",
+      "You may not use the API to download data or Content from GitHub for spamming purposes, including for the purposes of selling GitHub users' personal information, such as to recruiters, headhunters, and job boards."
+    ],
+    "rate_limit_doc": "unauthenticated search: up to 10 requests per minute; this protocol makes 4 search requests 60 s apart",
+    "robots": "https://api.github.com/robots.txt returned HTTP 404 on 2026-09-18 (RFC 9309: no restriction); re-checked at preflight",
+    "binding_conditions": [
+      "every resulting Programme A publication is open access (condition of the research clause)",
+      "only public, non-personal information is published: owner logins, avatars and user objects are excluded from published projections",
+      "no spamming or sale of personal information"
+    ]
+  },
+  "capture_representation": {
+    "raw": "exact response bytes written O_EXCL to a custody directory outside the repository (~/.firstcall-custody/programme-a/authoritative-2026-09-23T0900Z); never published because responses contain user objects (personal information); disclosed to auditors on request under the same research terms",
+    "published": "per response: request URL, status, selected headers (date, x-github-request-id, rate-limit headers, content-type), timing, raw SHA256, raw byte count, and a deterministic canonical projection: total_count, incomplete_results, and per item position, id, full_name, html_url, owner_type, fork, archived, created_at, pushed_at, default_branch, license_spdx_id",
+    "auditability": "The projection function is in the digested runner, so anyone holding the raw bytes can reproduce the projection and both hashes. Repository ids plus commit SHAs <=T0 make the source universe itself immutable and publicly re-retrievable. Nothing about auditability is weakened silently: raw bytes are withheld from publication only because of personal-information restrictions.",
+    "residual": "full_name (owner/repo) contains the owner login for user-owned repositories; it is published as the repository's public address because provenance needs it"
+  },
+  "failure_policy": {
+    "terms_changed": "preflight fetches the GitHub AUP page and requires the registered sentences (after tag stripping and whitespace normalisation); any missing => TERMS_CHANGED halt before any search request",
+    "terms_unreachable": "TERMS_UNVERIFIED halt",
+    "robots_disallows": "ROBOTS_DISALLOW halt; 5xx/unreachable => ROBOTS_UNVERIFIED halt (RFC 9309); 4xx => no restriction",
+    "source_unavailable": "network error, timeout, non-200 or redirect => halt; no retry; later queries not issued",
+    "rate_limited": "403/429 => RATE_LIMITED halt; no wait-and-retry",
+    "malformed_response": "non-JSON, missing fields, or item count != min(20,total_count) => MALFORMED_RESPONSE halt after custody write",
+    "partial_enumeration": "incomplete_results=true => INCOMPLETE_RESULTS halt",
+    "duplicate_enumeration": "same repository id across queries => one discovered source with all occurrences recorded; mirrors/forks resolved by upstream identity at screening; never extra sampling weight",
+    "source_changed_after_capture": "the source version is the latest commit <=T0; a force-push or rewrite that removes it => source-lock STOP (Freeze 1.1), unless a byte-identical copy verified against the recorded commit/tree hash is available",
+    "source_disappears_between_capture_and_lock": "deleted/renamed/private repository => SOURCE_UNRESOLVED => blocks lock; no substitute",
+    "terms_change_after_capture": "a later change never retroactively licenses or unlicenses the capture; S-LIC is judged at the T0 version; a new prohibition before retrieval of a source's content => that source UNRESOLVED",
+    "all_failures": "any capture halt is final for this cohort; no alternate session; a new cohort needs a new prospective amendment"
+  },
+  "coverage_and_estimand": {
+    "estimand_text": "unchanged: Freeze-1.1 §8.6 P_v over canonical platforms in the sealed source-union frame ... under the frozen natural customer run condition",
+    "declared_support_change": "The discoverable-source class narrows from 'enumerations reachable through the top-20 English/GB Bing web results for four queries' to 'public GitHub repositories matching the same four queries in name/description/topics/README (top 20 each)', with explicit reuse licences (S-LIC) and a permitted automated retrieval path (S-ACCESS). Qualifying enumerations hosted only off GitHub are no longer discoverable. Vendor-level inclusion, identity, strata, eligibility, prior-target exclusion and UK-customer context are unchanged.",
+    "materiality_assessment": "The estimand is frame-relative by construction (Freeze 1.1 §3: 'Membership in a catalog is a coverage mechanism, not a random sample of all software. Outside-union probabilities are unknown'). The realized frame under either index was unknown in advance and neither was ever observed, so no vendor population is being traded for another on outcome grounds. The change is therefore declared as a support change of the discovery layer, not an estimand change. It is not hidden: every report must state the GitHub-hosted, licensed-catalog support. The researcher must accept it at anchoring; if it is judged material, the correct response is NOT to anchor.",
+    "unknowns": "The overlap between Bing-discoverable and GitHub-discoverable qualifying catalogs is unknown and is not estimated from memory. Whether >=2 independent qualifying maintainers will be found is untested; failure halts."
+  },
+  "biases_disclosed": ["GitHub hosting", "English-language query terms", "GitHub best-match ranking (signals undocumented, may include popularity) with top-20 truncation; total_count published", "licence requirement excludes unlicensed catalogs", "catalog-maintainer editorial choices"]
+}

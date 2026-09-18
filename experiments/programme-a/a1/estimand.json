@@ -1,0 +1,57 @@
+{
+  "schema": "firstcall.programmeA.a1_estimand.v1",
+  "population": "A1",
+  "S": "S_G = RDGs of the sealed frame G whose primary entry's platform/journey surface is RESOLVED_ELIGIBLE under decision-protocol.json (I0-I4 agreed TRUE; E1-E4, E6, T1-T3 agreed FALSE; >= 1 category agreed TRUE; no fatal stop; no deviation; records about the primary entry only)",
+  "M": "|S_G|, unknown; never estimated from outcomes",
+  "primary_estimand": "P_A1 is the equal-weight mean, over resolved-eligible registrable-domain groups represented in the frozen APIs.guru snapshot, of the probability that a fresh autonomous run PROVEN_SUCCEEDs on the platform/journey surface mechanically represented by that group's primary entry, given a valid determinate run, under the frozen Freeze-1 natural customer condition, journey, verifier and outcome taxonomy.",
+  "design": "S0: the selected RDGs are the first min(24, M_G) members of S_G in the sealed uniform permutation of G, a simple random sample without replacement from S_G with inclusion probability n/M_G (amendment §7 proof)",
+  "estimator": "for each selected RDG g: r_g = PROVEN_SUCCESS runs / valid determinate runs among its k = 5 attempts (UNKNOWN and invalid runs excluded from the denominator, never converted to failures); P_A1_hat = mean of r_g over selected RDGs with >= 1 valid determinate run (= (1/n) sum r_g when all are defined); indeterminate RDGs reported and bounded",
+  "uncertainty": {
+    "primary": "Freeze-1.1 §8.6 conservative two-stage band with one stratum over n = 24 RDG clusters: W = 1, C = 1/n_selected, e = sqrt(C ln 40); L_g = U_g = r_g if n_g > 0 else L_g = 0, U_g = 1",
+    "half_width_n24": 0.3921,
+    "statement": "At n = 24 the conservative band has half-width about 0.39 before indeterminate-vendor widening. A1 does not provide narrow population precision.",
+    "secondary": "descriptive cluster bootstrap: 10,000 resamples of the selected RDGs; seed SHA256(canonical JSON [\"FIRSTCALL-A1-BOOTSTRAP\", sealed_sample_digest]); Freeze-1.1 §8.6 stream and nearest-rank rules otherwise unchanged",
+    "run_level": "Freeze-1 Wilson intervals for per-platform and pooled run rates unchanged",
+    "correlation_limitation": "SRS makes the SELECTION exchangeable, not the outcomes independent. Selected RDGs that share a control plane, vendor or infrastructure may have correlated run outcomes (e.g. a shared outage or shared documentation). The band's run-noise stage assumes cluster independence conditional on the frozen environment; where shared control planes exist that assumption may fail and the band may under-cover. This is reported as a limitation; no adjustment, collapsing or reweighting is made."
+  },
+  "post_selection_non_executable": "a selected RDG whose primary-entry surface cannot be executed (e.g. signup-time terms or KYC surfaced only after selection) is sealed SELECTED_NOT_EXECUTABLE, never replaced, contributes n_g = 0 (indeterminate) and widens the band via L_g = 0, U_g = 1",
+  "reported_separately": [
+    "primary estimate and band",
+    "UNKNOWN rate by sub-code",
+    "FALSE_SUCCESS rate",
+    "indeterminate and SELECTED_NOT_EXECUTABLE counts",
+    "unresolved screening rate (identity and eligibility) with hypergeometric CI",
+    "exclusion counts by predicate",
+    "number of keys, hosts and spec files per selected RDG (descriptive)",
+    "number screened T to obtain n, and (n-1)/(T-1) S-prevalence",
+    "overshoot S-members not selected",
+    "descriptive category mix and per-category rates of selected platforms (INCOMPLETE vectors shown as such)",
+    "snapshot commit, vintage and staleness",
+    "OpenAPI-directory selection bias",
+    "position-drift and adjudicator-rate diagnostics",
+    "descriptively reported cross-domain relationships among selected RDGs (no estimator)",
+    "RDG frame size |G| and singleton RDG count by basis"
+  ],
+  "forbidden_headlines": [
+    "any claim about all API vendors, SaaS or software",
+    "any product of S-prevalence and success rate presented as a headline",
+    "category-weighted or pooled cross-population rates not separately preregistered",
+    "rankings, scores or badges",
+    "any vendor-level, vendor-collapsed or de-duplicated estimate",
+    "describing an RDG as a vendor"
+  ],
+  "exhaustion": "if the whole RDG permutation is exhausted with M_G < 24, all M_G members of S_G are selected (a complete census of S_G); if M_G < 16 A1 is reported as underpowered/uninformative under this criterion; no other population is substituted",
+  "multi_population": {
+    "architecture": "Programme A is a multi-population programme. A1 is the first registered population. Later populations (A2, A3, ...) may use other independently defined enumerations under the same Freeze-1 measurement standard, each with its own prospectively registered source, snapshot, unit rule, estimand and interval.",
+    "pooling": "none automatically; any pooled estimand needs a separately preregistered superpopulation (union frame, cross-population identity, multiplicity for overlapping platforms, declared weights) before any member population's outcomes are seen",
+    "replication": "consistency of per-population estimates and preregistered contrasts across differently constructed populations is replication/generalisation evidence about robustness to frame construction; it is never a licence for universal representativeness"
+  },
+  "unit_statement": [
+    "An RDG is a structural sampling unit, not a vendor.",
+    "One vendor/control plane may contribute multiple RDGs.",
+    "One RDG may contain multiple products/platform surfaces.",
+    "Only the mechanically chosen primary entry is measured.",
+    "A1 does not estimate a universal vendor, API or SaaS success rate."
+  ],
+  "cross_domain_relationships": "If two selected RDGs are shown by the ordinary frozen evidence process to share a vendor or control plane, BOTH are kept and measured as distinct units. This is a property of the A1 structural population, not a sampling error. Such relationships may be reported descriptively only and never alter inclusion, weighting, denominators, the primary estimate, replacement or eligibility. No vendor-collapsed or vendor-level estimator is defined or permitted."
+}

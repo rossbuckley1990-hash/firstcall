@@ -1,0 +1,87 @@
+{
+  "schema": "firstcall.programmeA.non_operative_draft_provenance.v1",
+  "status": "WITHDRAWN_NON_OPERATIVE_EVIDENCE_ONLY",
+  "draft": "Freeze 1.2 Population A1 consolidated amendment, key-level randomisation with designated-key identity (uncommitted)",
+  "withdrawn_utc_date": "2026-09-19",
+  "reason": "randomisation unit (structural key, designated-key rule within registrable-domain components) differed from the estimand unit (vendor platform); exact enumeration showed unequal platform inclusion (counterexamples A(ii), C, E; D under identity error). Superseded by the registrable-domain-group (RDG) correction.",
+  "observations_at_withdrawal": {
+    "A1_membership_retrieved": false,
+    "candidate_identities_observed": 0,
+    "entropy": false,
+    "permutation": false,
+    "eligibility_decisions": 0,
+    "outcomes": 0
+  },
+  "committed_tagged_or_pushed": false,
+  "files": {
+    "a1/a1-population.json": {
+      "original_path": "experiments/programme-a/a1/a1-population.json",
+      "sha256": "ce240ebf843ef4e222ce3fc27c7f2ffd1e177a772c8a7fab1de69f5d386355d8"
+    },
+    "a1/a1-validation.json": {
+      "original_path": "experiments/programme-a/a1/a1-validation.json",
+      "sha256": "b9144f1e30b9dd84a11edbe4c56b9b4f93b16cc4c585f31c3abb55f90f459281"
+    },
+    "a1/a1_frame.py.txt": {
+      "original_path": "experiments/programme-a/a1/a1_frame.py",
+      "sha256": "4cda1391c7a131c09419642de3b7e6d483ed916cad6d44f83d02b86a01a1372c"
+    },
+    "a1/a1_permutation.py.txt": {
+      "original_path": "experiments/programme-a/a1/a1_permutation.py",
+      "sha256": "cf4600d07cee5e8314428d0e41b4ad09b4213c343390298aed0a4c15c9dafc43"
+    },
+    "a1/a1_screening.py.txt": {
+      "original_path": "experiments/programme-a/a1/a1_screening.py",
+      "sha256": "b16ee351c99aed536d8b97be1b411f8acb491e7c9a3c56562f8fa24f37405779"
+    },
+    "a1/adjudication-record.schema.json": {
+      "original_path": "experiments/programme-a/a1/adjudication-record.schema.json",
+      "sha256": "2dc631f9e63c67394d98de72eb5cb4fc22cb73f41e9fa1cbffeee00063b41600"
+    },
+    "a1/decision-protocol.json": {
+      "original_path": "experiments/programme-a/a1/decision-protocol.json",
+      "sha256": "ac64f6219b6c4d46ae719baadda2d39c946fb4bb3a7371515b1cef8473015fbf"
+    },
+    "a1/estimand.json": {
+      "original_path": "experiments/programme-a/a1/estimand.json",
+      "sha256": "7adaef16dcdab654e238622b78bf702e610b365ec8f91a9321c1ab6da8c2cbbd"
+    },
+    "a1/evidence-record.schema.json": {
+      "original_path": "experiments/programme-a/a1/evidence-record.schema.json",
+      "sha256": "bf333260b23b0232056367a0e3310fbfbef2e9df7592f00c428a88d0b2fa3751"
+    },
+    "a1/hostile-review.md": {
+      "original_path": "experiments/programme-a/a1/hostile-review.md",
+      "sha256": "b89dc2e24b69d7ad252583ea8af50f330f6c37d66c7ec7f5188e39743652ccea"
+    },
+    "a1/prior_firstcall_projector.py.txt": {
+      "original_path": "experiments/programme-a/a1/prior_firstcall_projector.py",
+      "sha256": "c5c68a7a9a584fcecc91af082680baf6cbf3fbc86e2a89b1d981bef89a7875eb"
+    },
+    "a1/roles.json": {
+      "original_path": "experiments/programme-a/a1/roles.json",
+      "sha256": "417b92c00d28d8596705ecac5746d41067fd8690d650d7e65ae107c8f39e7443"
+    },
+    "a1/supersession.json": {
+      "original_path": "experiments/programme-a/a1/supersession.json",
+      "sha256": "2989abd4726f9720d77690bc70e468dee541314867fa1ad772ee2c02bd23772d"
+    },
+    "a1/test_a1.py.txt": {
+      "original_path": "experiments/programme-a/a1/test_a1.py",
+      "sha256": "55065ca3c3f0a7ac82b39c26dc22f955e51a4fc5e148b0615e4b2d38198fe9ce"
+    },
+    "a1/validate_a1.py.txt": {
+      "original_path": "experiments/programme-a/a1/validate_a1.py",
+      "sha256": "6a467f998a40c07acdf7ecdfd3e25953c9d068632bea898b4e51b360cb2e2afc"
+    },
+    "docs/programme-a-freeze-1.2-a1-amendment.md": {
+      "original_path": "docs/programme-a-freeze-1.2-a1-amendment.md",
+      "sha256": "99eb969a00d7c3b6293dcbd834aa9b4759ec2fab54ae5cf5c57b99c86d9101be"
+    },
+    "amendments/freeze-1.2-a1.json": {
+      "original_path": "experiments/programme-a/amendments/freeze-1.2-a1.json",
+      "sha256": "b743c6b89dc1a4441682089291bfbb11a49d6b70c50b530df19e9d696dc95e59"
+    }
+  },
+  "note": "copies taken immediately before the RDG correction edited the operative files in place"
+}

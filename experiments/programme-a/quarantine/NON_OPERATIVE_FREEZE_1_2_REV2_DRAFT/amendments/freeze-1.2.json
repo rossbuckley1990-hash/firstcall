@@ -1,0 +1,203 @@
+{
+  "schema": "firstcall.programmeA.protocol_amendment.v1_2",
+  "revision": 2,
+  "status": "PROPOSED_BINDING_ON_REMOTE_ANCHOR",
+  "design_date": "2026-09-18",
+  "tag": "programme-a-freeze-1.2-registration",
+  "anchor_deadline_utc": "2026-09-22T09:00:00Z",
+  "parents": {
+    "freeze_1": {
+      "commit": "13ff44c37a96882553ffb9103a5596787555e0f3",
+      "tag": "programme-a-freeze-1-protocol"
+    },
+    "freeze_1_1": {
+      "commit": "4eaa6493924256dbeb888ff992a769a6b9c6d56d",
+      "tag": "programme-a-freeze-1.1-protocol",
+      "sealed_utc": "2026-09-18T18:00:20Z",
+      "effective_protocol_sha256": "13f9e400661f6d2cf1af45cf15e56940ec532a0f8a3ff78b146c9a76edd4c29f"
+    }
+  },
+  "amendment_document": "docs/programme-a-freeze-1.2-registration-amendment.md",
+  "origin": [
+    "missing registrations found while implementing Freeze 2; halted before any source request",
+    "Bing HTML discovery withdrawn on terms uncertainty found by external review of uncommitted revision 1; no Bing request ever made"
+  ],
+  "counters_at_design": {
+    "source_requests": 0,
+    "source_observations": 0,
+    "candidate_observations": 0,
+    "selected_vendors": 0,
+    "random_draw": "NONE",
+    "entropy": "NONE",
+    "outcome_observations": 0,
+    "real_vendor_runs": 0
+  },
+  "repairs": [
+    {
+      "id": "F12-R1",
+      "freeze_1_1_clauses": [
+        "§8.2 para 2",
+        "rules.source_universe.capture.authority"
+      ],
+      "replacement": "one custodian and the registered source_capture_runner.py named in the Freeze-1.2 registration certificate (remotely anchored tag programme-a-freeze-1.2-registration) before any responses; discovery index per registration/source-mechanism.json",
+      "json_pointer_tests": [
+        {
+          "pointer": "/amendment/rules/source_universe/capture/authority",
+          "freeze_1_1_value": "one custodian/runner registered in Freeze-1.1 sealing certificate before any responses"
+        },
+        {
+          "pointer": "/effective_json_documents/experiments~1programme-a~1sample-frame.config.json/freeze_1_1_rules/source_universe/capture/authority",
+          "freeze_1_1_value": "one custodian/runner registered in Freeze-1.1 sealing certificate before any responses"
+        },
+        {
+          "pointer": "/effective_json_documents/experiments~1programme-a~1sample-frame.config.json/frozen_snapshot/capture/authority",
+          "freeze_1_1_value": "one custodian/runner registered in Freeze-1.1 sealing certificate before any responses"
+        }
+      ]
+    },
+    {
+      "id": "F12-R2",
+      "freeze_1_1_clauses": [
+        "§4 para 4",
+        "§5",
+        "§8.3",
+        "§8.4",
+        "§8.5"
+      ],
+      "replacement": "slot records per registration/roles.json; fail-closed; remotely anchored before each gate; append-only; frozen after first use",
+      "json_pointer_tests": []
+    },
+    {
+      "id": "F12-R3",
+      "freeze_1_1_clauses": [
+        "§8.2 network-egress identity"
+      ],
+      "replacement": "method frozen; IPv4 echo bound into hashed preflight before first request; post mismatch halts",
+      "json_pointer_tests": []
+    },
+    {
+      "id": "F12-R4",
+      "freeze_1_1_clauses": [
+        "§8.2 start/lateness"
+      ],
+      "replacement": "SNTP-corrected UTC; |offset|>2 s halts; lateness under pre and post offsets",
+      "json_pointer_tests": []
+    },
+    {
+      "id": "F12-R5",
+      "freeze_1_1_clauses": [
+        "§3 para 1",
+        "§8.2",
+        "rules.source_universe.engine/language/country_parameter/personalization"
+      ],
+      "replacement": "GitHub REST API repository search, unauthenticated; registration/source-mechanism.json",
+      "json_pointer_tests": [
+        {
+          "pointer": "/amendment/rules/source_universe/engine",
+          "freeze_1_1_value": "public Bing web search HTML"
+        },
+        {
+          "pointer": "/effective_json_documents/experiments~1programme-a~1sample-frame.config.json/freeze_1_1_rules/source_universe/engine",
+          "freeze_1_1_value": "public Bing web search HTML"
+        }
+      ]
+    },
+    {
+      "id": "F12-R6",
+      "freeze_1_1_clauses": [
+        "§3 para 1 discovery day",
+        "§8.2 09:00 start"
+      ],
+      "replacement": "capture 2026-09-23T09:00:00Z; anchor deadline 2026-09-22T09:00:00Z; T0 unchanged 2026-09-17T00:00:00Z",
+      "json_pointer_tests": [
+        {
+          "pointer": "/amendment/rules/source_universe/discovery_day",
+          "freeze_1_1_value": "first UTC day after future sealing"
+        },
+        {
+          "pointer": "/amendment/rules/source_universe/capture/start",
+          "freeze_1_1_value": "09:00:00 UTC first day after sealing"
+        }
+      ]
+    },
+    {
+      "id": "F12-R7",
+      "freeze_1_1_clauses": [
+        "§3 source eligibility"
+      ],
+      "replacement": "add S-LIC and S-ACCESS under Freeze-1.1 precedence",
+      "json_pointer_tests": []
+    },
+    {
+      "id": "F12-R8",
+      "freeze_1_1_clauses": [
+        "§3/§8.2 archive and publish raw"
+      ],
+      "replacement": "raw in unpublished custody + published hashes and deterministic non-personal projection",
+      "json_pointer_tests": []
+    },
+    {
+      "id": "F12-R9",
+      "freeze_1_1_clauses": [
+        "§8.4 (Freeze-1.2 rev-1 projector)"
+      ],
+      "replacement": "value-type structural trigger; fenced code ignored; example-path designation shapes block",
+      "json_pointer_tests": []
+    }
+  ],
+  "unchanged": [
+    "T0 2026-09-17T00:00:00Z",
+    "four query strings",
+    "offsets 0/60/120/180",
+    "5 s lateness",
+    "single attempt",
+    "all other source criteria",
+    "≥2 independent maintainers",
+    "no substitute catalogs",
+    "all other Freeze-1/1.1 provisions"
+  ],
+  "non_operative": {
+    "dir": "experiments/programme-a/quarantine/NON_OPERATIVE_BING_CAPTURE_DRAFT/",
+    "bing_requests_made": 0
+  },
+  "declared_support_change": "discoverable-source class narrowed to public GitHub repositories matching the frozen queries with explicit reuse licences and permitted retrieval; estimand text unchanged; custodian must accept at anchoring",
+  "open_issues": [
+    "terms basis for automated retrieval/retention of vendor documentation pages (blocks scheduler R10 before G3)"
+  ],
+  "unfilled_roles": [
+    "R06",
+    "R07",
+    "R08",
+    "R09",
+    "R10",
+    "R11",
+    "R14",
+    "R15",
+    "R16"
+  ],
+  "future_stage_roles": [
+    "R12",
+    "R17"
+  ],
+  "decision": "SEALABLE_BUT_REGISTRATIONS_INCOMPLETE",
+  "registered_file_sha256": {
+    "docs/programme-a-freeze-1.2-registration-amendment.md": "11c2d5a71400bf4df9091a91e742c709d60ec94ad81bba67f8507b0c6e675db8",
+    "experiments/programme-a/registration/adjudicator-registration.schema.json": "287f9bb48978b2e4161089bd92ca4818b7c5004e8fd8084e367f57c6ec7c923a",
+    "experiments/programme-a/registration/hostile-review.md": "d845a60f6918eb4f94dc9ad91ac823975fe9bb9b8a814fb6eecf8c933725cac4",
+    "experiments/programme-a/registration/prior_firstcall_projector.py": "c5c68a7a9a584fcecc91af082680baf6cbf3fbc86e2a89b1d981bef89a7875eb",
+    "experiments/programme-a/registration/roles.json": "edfa6d2c2661ee40714097291dcce0cc8de4170ad273326b8dc495ee35a6038f",
+    "experiments/programme-a/registration/scheduler-manifest.json": "21e1e34dfdb5596e723fab5241fa0e2ef7da8994317f8a834c71a30581dd36c8",
+    "experiments/programme-a/registration/source-capture-runner-manifest.json": "b559ca3bc7e464bbdec4c3fbf70d0f9a84f06df81b3a97f01c7390283d75cd47",
+    "experiments/programme-a/registration/source-capture-schedule.json": "9bdfd26b4c51074737a21b7d3bb2bfaac52879103df47fa57151b9327eaade12",
+    "experiments/programme-a/registration/source-mechanism.json": "4663336e3b3ff598c0d78fa4f1c66023366110e6aadc08f98e6d901ccfedd8db",
+    "experiments/programme-a/registration/source_capture_runner.py": "0ce46a2d8709df420bf90efe0ad53de88d70f255a7003785f4f99f86ecc0d795",
+    "experiments/programme-a/registration/test_registration.py": "379431ad5d15a0eae77c163b124537cf39ddcae2ce3a3886b3513c170c080d1f",
+    "experiments/programme-a/registration/translation-tool.json": "baa6d44b03a13504cf351ab4ed55547c5dd742872b70f33d4619ed919155d7bb",
+    "experiments/programme-a/registration/validate_registration.py": "41afad01b648b803375454bb007e463240a38ec777118b9c1aed9550162d5e6e",
+    "experiments/programme-a/quarantine/NON_OPERATIVE_BING_CAPTURE_DRAFT/README.md": "63fe1e4277d434d3d7f1f2db92119bd6444d86ecf15028416bb8100b96e2e5c0",
+    "experiments/programme-a/quarantine/NON_OPERATIVE_BING_CAPTURE_DRAFT/capture-runner-manifest.json": "666cce615d9a7916635d16d671d7992688a6aed88e67890e5fff69095a3afad5",
+    "experiments/programme-a/quarantine/NON_OPERATIVE_BING_CAPTURE_DRAFT/capture-schedule.json": "90b182cd93a1d08dd72e3b5001e17691aff7597c347f48d536f757315c6934a7",
+    "experiments/programme-a/quarantine/NON_OPERATIVE_BING_CAPTURE_DRAFT/capture_runner.py.txt": "a2374399022425bb131b42eeb993e1e3af7eff5df1037bd48dc0a69f89be85af",
+    "experiments/programme-a/quarantine/NON_OPERATIVE_BING_CAPTURE_DRAFT/provenance.json": "8067ab0f35e5258b61a86aff39d6ff5059fa34fee93d370f840111b4bbfad4ba"
+  }
+}

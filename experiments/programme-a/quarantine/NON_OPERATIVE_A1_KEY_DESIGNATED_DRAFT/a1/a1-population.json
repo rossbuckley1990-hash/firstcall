@@ -1,0 +1,57 @@
+{
+  "schema": "firstcall.programmeA.population.v1",
+  "population_id": "A1",
+  "name": "FIRSTCALL Programme A - Population A1",
+  "definition": "The prospectively frozen population of canonical vendor platforms represented by structural entries in the immutable APIs.guru OpenAPI Directory snapshot below, after the frozen structural canonicalisation and designated-key identity rules.",
+  "not_a_claim_about": ["all API vendors", "SaaS in general", "software in general", "vendors without a listed OpenAPI definition"],
+  "source": {
+    "repository": "https://github.com/APIs-guru/openapi-directory.git",
+    "maintainer": "APIs.guru community project (independent of FIRSTCALL)",
+    "licence": "repository CC0-1.0; README: contributed definitions CC0 1.0, definitions acquired from public sources held by APIs.guru under fair use",
+    "stated_criteria": "public (accessible after clearly defined steps), long-lived, useful beyond its owner; private and event-only APIs excluded",
+    "search_engine_or_ranking": "none"
+  },
+  "snapshot": {
+    "commit": "f04b8d0bcd39c52e1cf3ad7a5fe744709832ae49",
+    "how_pinned": "sole value of refs/heads/main and HEAD returned by `git ls-remote` on 2026-09-18 (ref names and SHAs only; no repository content)",
+    "rule": "A1 uses exactly this commit. At retrieval it must exist and have committer date <= T0 = 2026-09-17T00:00:00Z; otherwise HALT. No other commit, branch, mirror or date may be substituted.",
+    "t0_utc": "2026-09-17T00:00:00Z",
+    "expected_vintage": "the automated refresh stopped 2024-03-01; later commits 2025-07-17, 2025-08-23 (x2), 2025-08-28, 2026-04-20 (commit dates only)"
+  },
+  "retrieval": {
+    "who": "registered snapshot custodian (R02), once, after remote anchoring of this amendment",
+    "method": "git fetch of the pinned commit into an empty repository; git clone of the Public Suffix List; a1_frame.py --retrieve",
+    "exactly_once": "output directory created exclusively; a second retrieval is refused",
+    "psl": "https://github.com/publicsuffix/list.git, public_suffix_list.dat at the first first-parent commit of main with committer date <= T0; commit and SHA256 recorded"
+  },
+  "retained_representation": {
+    "custody": "git bundle of the pinned commit (SHA256 recorded); not republished",
+    "published": "commit SHA, tree SHA, PSL commit and SHA256, frame.json (K, structural exclusions, component map), raw-entries.json (spec paths and blob ids), retrieval.json",
+    "not_published": "definition bodies; auditors retrieve them from the public commit"
+  },
+  "extraction": {
+    "raw_entry": "each file under APIs/<provider>/... whose basename is openapi.json, openapi.yaml, swagger.json or swagger.yaml",
+    "source_record_id": "canonical JSON [\"FIRSTCALL-A1\", commit, null, path]",
+    "structural_key": "NFC + lower-case + trailing-dot removal of the <provider> directory name; no other merge",
+    "structural_exclusions": {
+      "XS1_NOT_A_PROVIDER_DIRECTORY": "a file directly under APIs/",
+      "XS2_NO_SPEC_FILE": "a provider directory with no spec file"
+    },
+    "identity_components": "keys grouped by registrable domain (PSL eTLD+1) of the key's host part (text before ':'); keys without a dotted DNS host form singleton components; computed mechanically before the permutation, never adjudicated",
+    "K": "byte-sorted unique structural keys; sealed as frame.json with K_sha256 before entropy"
+  },
+  "conservation": [
+    "every raw entry maps to exactly one key in K",
+    "every key in K has >= 1 raw entry",
+    "every top-level entry under APIs/ is either a provider directory in K or a recorded structural exclusion",
+    "K is unique and byte-sorted; components partition K",
+    "source_record_id values are unique"
+  ],
+  "pre_membership_observations": {
+    "aggregate_metrics_json": "numSpecs 3992, numAPIs 2529, numProviders 677, unreachable 166, invalid 688, unofficial 25 (APIs.guru metrics endpoint; aggregates only)",
+    "top_level_listing": "ONE GitHub contents-API response for APIs/ was retrieved on 2026-09-18. It contained entry names; the script reduced it to a count (701) before printing. No name was displayed, recorded or used.",
+    "commit_list": "ONE GitHub commits-API response was retrieved; only committer dates were printed. Messages and file lists were not displayed.",
+    "repository_metadata": "licence CC0-1.0, created 2015-02-22, last push 2026-04-20, top-level layout (.gitignore, APIs, CONTRIBUTING.md, LICENSE, README.md, branding)",
+    "readme": "inclusion criteria and licence text via a summariser instructed to omit names"
+  }
+}

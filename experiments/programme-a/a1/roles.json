@@ -1,0 +1,285 @@
+{
+  "schema": "firstcall.programmeA.a1_roles.v1",
+  "population": "A1",
+  "status_vocabulary": {
+    "DESIGNATED_PENDING_ANCHOR": "named by the person concerned in the design instruction; binding only when that person commits, tags and pushes this amendment",
+    "SOFTWARE_REGISTERED_PENDING_ANCHOR": "code frozen by digest in this amendment; binding on remote anchoring",
+    "FROZEN_DOCUMENT_PENDING_ANCHOR": "document frozen by digest in this amendment",
+    "UNFILLED": "required and not registered; every gate that needs it stays CLOSED",
+    "FUTURE_STAGE": "required at a later freeze; recorded so it cannot be forgotten"
+  },
+  "registration_mechanism": "A slot is filled only by a schema-valid record committed under an annotated tag whose peeled commit is on origin before the slot's first gate. Records are append-only and frozen after first use. A human slot may not be filled by a model, a process or a person already holding a conflicting role.",
+  "roles": [
+    {
+      "id": "R01",
+      "role": "PROTOCOL_CUSTODIAN",
+      "kind": "human",
+      "status": "DESIGNATED_PENDING_ANCHOR",
+      "holder": "Ross Buckley (tagger identity of Freeze 1 and Freeze 1.1)",
+      "duties": "commits, tags and pushes amendments and sealed ledgers; never alters a sealed artefact",
+      "conflicts": "may not be R03 or R04",
+      "gates": [
+        "G0_ANCHOR"
+      ]
+    },
+    {
+      "id": "R02",
+      "role": "SOURCE_SNAPSHOT_CUSTODIAN",
+      "kind": "human",
+      "status": "DESIGNATED_PENDING_ANCHOR",
+      "holder": "Ross Buckley",
+      "duties": "runs a1_frame.py --retrieve exactly once after anchoring (vendored pinned PSL only); publishes frame.json (sealed RDG frame G), raw-entries.json and retrieval.json; keeps the bundle in custody",
+      "conflicts": "may not be R03 or R04 (a source role under Freeze-1.1 §8.5)",
+      "gates": [
+        "G1_SNAPSHOT"
+      ]
+    },
+    {
+      "id": "R03",
+      "role": "ENTROPY_CUSTODIAN",
+      "kind": "independent_person",
+      "status": "UNFILLED",
+      "holder": null,
+      "duties": "generates the tape in one os.urandom call, commits its SHA256 before interpretation, holds the tape and permutation in custody, releases one block at a time, computes selection mechanically after each block seal",
+      "conflicts": "no source, identity, eligibility or apparatus role: not R01, R02, R05, R06, R10",
+      "gates": [
+        "G3_ENTROPY",
+        "G4_SCREENING"
+      ]
+    },
+    {
+      "id": "R04",
+      "role": "ENTROPY_WITNESS",
+      "kind": "independent_person",
+      "status": "UNFILLED",
+      "holder": null,
+      "duties": "witnesses and signs the one-call generation log and commitment",
+      "conflicts": "not R01, R02, R03, R05, R06",
+      "gates": [
+        "G3_ENTROPY"
+      ]
+    },
+    {
+      "id": "R05",
+      "role": "ADJUDICATOR_1",
+      "kind": "human",
+      "status": "UNFILLED",
+      "holder": null,
+      "duties": "independent eligibility, terms and category coding of each released RDG's primary entry under decision-protocol.json (no identity resolution, no substitution); approves the prior-FIRSTCALL registry",
+      "conflicts": "not R03, R04 or R06; no model-generated codes",
+      "gates": [
+        "G3_ENTROPY",
+        "G4_SCREENING",
+        "G2_REGISTRY"
+      ]
+    },
+    {
+      "id": "R06",
+      "role": "ADJUDICATOR_2",
+      "kind": "human",
+      "status": "UNFILLED",
+      "holder": null,
+      "duties": "as R05, independently",
+      "conflicts": "not R03, R04 or R05",
+      "gates": [
+        "G3_ENTROPY",
+        "G4_SCREENING",
+        "G2_REGISTRY"
+      ]
+    },
+    {
+      "id": "R07",
+      "role": "TRANSLATION_TOOL",
+      "kind": "software",
+      "status": "UNFILLED",
+      "holder": null,
+      "duties": "one pinned offline tool and language detector for non-English pages",
+      "conflicts": "none",
+      "gates": [
+        "G3_ENTROPY",
+        "G4_SCREENING"
+      ]
+    },
+    {
+      "id": "R08",
+      "role": "PINNED_BROWSER_PROFILE",
+      "kind": "software",
+      "status": "UNFILLED",
+      "holder": null,
+      "duties": "registered browser name/version and clean-profile settings used by both adjudicators",
+      "conflicts": "none",
+      "gates": [
+        "G4_SCREENING"
+      ]
+    },
+    {
+      "id": "R09",
+      "role": "EXECUTION_SCHEDULER",
+      "kind": "software_and_operator",
+      "status": "FUTURE_STAGE",
+      "holder": null,
+      "duties": "frozen run-schedule algorithm (domain-separated from the committed tape) and the operator who launches runs",
+      "conflicts": "operator may not be R05 or R06",
+      "gates": [
+        "G5_EXECUTION"
+      ]
+    },
+    {
+      "id": "R10",
+      "role": "VERIFIER_APPARATUS_REVIEWER",
+      "kind": "human",
+      "status": "FUTURE_STAGE",
+      "holder": null,
+      "duties": "reviews Freeze-4 mappings, runner, verifier and classifier against the Freeze-1 verification principles and hostile offline tests",
+      "conflicts": "not R03",
+      "gates": [
+        "G5_EXECUTION"
+      ]
+    },
+    {
+      "id": "R11",
+      "role": "DECISION_PROTOCOL_AND_CHECKLIST",
+      "kind": "document",
+      "status": "FROZEN_DOCUMENT_PENDING_ANCHOR",
+      "holder": "experiments/programme-a/a1/decision-protocol.json",
+      "gates": [
+        "G4_SCREENING"
+      ]
+    },
+    {
+      "id": "R12",
+      "role": "RDG_FRAME_EXTRACTOR",
+      "kind": "software",
+      "status": "SOFTWARE_REGISTERED_PENDING_ANCHOR",
+      "holder": "experiments/programme-a/a1/a1_frame.py",
+      "gates": [
+        "G1_SNAPSHOT"
+      ]
+    },
+    {
+      "id": "R13",
+      "role": "PERMUTATION_GENERATOR",
+      "kind": "software",
+      "status": "SOFTWARE_REGISTERED_PENDING_ANCHOR",
+      "holder": "experiments/programme-a/a1/a1_permutation.py",
+      "gates": [
+        "G3_ENTROPY"
+      ]
+    },
+    {
+      "id": "R14",
+      "role": "SCREENING_ENGINE",
+      "kind": "software",
+      "status": "SOFTWARE_REGISTERED_PENDING_ANCHOR",
+      "holder": "experiments/programme-a/a1/a1_screening.py",
+      "gates": [
+        "G4_SCREENING"
+      ]
+    },
+    {
+      "id": "R15",
+      "role": "PRIOR_FIRSTCALL_PROJECTOR",
+      "kind": "software",
+      "status": "SOFTWARE_REGISTERED_PENDING_ANCHOR",
+      "holder": "experiments/programme-a/a1/prior_firstcall_projector.py",
+      "gates": [
+        "G2_REGISTRY"
+      ]
+    },
+    {
+      "id": "R16",
+      "role": "PRIOR_FIRSTCALL_REGISTRY_APPROVAL",
+      "kind": "act_by_R05_and_R06",
+      "status": "UNFILLED",
+      "holder": null,
+      "duties": "both adjudicators independently confirm the full projection ledger, including the path-flagged experiments/multi-001/candidates.json",
+      "gates": [
+        "G2_REGISTRY"
+      ]
+    },
+    {
+      "id": "R17",
+      "role": "SPEC_PARSER",
+      "kind": "software",
+      "status": "UNFILLED",
+      "holder": null,
+      "duties": "one pinned YAML/JSON parser (name, version, file digests) used to read primary entries for E2 lead extraction (a1_evidence.py); no parser is installed in the registered runtime today",
+      "conflicts": "none",
+      "gates": [
+        "G4_SCREENING"
+      ]
+    },
+    {
+      "id": "R18",
+      "role": "PINNED_PUBLIC_SUFFIX_LIST",
+      "kind": "data",
+      "status": "FROZEN_DOCUMENT_PENDING_ANCHOR",
+      "holder": "experiments/programme-a/a1/psl/public_suffix_list.dat (commit 3955e3ec, sha256 a26f7d7e…)",
+      "gates": [
+        "G1_SNAPSHOT"
+      ]
+    }
+  ],
+  "gates": {
+    "G0_ANCHOR": {
+      "requires": [
+        "R01"
+      ],
+      "event": "amendment committed, tagged and pushed; peeled tag on origin"
+    },
+    "G1_SNAPSHOT": {
+      "requires": [
+        "G0_ANCHOR",
+        "R02",
+        "R12",
+        "R18"
+      ],
+      "event": "single snapshot retrieval and sealing of the RDG frame G"
+    },
+    "G2_REGISTRY": {
+      "requires": [
+        "G0_ANCHOR",
+        "R05",
+        "R06",
+        "R15",
+        "R16"
+      ],
+      "event": "prior-FIRSTCALL registry approved"
+    },
+    "G3_ENTROPY": {
+      "requires": [
+        "G1_SNAPSHOT",
+        "G2_REGISTRY",
+        "R03",
+        "R04",
+        "R05",
+        "R06",
+        "R07",
+        "R13"
+      ],
+      "event": "one entropy call of 32*|G| bytes and commitment; adjudicators and translation registered BEFORE any order exists"
+    },
+    "G4_SCREENING": {
+      "requires": [
+        "G3_ENTROPY",
+        "R03",
+        "R05",
+        "R06",
+        "R07",
+        "R08",
+        "R11",
+        "R14",
+        "R17"
+      ],
+      "event": "first block release"
+    },
+    "G5_EXECUTION": {
+      "requires": [
+        "G4_SCREENING",
+        "R09",
+        "R10"
+      ],
+      "event": "first autonomous run (after Freeze-4 apparatus seal)"
+    }
+  }
+}

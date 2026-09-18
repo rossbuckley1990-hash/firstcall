@@ -1,0 +1,56 @@
+{
+  "a1_counters": {
+    "A1_AUTONOMOUS_RUNS": 0,
+    "A1_CANDIDATE_IDENTITIES_OBSERVED": 0,
+    "A1_ELIGIBILITY_DECISIONS": 0,
+    "A1_ENTROPY_GENERATED": "NO",
+    "A1_MEMBERSHIP_RETRIEVED": "NO",
+    "A1_OUTCOMES": 0,
+    "A1_PERMUTATION_GENERATED": "NO",
+    "A1_VENDORS_SELECTED": 0,
+    "A1_VENDOR_API_CALLS": 0
+  },
+  "anchored": false,
+  "decision": "SEALABLE_BUT_REGISTRATIONS_INCOMPLETE",
+  "errors": [],
+  "freeze_1": {
+    "files": 10,
+    "mismatched": [],
+    "pass": true,
+    "tag_peels": true
+  },
+  "freeze_1_1": {
+    "clean_clone_effective_sha256": "13f9e400661f6d2cf1af45cf15e56940ec532a0f8a3ff78b146c9a76edd4c29f",
+    "clean_clone_tests_rc": 0,
+    "pass": true,
+    "tag_peels": true,
+    "tracked_changes_since_tag": []
+  },
+  "gates": {
+    "G0_ANCHOR": "CLOSED",
+    "G1_SNAPSHOT": "CLOSED",
+    "G2_REGISTRY": "CLOSED",
+    "G3_ENTROPY": "CLOSED",
+    "G4_SCREENING": "CLOSED",
+    "G5_EXECUTION": "CLOSED"
+  },
+  "protected": {
+    "helpers_mismatched": [],
+    "multi_files": 145,
+    "multi_mismatched": [],
+    "pass": true
+  },
+  "schema": "firstcall.programmeA.a1_validation.v1",
+  "supersession_rows": 37,
+  "unfilled_or_future_roles": [
+    "R03 ENTROPY_CUSTODIAN",
+    "R04 ENTROPY_WITNESS",
+    "R05 ADJUDICATOR_1",
+    "R06 ADJUDICATOR_2",
+    "R07 TRANSLATION_TOOL",
+    "R08 PINNED_BROWSER_PROFILE",
+    "R09 EXECUTION_SCHEDULER",
+    "R10 VERIFIER_APPARATUS_REVIEWER",
+    "R16 PRIOR_FIRSTCALL_REGISTRY_APPROVAL"
+  ]
+}

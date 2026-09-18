@@ -1,0 +1,102 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "firstcall.programmeA.a1_adjudication_record.v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "rdg",
+    "primary_entry",
+    "block",
+    "adjudicator",
+    "predicates",
+    "fatal_stop",
+    "deviation",
+    "observed_relationships",
+    "pages_used",
+    "minutes_used",
+    "evidence_sha256",
+    "sealed_utc",
+    "record_sha256"
+  ],
+  "properties": {
+    "rdg": {
+      "type": "string"
+    },
+    "primary_entry": {
+      "type": "string",
+      "description": "must equal the sealed frame's primary entry for this RDG; anything else is a protocol deviation"
+    },
+    "block": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "adjudicator": {
+      "enum": [
+        "ADJ-1",
+        "ADJ-2"
+      ]
+    },
+    "predicates": {
+      "type": "object",
+      "additionalProperties": false,
+      "patternProperties": {
+        "^(I[0-4]|E[1-4]|E6|T[1-3]|C0[1-7])$": {
+          "enum": [
+            "TRUE",
+            "FALSE",
+            "UNRESOLVED",
+            null
+          ]
+        }
+      }
+    },
+    "fatal_stop": {
+      "enum": [
+        null,
+        "INCLUSION_FALSE:I0",
+        "INCLUSION_FALSE:I1",
+        "INCLUSION_FALSE:I2",
+        "INCLUSION_FALSE:I3",
+        "INCLUSION_FALSE:I4",
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "E6",
+        "T1",
+        "T2",
+        "T3"
+      ]
+    },
+    "deviation": {
+      "type": "boolean"
+    },
+    "pages_used": {
+      "type": "object"
+    },
+    "minutes_used": {
+      "type": "object"
+    },
+    "evidence_sha256": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[0-9a-f]{64}$"
+      }
+    },
+    "sealed_utc": {
+      "type": "string"
+    },
+    "record_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "observed_relationships": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      },
+      "description": "descriptive cross-domain relationships established by the ordinary evidence process; never used for selection or estimation"
+    }
+  }
+}

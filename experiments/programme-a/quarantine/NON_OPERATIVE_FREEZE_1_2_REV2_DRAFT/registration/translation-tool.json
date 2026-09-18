@@ -1,0 +1,18 @@
+{
+  "schema": "firstcall.programmeA.translation_tool_registration.v1",
+  "freeze": "1.2",
+  "status": "UNFILLED",
+  "controlling_clauses": ["Freeze-1.1 §4 para 3", "Freeze-1.1 §8.3 para 1"],
+  "frozen_requirement": {
+    "tool_count": 1,
+    "determinism": "offline, locally executed, fixed package version and fixed model files identified by sha256; no hosted service whose model or output can change",
+    "language_detection": "one pinned detector (version + model sha256) decides which captured pages are non-English; its output is recorded per page",
+    "scope": "every captured non-English page in every packet, identically; never per-unit or per-page tool choice",
+    "retention": "original bytes, extracted source text, translation text, tool/version/model digests, and sha256 of each retained side by side in the packet",
+    "uncertainty": "detector failure, unsupported language, or translation error leaves affected predicates UNRESOLVED (Freeze 1.1)",
+    "timing": "registered and remotely anchored before gate G2; translation runs only inside packet construction after capture of each stage, before review"
+  },
+  "registrant": null,
+  "registration_required_fields": ["tool_name", "package_version", "install_source", "model_files_sha256", "detector_name", "detector_version", "detector_model_sha256", "invocation_command", "offline_test_sha256"],
+  "note": "Example only, not a registration: an offline package such as Argos Translate with pinned model packages could meet the requirement. The custodian must choose and digest the tool; choosing it needs no candidate evidence."
+}
