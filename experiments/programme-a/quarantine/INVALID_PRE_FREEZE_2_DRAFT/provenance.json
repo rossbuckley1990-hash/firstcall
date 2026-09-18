@@ -1,0 +1,16 @@
+{
+  "schema": "firstcall.programmeA.invalid_draft_provenance.v1",
+  "status": "REJECTED_NON_OPERATIVE_EVIDENCE_ONLY",
+  "original_path": "experiments/programme-a/frame/build_frame.py",
+  "preserved_path": "experiments/programme-a/quarantine/INVALID_PRE_FREEZE_2_DRAFT/build_frame.py.txt",
+  "sha256": "a3e3af7045424c59b559ba34c4e7143ebfa00821bca9efc3284a85627846302b",
+  "bytes": 27930,
+  "original_tracking": "untracked",
+  "original_author": "inherited previous-agent draft; exact authorship not independently verified",
+  "quarantine_date": "2026-09-18",
+  "parent_freeze_commit": "13ff44c37a96882553ffb9103a5596787555e0f3",
+  "parent_freeze_tag": "programme-a-freeze-1-protocol",
+  "executed_during_takeover_or_amendment": false,
+  "usable_as_sampling_apparatus": false,
+  "evidence_preserved_byte_identically": true
+}

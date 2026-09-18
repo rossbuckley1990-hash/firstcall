@@ -1,0 +1,1769 @@
+{
+  "schema": "firstcall.programmeA.freeze_1_1_amendment.v1",
+  "status": "PROPOSED_NOT_FROZEN",
+  "design_date": "2026-09-18",
+  "parent_commit": "13ff44c37a96882553ffb9103a5596787555e0f3",
+  "parent_tag": "programme-a-freeze-1-protocol",
+  "parent_file_sha256": {
+    "docs/programme-a-measurement-protocol.md": "c1c6686b8c594ace07100f3743e6e0a7ddf2d32b033e243a975704fd735e8720",
+    "experiments/programme-a/README.md": "6560ae4bcbf1033127620dfb0d5b40995c1a1ec7c466d8bd1735a2238a5390ce",
+    "experiments/programme-a/analysis-plan.json": "47eb5398624abcbe376f5341cb8c65c3532b345d25f795d0218ca32245537f1f",
+    "experiments/programme-a/estimand.schema.json": "32eb2b6d4181b4c09db5d365ad42797853356495613dbf6b19f70a471ef6a0fa",
+    "experiments/programme-a/journey-standard.json": "3b9abeee92e0e4f69740f6142faa20c8a70dfcc0c88b74f29481eec4222c318b",
+    "experiments/programme-a/outcome-taxonomy.json": "2b06f88b4ffaa77c619e3eb87fefa3c89ccb00b49623766c8b69dd6437de211f",
+    "experiments/programme-a/prereg-freeze-sequence.json": "855cf6bd1f4433dbea5d84270004332ebf3aef5db45216010fb5185ddadbc72f",
+    "experiments/programme-a/receipt.v1.schema.json": "1aa5c85a467034480588f55bd6509a5b1716cf3098f116b4210b84a3097e99d9",
+    "experiments/programme-a/run-design.config.json": "9e899762beb60ba3a3625ba1fa47b756a07a794ce6d66dcf55bb4a3b8fa56447",
+    "experiments/programme-a/sample-frame.config.json": "106d63cadf29663f1fcead3918dbb2425d4c255a2e8b18c4aba0be75bc418dc8"
+  },
+  "amendment_document": "docs/programme-a-freeze-1.1-amendment.md",
+  "amendment_document_sha256": "7526e8180335ab67e9f64d6fe12e3e69496721da2d72eb6a0a7ef0e638c069ed",
+  "discovery_history": "Rejected named hand-picked draft inspected; no valid source snapshot/frame, draw, execution apparatus, Programme A runs or outcomes. No claim of never having seen proposed vendor names.",
+  "scope": [
+    "source-selection and extraction",
+    "unit/identity and category resolution",
+    "insufficient documentary evidence",
+    "provenance-only prior-target exclusion",
+    "necessary allocation/probability/weighting and replacement consequences",
+    "explicit amendment chronology"
+  ],
+  "unrelated_freeze_1_provisions_unchanged": true,
+  "real_vendor_runs": 0,
+  "selected_vendors": 0,
+  "outcome_observations": 0,
+  "rules": {
+    "sampling_unit": {
+      "unit": "vendor_operated_platform_control_plane",
+      "boundary": [
+        "documented tenant/account resource namespace",
+        "common account-level authorization authority"
+      ],
+      "same_parent_implies_same_unit": false,
+      "same_login_implies_same_unit": false,
+      "separate_product_names_imply_separate_units": false,
+      "identity_relations": [
+        "SAME",
+        "DISTINCT",
+        "UNRESOLVED"
+      ],
+      "identity_unresolved": "BLOCK_ENTIRE_FRAME",
+      "canonical_id": "lowercase hex SHA256(UTF8(canonical_JSON([FIRSTCALL-A-1.1-ID, normalized_account_anchor, namespace_id])))",
+      "normalization_authority": "amendment section 2",
+      "row_duplicates": "alias rows, not terminal exclusions",
+      "pair_rule": "SAME if documented equality of both account-wide tenant scope and permission authority; DISTINCT if either affirmatively differs; otherwise UNRESOLVED",
+      "anchor_difference_proves_distinct": false,
+      "identity_stage": "per unique normalized raw lead set, then resolved unit stage; 16 pages and 60 review minutes each stage",
+      "post_lock_alias_change": "ABORT_COHORT_NO_REROLL",
+      "boundary_cases_authority": "amendment section 8.3"
+    },
+    "categories": [
+      {
+        "id": "C01",
+        "label": "messaging/email",
+        "membership": "First-class message submission/delivery objects"
+      },
+      {
+        "id": "C02",
+        "label": "payments",
+        "membership": "First-class payment, transaction, checkout or settlement objects"
+      },
+      {
+        "id": "C03",
+        "label": "storage/object",
+        "membership": "First-class stored file/blob/object resources"
+      },
+      {
+        "id": "C04",
+        "label": "identity/auth",
+        "membership": "First-class account, identity, user, credential or authorization resources"
+      },
+      {
+        "id": "C05",
+        "label": "scheduling/calendar",
+        "membership": "First-class calendar, event, appointment or booking resources"
+      },
+      {
+        "id": "C06",
+        "label": "docs/e-sign",
+        "membership": "First-class authored document, signature request or signing workflow resources"
+      },
+      {
+        "id": "C07",
+        "label": "data/CRM",
+        "membership": "First-class general database records or CRM entities, excluding merely storing the other six resource types"
+      }
+    ],
+    "category_assignment": {
+      "algorithm": "argmin_unsigned_SHA256",
+      "input": [
+        "FIRSTCALL-A-1.1-STRATUM",
+        "canonical_id",
+        "category_id"
+      ],
+      "tie_break": "stable category ID bytes",
+      "applies_to": "complete affirmative native functional membership set",
+      "membership_states": [
+        "TRUE",
+        "FALSE",
+        "UNRESOLVED"
+      ],
+      "unknown_membership": "UNRESOLVED_ELIGIBILITY unless affirmative exclusion",
+      "empty_resolved_membership": "EXCLUDED:SCOPE_OUTSIDE",
+      "depends_on_category_counts": false,
+      "depends_on_display_names": false,
+      "random_seed_used": false,
+      "overrides_or_rerolls": false,
+      "ledger_sealed_before_scoring": true,
+      "adjudicators_blind_to_scores": true,
+      "probability_claim": "deterministic 0/1 only; no equal-category or balancing guarantee",
+      "canonical_id_validation": "64 lowercase hexadecimal characters; retain domain-separated identity preimages",
+      "malformed_or_duplicate_ids": "REJECT_NOT_DEDUPLICATE",
+      "post_lock_identity_or_membership_change": "ABORT_COHORT",
+      "protocol_frozen_before_source_discovery": true,
+      "fraud_limit": "no cryptographic prevention of clandestine score computation; any observed score inspection before lock is a halt"
+    },
+    "canonical_json": {
+      "encoding": "UTF-8",
+      "sort_keys": true,
+      "separators": [
+        ",",
+        ":"
+      ],
+      "ensure_ascii": false,
+      "allow_nan": false
+    },
+    "source_universe": {
+      "actual_sources": [],
+      "source_selection_status": "NOT_STARTED",
+      "snapshot_cutoff": "00:00:00 UTC on day before future Freeze-1.1 sealing timestamp",
+      "discovery_day": "first UTC day after future sealing",
+      "engine": "public Bing web search HTML",
+      "language": "English",
+      "country_parameter": "GB",
+      "personalization": false,
+      "queries": [
+        "public API directory downloadable dataset",
+        "open software API catalog CSV JSON",
+        "public developer platform registry bulk export",
+        "open API index data repository"
+      ],
+      "organic_positions": [
+        1,
+        20
+      ],
+      "snowballing": false,
+      "query_edits": false,
+      "metadata_pages_per_source": 4,
+      "metadata_page_order": [
+        "landing",
+        "about/governance",
+        "data-format/export",
+        "revision/history"
+      ],
+      "min_independent_maintainers": 2,
+      "take": "ALL_QUALIFYING_UPSTREAM_ENUMERATIONS",
+      "minimum_history_days": 365,
+      "maximum_age_of_latest_revision_days": 365,
+      "formats": [
+        "JSON",
+        "CSV",
+        "TSV"
+      ],
+      "candidate_content_screening_for_source_choice": false,
+      "uncertain_source_eligibility": "BLOCK_SOURCE_LOCK",
+      "source_change_or_disappearance": "STOP; only byte-identical archive verified against upstream digest permitted",
+      "snapshot_version": "latest complete immutable <=T0; equal timestamp tie by immutable version ID bytes",
+      "extraction": "all records; lock parser from published schema before parsing contents",
+      "geographic_listing_scope": "worldwide",
+      "customer_access_context": "ordinary UK-resident individual developer; no foreign incorporation or special enterprise agreement",
+      "popularity_truncation": false,
+      "union": "all records normalized to canonical platform units",
+      "missing_identity": "BLOCK_ENTIRE_FRAME",
+      "coverage_claim": "enumerated union only; outside-union coverage and inclusion probabilities unknown",
+      "source_decision_precedence": [
+        "any affirmative failed source criterion => SOURCE_INELIGIBLE",
+        "all source criteria true => SOURCE_ELIGIBLE",
+        "otherwise SOURCE_UNRESOLVED => block source lock"
+      ],
+      "source_record_id": "canonical JSON [source_id, version_id, native_id_or_null, exact_row_address]",
+      "reproducibility": "conditional on one authoritative immutable response capture and sealed source-adjudication ledger; independent live searches are not substitute inputs",
+      "capture": {
+        "authority": "one custodian/runner registered in Freeze-1.1 sealing certificate before any responses",
+        "start": "09:00:00 UTC first day after sealing",
+        "query_offsets_seconds": [
+          0,
+          60,
+          120,
+          180
+        ],
+        "maximum_start_lateness_seconds": 5,
+        "attempts": 1,
+        "settings": "same logged-out English/GB interface; fixed user-agent/network-egress/runtime/code digest",
+        "response_commitment": "archive raw ordered responses and publish hashes before source screening",
+        "failure": "HALT_NO_ALTERNATE_SESSION",
+        "researchers_use_same_archived_bytes": true
+      },
+      "source_adjudicators": 2,
+      "screening_order": "normalized result URL bytes",
+      "source_disagreement": "UNRESOLVED unless another agreed affirmative failure excludes source"
+    },
+    "documentary_adjudication": {
+      "capture_window_calendar_days": 7,
+      "max_pages_per_unit": 16,
+      "max_link_depth": 2,
+      "max_page_bytes": 2097152,
+      "request_timeout_seconds": 30,
+      "retries_per_page": 1,
+      "retry_on": [
+        "timeout",
+        429,
+        "5xx"
+      ],
+      "retry_wait_seconds": 30,
+      "redirect_limit": 3,
+      "frontier": "source-provided official docs/product URLs; breadth-first, normalized URI byte order",
+      "link_path_terms": [
+        "doc",
+        "api",
+        "reference",
+        "sandbox",
+        "test",
+        "free",
+        "pricing",
+        "signup",
+        "sign-up",
+        "account",
+        "auth",
+        "tenant",
+        "terms",
+        "region",
+        "privacy",
+        "deprecat"
+      ],
+      "search_engines_for_candidate_evidence": false,
+      "complete_budget_even_after_decision": true,
+      "shared_cache_charged_per_unit": true,
+      "failed_pages_consume_slots": true,
+      "permitted_sources": [
+        "frozen source metadata for identity leads",
+        "first-party public documentation",
+        "first-party pricing/signup/terms/account-help",
+        "official deprecation notices",
+        "official legal/control-plane documents",
+        "dated public archives of permitted first-party pages"
+      ],
+      "forbidden_evidence": [
+        "model memory",
+        "rejected draft",
+        "search snippets",
+        "reviews",
+        "forums",
+        "rankings",
+        "prior outcomes"
+      ],
+      "adjudicators": 2,
+      "independent_packets": true,
+      "disagreement": "UNRESOLVED",
+      "extra_search_on_disagreement": false,
+      "identity_disagreement": "BLOCK_ENTIRE_FRAME",
+      "translation": "one pinned tool/version; originals and translations retained; uncertain translation UNRESOLVED",
+      "post_lock_upgrades": false,
+      "max_review_minutes_per_unit_per_adjudicator": 60,
+      "max_source_review_minutes_per_adjudicator": 20,
+      "adjudicator_and_translation_registration": "before opening packets; no per-unit changes",
+      "identity_stage": "same 16-page/depth-2 capture and 60-minute review per unique raw lead-URL set before unit resolution",
+      "eligibility_stage": "separate 16-page/depth-2 and 60-minute review per resolved unit",
+      "capture_start": "00:00 UTC day after source lock",
+      "batch_deadline_missed": "BLOCK_ENTIRE_BATCH",
+      "ordering": "one registered scheduler; lead sets then canonical units in byte order; BFS paths byte order",
+      "cache": "mandatory shared response bytes; each unit charged for use",
+      "script_execution": false,
+      "archive_search": false,
+      "unsupported_formats": "consume slot; evidence unresolved",
+      "all_capture_before_review": "within each stage; identity review precedes unit eligibility capture"
+    },
+    "eligibility": {
+      "inclusion_ids": [
+        "I1",
+        "I2",
+        "I3",
+        "I4",
+        "I5"
+      ],
+      "predicate_states": [
+        "TRUE",
+        "FALSE",
+        "UNRESOLVED"
+      ],
+      "terminal_states": [
+        "ELIGIBLE",
+        "EXCLUDED",
+        "UNRESOLVED_ELIGIBILITY"
+      ],
+      "precedence": [
+        "affirmative exclusion or affirmative inclusion violation => EXCLUDED",
+        "all inclusions true, exclusions false, provenance complete-negative, membership resolved nonempty => ELIGIBLE",
+        "otherwise => UNRESOLVED_ELIGIBILITY"
+      ],
+      "exclusion_codes": {
+        "E1": "enterprise-contract-only",
+        "E2": "no safe test/sandbox capability per public docs",
+        "E3": "requires real money/PII/irreversible effect with no sandbox",
+        "E4": "region-locked or KYC-gated beyond sandbox under fixed UK customer context",
+        "E6": "FIRSTCALL-authored/operated or prior designated target per section 5",
+        "INCLUSION_FALSE:I1": "affirmative violation of has public documentation",
+        "INCLUSION_FALSE:I2": "affirmative violation of test/sandbox OR free self-serve tier supporting reversible effect",
+        "INCLUSION_FALSE:I3": "affirmative violation of self-serve signup without enterprise sales contract",
+        "INCLUSION_FALSE:I4": "affirmative violation of supports journey meeting effect requirements",
+        "SCOPE_OUTSIDE": "affirmatively outside all seven defined categories"
+      },
+      "retired_E5": "duplicate platform becomes alias normalization, never a separate excluded canonical unit",
+      "conservation": "TOTAL_CANONICAL_UNITS = ELIGIBLE + EXCLUDED + UNRESOLVED_ELIGIBILITY",
+      "raw_conservation": "TOTAL_SOURCE_ROWS = SUM(unit.alias_row_count)",
+      "unresolved_draw": false,
+      "unresolved_reserve": false,
+      "unresolved_denominator": "reported against total canonical union; outside eligible-frame estimand; never run-level failures",
+      "publication": "all predicates, evidence, decisions, budgets, disagreement, source and category distributions"
+    },
+    "prior_firstcall": {
+      "provenance_commit": "13ff44c37a96882553ffb9103a5596787555e0f3",
+      "explicit_parent_exclusions": [
+        "Postmark",
+        "Resend",
+        "CF-001/Acme",
+        "MULTI-002 Stripe"
+      ],
+      "additional_rule": "FIRSTCALL-authored/operated units or tracked explicit experimental target designations at cutoff, regardless of execution or outcome",
+      "allowed_designation_sources": [
+        "experiment-object-level identity field in tracked configuration/manifest with experiment identifier",
+        "explicit experiment-design Target/Targets or Experimental target(s) heading/table",
+        "explicit FIRSTCALL authorship/operation declaration in qualifying design/configuration"
+      ],
+      "incidental_mentions_qualify": false,
+      "untracked_draft_qualifies": false,
+      "outcome_lookup": false,
+      "known_outcome_condition": false,
+      "stripe_reentry_exception": false,
+      "ambiguous_designation": "BLOCK_REGISTRY",
+      "post_cutoff_new_designation": "contamination halt; no post-hoc registry mutation",
+      "code_paths_alone_qualify": false,
+      "identity_fields": [
+        "vendor",
+        "vendor_id",
+        "target_vendor",
+        "target_vendor_id"
+      ],
+      "projection_roots": [
+        "experiments/",
+        "docs/",
+        "firstcall/"
+      ],
+      "projection_order": "all tracked parent-commit paths in byte order; record projection or exclusion reason for each",
+      "outcome_sections": "not projected or used; mixed-document projection failure blocks registry",
+      "reconstruction": "fixed repository plus complete sealed role-evidence projection ledger; not arbitrary name search",
+      "fuzzy_name_matching": false,
+      "positive_grammar": {
+        "json_experiment_keys": [
+          "experiment",
+          "experiment_id"
+        ],
+        "json_identity_keys": [
+          "vendor",
+          "vendor_id",
+          "target_vendor",
+          "target_vendor_id"
+        ],
+        "values": "nonempty strings at the same experiment-object level",
+        "markdown_metadata": "Experiment: <identifier>",
+        "markdown_heading_labels": [
+          "Target",
+          "Targets",
+          "Experimental target",
+          "Experimental targets"
+        ],
+        "markdown_identity_labels": [
+          "Vendor",
+          "Target vendor"
+        ],
+        "authorship_boolean_keys": [
+          "firstcall_authored",
+          "firstcall_operated"
+        ],
+        "label_normalization": "case-fold; trim; strip leading numeric section label; identity strings preserved",
+        "code_association": "literal runner/verifier path reference in qualifying experiment/identity record",
+        "unrecognized_layout": "UNRECOGNIZED_DESIGNATION => BLOCK_REGISTRY; no ad hoc parser extension",
+        "forbidden_positive_contexts": [
+          "receipts",
+          "results",
+          "outcomes",
+          "traces",
+          "retrospective",
+          "forensic"
+        ]
+      }
+    },
+    "allocation": {
+      "N": 24,
+      "method": "Hamilton proportional apportionment",
+      "base": "floor(24*M_h/M)",
+      "remainder": "24*M_h mod M",
+      "remainder_order": "descending integer remainder",
+      "tie_domain": "FIRSTCALL-A-1.1-ALLOCATION",
+      "tie_hash_input": [
+        "FIRSTCALL-A-1.1-ALLOCATION",
+        "category_id"
+      ],
+      "final_tie": "stable category ID bytes",
+      "each_stratum_min_seats": 1,
+      "reserve_min": "ceil(m_h/4)",
+      "capacity_gate": "all seven strata M_h >= m_h + ceil(m_h/4); otherwise STOP",
+      "modify_strata_sources_or_N_on_failure": false
+    },
+    "later_draw": {
+      "status": "NOT_PERFORMED",
+      "randomness": "later 32*M independent uniform bytes, once, after frame/method seal; hash-commit before interpretation",
+      "tape_bytes_per_unit": 32,
+      "mapping": "successive slices in global canonical-ID byte order",
+      "ordering": "ascending unsigned big-endian priority within assigned stratum",
+      "priority_collision": "HALT_COHORT; no reroll or identity tie-break",
+      "uniformity": "uniform permutation conditional on no tie under independent uniform-byte entropy model",
+      "initial_pi": "m_h/M_h",
+      "minimum_selected_plus_reserves_pi": "(m_h+ceil(m_h/4))/M_h",
+      "seed_value": null,
+      "selected_vendor_ids": [],
+      "replacement_order": [],
+      "entropy_interface": "one os.urandom(32*M) call later; record OS/Python versions; entropy failure STOP without fallback",
+      "commitment": "publish SHA256(raw tape) and frame digest before any interpretation; all failures logged",
+      "frame_lock": "FREEZE_2A before entropy; M=sum(M_h) and IDs/quota/method committed",
+      "custody": "registered independent witnessed custodian with no source/identity/eligibility/apparatus role",
+      "repeat_invocation": "ABORT_COHORT_NO_REROLL",
+      "short_tape_or_commitment_failure": "ABORT_COHORT",
+      "block_mapping": "sorted unique canonical IDs u_j receive tape[32*j:32*(j+1)]",
+      "probability_condition": "successful entropy/commitment and no within-stratum tie; conditional on sealed frame",
+      "priority_access_before_census_seal": "CUSTODIAN_ONLY",
+      "public_beacon": "not adopted; stronger provenance auditability is not necessary for exchangeability under witnessed OS-entropy model"
+    },
+    "replacement": {
+      "within_same_stratum": true,
+      "source": "full previously frozen ordering",
+      "outcome_based": false,
+      "pre_execution_census": "Freeze 5A: all frame-eligible units once, frozen all-frame gates, blinded to tape/order/derived schedule, seal accepted sets and G_h before Freeze 5B reveal",
+      "census_unresolved": "BLOCK_EXECUTION",
+      "insufficient_census_eligible": "G_h < m_h => STOP_COHORT",
+      "final_selection": "first m_h census-eligible units in frozen ordering",
+      "final_pi": "m_h/G_h for census-eligible units, 0 for census-ineligible units, conditional on complete order-independent census and successful draw gates",
+      "log": "all original dispositions, skips, reasons, positions and replacements",
+      "reveal_after_census_seal": true,
+      "repeat_eligibility_adjudication": false,
+      "post_census_change": "ABORT_COHORT; no replacement after census seal or execution",
+      "apparatus_fault_as_exclusion": false,
+      "joint_pi_within": "m_h*(m_h-1)/(G_h*(G_h-1)) for distinct units when G_h>1",
+      "joint_pi_between": "pi_i*pi_j",
+      "initial_joint_pi": "same within formula with M_h; across strata product"
+    },
+    "analysis_consequence": {
+      "support": "census-eligible subset of frozen eligible frame; report frame attrition separately",
+      "weight": "G_h/m_h",
+      "primary_all_defined": "sum_h (G_h/G)*mean_h(r_i)",
+      "primary_with_indeterminate": "sum_defined(w_i*r_i)/sum_defined(w_i); report informative missingness, no unbiased full-population claim",
+      "bootstrap": "SECONDARY_DESCRIPTIVE_ONLY: 10000 within-stratum vendor-cluster replicates; nearest-rank 0.025/0.975; any undefined replicate => null interval, report count; no redrawing",
+      "assignment_bounds": "original raw UNKNOWN assignments remain separate descriptive sensitivity, not a CI for conditional P_v",
+      "unresolved_frame_units": "never enter run denominators",
+      "unrelated_parent_rules": "UNCHANGED",
+      "zero_defined_denominator": "point summary null; conservative band [0,1]; secondary bootstrap interval null when any replicate undefined",
+      "parameter": "P_v=mean_G Pr(PROVEN_SUCCESS | valid determinate run, platform i); conditional parameter requires positive determination probability for every unit",
+      "support_changed_explicitly": true,
+      "structural_zero_determination": "conditional population parameter undefined; never delete platform to manufacture definition",
+      "point_summary": "weighted complete-case ratio, labelled conditional/partial with indeterminate vendors; G unchanged",
+      "primary_interval": {
+        "method": "conservative two-stage bounded-cluster population band",
+        "L_U": "n_i>0: L_i=U_i=S_i/n_i; n_i=0: L_i=0,U_i=1; uncertainty endpoints, not scored outcomes",
+        "weights": "W_h=G_h/G",
+        "a": "sum_h W_h*mean_h(L_i)",
+        "b": "sum_h W_h*mean_h(U_i)",
+        "C": "sum_h W_h^2/m_h",
+        "epsilon": "sqrt(C*ln(40))",
+        "interval": "[max(0,a-epsilon),min(1,b+epsilon)]",
+        "alpha": 0.05,
+        "assumptions": [
+          "stratified SRS conditional on fixed complete census",
+          "independent platform run clusters under frozen environment/schedule and no dependence of cluster laws on selection priorities",
+          "E[r_i | n_i>0]=p_i",
+          "positive determination probability for every unit"
+        ],
+        "proof": "each endpoint one-sided sampling-plus-run-noise tail <= exp(-t^2/C); union at epsilon <=0.05",
+        "joint_probabilities_required": false,
+        "failed_assumptions": "no calibrated-95%-coverage claim or post-result method switch",
+        "all_unidentified": "[0,1], no population point claim"
+      },
+      "bootstrap_parameters": {
+        "replicates": 10000,
+        "seed_definition": "SHA256(canonical JSON [FIRSTCALL-A-1.1-BOOTSTRAP, final_frame_digest]); compute later only",
+        "seed_value": null,
+        "stream": "SHAKE256(UTF8(FIRSTCALL-A-1.1-BOOTSTRAP-STREAM)+NUL+raw_seed_digest)",
+        "integer_mapping": "consume successive unsigned 64-bit big-endian words; L=2^64-(2^64 mod m_h); reject x>=L; index=x mod m_h",
+        "traversal": "replicate ascending; stratum stable ID ascending; draw slot ascending; selected cluster IDs sorted",
+        "quantiles": "nearest rank ceil(p*10000), one based",
+        "undefined_replicates": "null interval if any; count; never drop/redraw"
+      }
+    },
+    "sequence": [
+      "FREEZE_1_IMMUTABLE",
+      "REJECTED_FREEZE_2_DRAFT_DOCUMENTED",
+      "FREEZE_1_1_SEAL_AND_CAPTURE_REGISTRATION",
+      "AUTHORITATIVE_SOURCE_CAPTURE_LOCK_AND_PROVENANCE_REGISTRY",
+      "IDENTITY_ELIGIBILITY_ADJUDICATION",
+      "FREEZE_2A_FRAME_METHOD_SAP_SEAL",
+      "FREEZE_2B_ENTROPY_COMMITMENT",
+      "FREEZE_3_CUSTODIAL_BLIND_DRAW",
+      "FREEZE_4_ALL_FRAME_APPARATUS_AND_GATE_SEAL",
+      "FREEZE_5A_BLINDED_CENSUS_SEAL",
+      "FREEZE_5B_REVEAL_VERIFY_MECHANICAL_REPLACEMENT",
+      "FROZEN_RUN_SCHEDULE",
+      "EXECUTION"
+    ]
+  },
+  "json_patches": {
+    "experiments/programme-a/sample-frame.config.json": [
+      {
+        "op": "test",
+        "path": "/version",
+        "value": "1.0.0"
+      },
+      {
+        "op": "replace",
+        "path": "/version",
+        "value": "1.1.0-PROPOSED"
+      },
+      {
+        "op": "test",
+        "path": "/status",
+        "value": "PROSPECTIVE_DESIGN_FROZEN_BEFORE_OUTCOMES"
+      },
+      {
+        "op": "replace",
+        "path": "/status",
+        "value": "PROSPECTIVE_AMENDMENT_PROPOSED_NOT_FROZEN"
+      },
+      {
+        "op": "test",
+        "path": "/frozen_snapshot",
+        "value": {
+          "source_type_candidates": [
+            "public API directory",
+            "open ecosystem index",
+            "category-tagged public registry"
+          ],
+          "requires": [
+            "source name",
+            "exact snapshot date",
+            "retrieval method",
+            "SHA256 of frozen snapshot file"
+          ],
+          "single_frame_chosen": true,
+          "alternates_recorded_but_unused": true
+        }
+      },
+      {
+        "op": "replace",
+        "path": "/frozen_snapshot",
+        "value": {
+          "actual_sources": [],
+          "source_selection_status": "NOT_STARTED",
+          "snapshot_cutoff": "00:00:00 UTC on day before future Freeze-1.1 sealing timestamp",
+          "discovery_day": "first UTC day after future sealing",
+          "engine": "public Bing web search HTML",
+          "language": "English",
+          "country_parameter": "GB",
+          "personalization": false,
+          "queries": [
+            "public API directory downloadable dataset",
+            "open software API catalog CSV JSON",
+            "public developer platform registry bulk export",
+            "open API index data repository"
+          ],
+          "organic_positions": [
+            1,
+            20
+          ],
+          "snowballing": false,
+          "query_edits": false,
+          "metadata_pages_per_source": 4,
+          "metadata_page_order": [
+            "landing",
+            "about/governance",
+            "data-format/export",
+            "revision/history"
+          ],
+          "min_independent_maintainers": 2,
+          "take": "ALL_QUALIFYING_UPSTREAM_ENUMERATIONS",
+          "minimum_history_days": 365,
+          "maximum_age_of_latest_revision_days": 365,
+          "formats": [
+            "JSON",
+            "CSV",
+            "TSV"
+          ],
+          "candidate_content_screening_for_source_choice": false,
+          "uncertain_source_eligibility": "BLOCK_SOURCE_LOCK",
+          "source_change_or_disappearance": "STOP; only byte-identical archive verified against upstream digest permitted",
+          "snapshot_version": "latest complete immutable <=T0; equal timestamp tie by immutable version ID bytes",
+          "extraction": "all records; lock parser from published schema before parsing contents",
+          "geographic_listing_scope": "worldwide",
+          "customer_access_context": "ordinary UK-resident individual developer; no foreign incorporation or special enterprise agreement",
+          "popularity_truncation": false,
+          "union": "all records normalized to canonical platform units",
+          "missing_identity": "BLOCK_ENTIRE_FRAME",
+          "coverage_claim": "enumerated union only; outside-union coverage and inclusion probabilities unknown",
+          "source_decision_precedence": [
+            "any affirmative failed source criterion => SOURCE_INELIGIBLE",
+            "all source criteria true => SOURCE_ELIGIBLE",
+            "otherwise SOURCE_UNRESOLVED => block source lock"
+          ],
+          "source_record_id": "canonical JSON [source_id, version_id, native_id_or_null, exact_row_address]",
+          "reproducibility": "conditional on one authoritative immutable response capture and sealed source-adjudication ledger; independent live searches are not substitute inputs",
+          "capture": {
+            "authority": "one custodian/runner registered in Freeze-1.1 sealing certificate before any responses",
+            "start": "09:00:00 UTC first day after sealing",
+            "query_offsets_seconds": [
+              0,
+              60,
+              120,
+              180
+            ],
+            "maximum_start_lateness_seconds": 5,
+            "attempts": 1,
+            "settings": "same logged-out English/GB interface; fixed user-agent/network-egress/runtime/code digest",
+            "response_commitment": "archive raw ordered responses and publish hashes before source screening",
+            "failure": "HALT_NO_ALTERNATE_SESSION",
+            "researchers_use_same_archived_bytes": true
+          },
+          "source_adjudicators": 2,
+          "screening_order": "normalized result URL bytes",
+          "source_disagreement": "UNRESOLVED unless another agreed affirmative failure excludes source"
+        }
+      },
+      {
+        "op": "test",
+        "path": "/categories_min",
+        "value": 6
+      },
+      {
+        "op": "replace",
+        "path": "/categories_min",
+        "value": 7
+      },
+      {
+        "op": "test",
+        "path": "/example_categories",
+        "value": [
+          "messaging/email",
+          "payments",
+          "storage/object",
+          "identity/auth",
+          "scheduling/calendar",
+          "docs/e-sign",
+          "data/CRM"
+        ]
+      },
+      {
+        "op": "replace",
+        "path": "/example_categories",
+        "value": [
+          "messaging/email",
+          "payments",
+          "storage/object",
+          "identity/auth",
+          "scheduling/calendar",
+          "docs/e-sign",
+          "data/CRM"
+        ]
+      },
+      {
+        "op": "test",
+        "path": "/inclusion_rules/4",
+        "value": "not FIRSTCALL-authored and not a prior FIRSTCALL target with known outcome"
+      },
+      {
+        "op": "replace",
+        "path": "/inclusion_rules/4",
+        "value": "not FIRSTCALL-authored/operated and not an explicitly designated prior experimental target under section 5, regardless of execution or outcome; explicit parent exclusions always apply"
+      },
+      {
+        "op": "test",
+        "path": "/exclusion_rules",
+        "value": [
+          "enterprise-contract-only",
+          "no safe test/sandbox capability per public docs",
+          "requires real money/PII/irreversible effect with no sandbox",
+          "region-locked or KYC-gated beyond a sandbox",
+          "duplicate platform of an already-included vendor",
+          "prior FIRSTCALL experimental target (Postmark, Resend, CF-001/Acme, MULTI-002 Stripe) to prevent outcome leakage"
+        ]
+      },
+      {
+        "op": "replace",
+        "path": "/exclusion_rules",
+        "value": [
+          "enterprise-contract-only",
+          "no safe test/sandbox capability per public docs",
+          "requires real money/PII/irreversible effect with no sandbox",
+          "region-locked or KYC-gated beyond sandbox under fixed UK customer context",
+          "FIRSTCALL-authored/operated or prior designated target per section 5",
+          "affirmative violation of has public documentation",
+          "affirmative violation of test/sandbox OR free self-serve tier supporting reversible effect",
+          "affirmative violation of self-serve signup without enterprise sales contract",
+          "affirmative violation of supports journey meeting effect requirements",
+          "affirmatively outside all seven defined categories"
+        ]
+      },
+      {
+        "op": "test",
+        "path": "/ordering",
+        "value": "within each category sort by hash(vendor_name + RANDOMISATION_SEED); take top m per category to reach N"
+      },
+      {
+        "op": "replace",
+        "path": "/ordering",
+        "value": "Freeze 1.1 section 6: independent uniform priority tape per canonical unit; category permutations; no mutable-name hash sort"
+      },
+      {
+        "op": "test",
+        "path": "/enterprise_only_or_no_sandbox",
+        "value": "excluded at frame stage by rule; if drawn due to ambiguous metadata => INELIGIBLE_PRE_EXECUTION and replaced by next-in-order in same category"
+      },
+      {
+        "op": "replace",
+        "path": "/enterprise_only_or_no_sandbox",
+        "value": "Three terminal states under Freeze 1.1 section 4; unresolved units never drawn; later complete pre-execution census under section 6"
+      },
+      {
+        "op": "test",
+        "path": "/replacements",
+        "value": {
+          "rule_frozen_before_draw": true,
+          "source": "next vendor in the same category's frozen ordering",
+          "logged_with_reason": true,
+          "reserve_budget_fraction": 0.25
+        }
+      },
+      {
+        "op": "replace",
+        "path": "/replacements",
+        "value": {
+          "within_same_stratum": true,
+          "source": "full previously frozen ordering",
+          "outcome_based": false,
+          "pre_execution_census": "Freeze 5A: all frame-eligible units once, frozen all-frame gates, blinded to tape/order/derived schedule, seal accepted sets and G_h before Freeze 5B reveal",
+          "census_unresolved": "BLOCK_EXECUTION",
+          "insufficient_census_eligible": "G_h < m_h => STOP_COHORT",
+          "final_selection": "first m_h census-eligible units in frozen ordering",
+          "final_pi": "m_h/G_h for census-eligible units, 0 for census-ineligible units, conditional on complete order-independent census and successful draw gates",
+          "log": "all original dispositions, skips, reasons, positions and replacements",
+          "reveal_after_census_seal": true,
+          "repeat_eligibility_adjudication": false,
+          "post_census_change": "ABORT_COHORT; no replacement after census seal or execution",
+          "apparatus_fault_as_exclusion": false,
+          "joint_pi_within": "m_h*(m_h-1)/(G_h*(G_h-1)) for distinct units when G_h>1",
+          "joint_pi_between": "pi_i*pi_j",
+          "initial_joint_pi": "same within formula with M_h; across strata product"
+        }
+      },
+      {
+        "op": "test",
+        "path": "/sample_size/min_acceptable",
+        "value": 20
+      },
+      {
+        "op": "replace",
+        "path": "/sample_size/min_acceptable",
+        "value": 24
+      },
+      {
+        "op": "test",
+        "path": "/sample_size/discouraged_below",
+        "value": 16
+      },
+      {
+        "op": "replace",
+        "path": "/sample_size/discouraged_below",
+        "value": 24
+      },
+      {
+        "op": "test",
+        "path": "/sample_size/rationale",
+        "value": ">=6 categories x ~4 vendors; vendor-level Wilson half-width ~0.10-0.12 mid-range; N is the precision driver at the unit of inference"
+      },
+      {
+        "op": "replace",
+        "path": "/sample_size/rationale",
+        "value": "N=24 retained; fixed Hamilton apportionment across seven strata, minimum one seat each, capacity failure stops without N reduction"
+      },
+      {
+        "op": "add",
+        "path": "/freeze_1_1_rules",
+        "value": {
+          "sampling_unit": {
+            "unit": "vendor_operated_platform_control_plane",
+            "boundary": [
+              "documented tenant/account resource namespace",
+              "common account-level authorization authority"
+            ],
+            "same_parent_implies_same_unit": false,
+            "same_login_implies_same_unit": false,
+            "separate_product_names_imply_separate_units": false,
+            "identity_relations": [
+              "SAME",
+              "DISTINCT",
+              "UNRESOLVED"
+            ],
+            "identity_unresolved": "BLOCK_ENTIRE_FRAME",
+            "canonical_id": "lowercase hex SHA256(UTF8(canonical_JSON([FIRSTCALL-A-1.1-ID, normalized_account_anchor, namespace_id])))",
+            "normalization_authority": "amendment section 2",
+            "row_duplicates": "alias rows, not terminal exclusions",
+            "pair_rule": "SAME if documented equality of both account-wide tenant scope and permission authority; DISTINCT if either affirmatively differs; otherwise UNRESOLVED",
+            "anchor_difference_proves_distinct": false,
+            "identity_stage": "per unique normalized raw lead set, then resolved unit stage; 16 pages and 60 review minutes each stage",
+            "post_lock_alias_change": "ABORT_COHORT_NO_REROLL",
+            "boundary_cases_authority": "amendment section 8.3"
+          },
+          "categories": [
+            {
+              "id": "C01",
+              "label": "messaging/email",
+              "membership": "First-class message submission/delivery objects"
+            },
+            {
+              "id": "C02",
+              "label": "payments",
+              "membership": "First-class payment, transaction, checkout or settlement objects"
+            },
+            {
+              "id": "C03",
+              "label": "storage/object",
+              "membership": "First-class stored file/blob/object resources"
+            },
+            {
+              "id": "C04",
+              "label": "identity/auth",
+              "membership": "First-class account, identity, user, credential or authorization resources"
+            },
+            {
+              "id": "C05",
+              "label": "scheduling/calendar",
+              "membership": "First-class calendar, event, appointment or booking resources"
+            },
+            {
+              "id": "C06",
+              "label": "docs/e-sign",
+              "membership": "First-class authored document, signature request or signing workflow resources"
+            },
+            {
+              "id": "C07",
+              "label": "data/CRM",
+              "membership": "First-class general database records or CRM entities, excluding merely storing the other six resource types"
+            }
+          ],
+          "category_assignment": {
+            "algorithm": "argmin_unsigned_SHA256",
+            "input": [
+              "FIRSTCALL-A-1.1-STRATUM",
+              "canonical_id",
+              "category_id"
+            ],
+            "tie_break": "stable category ID bytes",
+            "applies_to": "complete affirmative native functional membership set",
+            "membership_states": [
+              "TRUE",
+              "FALSE",
+              "UNRESOLVED"
+            ],
+            "unknown_membership": "UNRESOLVED_ELIGIBILITY unless affirmative exclusion",
+            "empty_resolved_membership": "EXCLUDED:SCOPE_OUTSIDE",
+            "depends_on_category_counts": false,
+            "depends_on_display_names": false,
+            "random_seed_used": false,
+            "overrides_or_rerolls": false,
+            "ledger_sealed_before_scoring": true,
+            "adjudicators_blind_to_scores": true,
+            "probability_claim": "deterministic 0/1 only; no equal-category or balancing guarantee",
+            "canonical_id_validation": "64 lowercase hexadecimal characters; retain domain-separated identity preimages",
+            "malformed_or_duplicate_ids": "REJECT_NOT_DEDUPLICATE",
+            "post_lock_identity_or_membership_change": "ABORT_COHORT",
+            "protocol_frozen_before_source_discovery": true,
+            "fraud_limit": "no cryptographic prevention of clandestine score computation; any observed score inspection before lock is a halt"
+          },
+          "canonical_json": {
+            "encoding": "UTF-8",
+            "sort_keys": true,
+            "separators": [
+              ",",
+              ":"
+            ],
+            "ensure_ascii": false,
+            "allow_nan": false
+          },
+          "source_universe": {
+            "actual_sources": [],
+            "source_selection_status": "NOT_STARTED",
+            "snapshot_cutoff": "00:00:00 UTC on day before future Freeze-1.1 sealing timestamp",
+            "discovery_day": "first UTC day after future sealing",
+            "engine": "public Bing web search HTML",
+            "language": "English",
+            "country_parameter": "GB",
+            "personalization": false,
+            "queries": [
+              "public API directory downloadable dataset",
+              "open software API catalog CSV JSON",
+              "public developer platform registry bulk export",
+              "open API index data repository"
+            ],
+            "organic_positions": [
+              1,
+              20
+            ],
+            "snowballing": false,
+            "query_edits": false,
+            "metadata_pages_per_source": 4,
+            "metadata_page_order": [
+              "landing",
+              "about/governance",
+              "data-format/export",
+              "revision/history"
+            ],
+            "min_independent_maintainers": 2,
+            "take": "ALL_QUALIFYING_UPSTREAM_ENUMERATIONS",
+            "minimum_history_days": 365,
+            "maximum_age_of_latest_revision_days": 365,
+            "formats": [
+              "JSON",
+              "CSV",
+              "TSV"
+            ],
+            "candidate_content_screening_for_source_choice": false,
+            "uncertain_source_eligibility": "BLOCK_SOURCE_LOCK",
+            "source_change_or_disappearance": "STOP; only byte-identical archive verified against upstream digest permitted",
+            "snapshot_version": "latest complete immutable <=T0; equal timestamp tie by immutable version ID bytes",
+            "extraction": "all records; lock parser from published schema before parsing contents",
+            "geographic_listing_scope": "worldwide",
+            "customer_access_context": "ordinary UK-resident individual developer; no foreign incorporation or special enterprise agreement",
+            "popularity_truncation": false,
+            "union": "all records normalized to canonical platform units",
+            "missing_identity": "BLOCK_ENTIRE_FRAME",
+            "coverage_claim": "enumerated union only; outside-union coverage and inclusion probabilities unknown",
+            "source_decision_precedence": [
+              "any affirmative failed source criterion => SOURCE_INELIGIBLE",
+              "all source criteria true => SOURCE_ELIGIBLE",
+              "otherwise SOURCE_UNRESOLVED => block source lock"
+            ],
+            "source_record_id": "canonical JSON [source_id, version_id, native_id_or_null, exact_row_address]",
+            "reproducibility": "conditional on one authoritative immutable response capture and sealed source-adjudication ledger; independent live searches are not substitute inputs",
+            "capture": {
+              "authority": "one custodian/runner registered in Freeze-1.1 sealing certificate before any responses",
+              "start": "09:00:00 UTC first day after sealing",
+              "query_offsets_seconds": [
+                0,
+                60,
+                120,
+                180
+              ],
+              "maximum_start_lateness_seconds": 5,
+              "attempts": 1,
+              "settings": "same logged-out English/GB interface; fixed user-agent/network-egress/runtime/code digest",
+              "response_commitment": "archive raw ordered responses and publish hashes before source screening",
+              "failure": "HALT_NO_ALTERNATE_SESSION",
+              "researchers_use_same_archived_bytes": true
+            },
+            "source_adjudicators": 2,
+            "screening_order": "normalized result URL bytes",
+            "source_disagreement": "UNRESOLVED unless another agreed affirmative failure excludes source"
+          },
+          "documentary_adjudication": {
+            "capture_window_calendar_days": 7,
+            "max_pages_per_unit": 16,
+            "max_link_depth": 2,
+            "max_page_bytes": 2097152,
+            "request_timeout_seconds": 30,
+            "retries_per_page": 1,
+            "retry_on": [
+              "timeout",
+              429,
+              "5xx"
+            ],
+            "retry_wait_seconds": 30,
+            "redirect_limit": 3,
+            "frontier": "source-provided official docs/product URLs; breadth-first, normalized URI byte order",
+            "link_path_terms": [
+              "doc",
+              "api",
+              "reference",
+              "sandbox",
+              "test",
+              "free",
+              "pricing",
+              "signup",
+              "sign-up",
+              "account",
+              "auth",
+              "tenant",
+              "terms",
+              "region",
+              "privacy",
+              "deprecat"
+            ],
+            "search_engines_for_candidate_evidence": false,
+            "complete_budget_even_after_decision": true,
+            "shared_cache_charged_per_unit": true,
+            "failed_pages_consume_slots": true,
+            "permitted_sources": [
+              "frozen source metadata for identity leads",
+              "first-party public documentation",
+              "first-party pricing/signup/terms/account-help",
+              "official deprecation notices",
+              "official legal/control-plane documents",
+              "dated public archives of permitted first-party pages"
+            ],
+            "forbidden_evidence": [
+              "model memory",
+              "rejected draft",
+              "search snippets",
+              "reviews",
+              "forums",
+              "rankings",
+              "prior outcomes"
+            ],
+            "adjudicators": 2,
+            "independent_packets": true,
+            "disagreement": "UNRESOLVED",
+            "extra_search_on_disagreement": false,
+            "identity_disagreement": "BLOCK_ENTIRE_FRAME",
+            "translation": "one pinned tool/version; originals and translations retained; uncertain translation UNRESOLVED",
+            "post_lock_upgrades": false,
+            "max_review_minutes_per_unit_per_adjudicator": 60,
+            "max_source_review_minutes_per_adjudicator": 20,
+            "adjudicator_and_translation_registration": "before opening packets; no per-unit changes",
+            "identity_stage": "same 16-page/depth-2 capture and 60-minute review per unique raw lead-URL set before unit resolution",
+            "eligibility_stage": "separate 16-page/depth-2 and 60-minute review per resolved unit",
+            "capture_start": "00:00 UTC day after source lock",
+            "batch_deadline_missed": "BLOCK_ENTIRE_BATCH",
+            "ordering": "one registered scheduler; lead sets then canonical units in byte order; BFS paths byte order",
+            "cache": "mandatory shared response bytes; each unit charged for use",
+            "script_execution": false,
+            "archive_search": false,
+            "unsupported_formats": "consume slot; evidence unresolved",
+            "all_capture_before_review": "within each stage; identity review precedes unit eligibility capture"
+          },
+          "eligibility": {
+            "inclusion_ids": [
+              "I1",
+              "I2",
+              "I3",
+              "I4",
+              "I5"
+            ],
+            "predicate_states": [
+              "TRUE",
+              "FALSE",
+              "UNRESOLVED"
+            ],
+            "terminal_states": [
+              "ELIGIBLE",
+              "EXCLUDED",
+              "UNRESOLVED_ELIGIBILITY"
+            ],
+            "precedence": [
+              "affirmative exclusion or affirmative inclusion violation => EXCLUDED",
+              "all inclusions true, exclusions false, provenance complete-negative, membership resolved nonempty => ELIGIBLE",
+              "otherwise => UNRESOLVED_ELIGIBILITY"
+            ],
+            "exclusion_codes": {
+              "E1": "enterprise-contract-only",
+              "E2": "no safe test/sandbox capability per public docs",
+              "E3": "requires real money/PII/irreversible effect with no sandbox",
+              "E4": "region-locked or KYC-gated beyond sandbox under fixed UK customer context",
+              "E6": "FIRSTCALL-authored/operated or prior designated target per section 5",
+              "INCLUSION_FALSE:I1": "affirmative violation of has public documentation",
+              "INCLUSION_FALSE:I2": "affirmative violation of test/sandbox OR free self-serve tier supporting reversible effect",
+              "INCLUSION_FALSE:I3": "affirmative violation of self-serve signup without enterprise sales contract",
+              "INCLUSION_FALSE:I4": "affirmative violation of supports journey meeting effect requirements",
+              "SCOPE_OUTSIDE": "affirmatively outside all seven defined categories"
+            },
+            "retired_E5": "duplicate platform becomes alias normalization, never a separate excluded canonical unit",
+            "conservation": "TOTAL_CANONICAL_UNITS = ELIGIBLE + EXCLUDED + UNRESOLVED_ELIGIBILITY",
+            "raw_conservation": "TOTAL_SOURCE_ROWS = SUM(unit.alias_row_count)",
+            "unresolved_draw": false,
+            "unresolved_reserve": false,
+            "unresolved_denominator": "reported against total canonical union; outside eligible-frame estimand; never run-level failures",
+            "publication": "all predicates, evidence, decisions, budgets, disagreement, source and category distributions"
+          },
+          "prior_firstcall": {
+            "provenance_commit": "13ff44c37a96882553ffb9103a5596787555e0f3",
+            "explicit_parent_exclusions": [
+              "Postmark",
+              "Resend",
+              "CF-001/Acme",
+              "MULTI-002 Stripe"
+            ],
+            "additional_rule": "FIRSTCALL-authored/operated units or tracked explicit experimental target designations at cutoff, regardless of execution or outcome",
+            "allowed_designation_sources": [
+              "experiment-object-level identity field in tracked configuration/manifest with experiment identifier",
+              "explicit experiment-design Target/Targets or Experimental target(s) heading/table",
+              "explicit FIRSTCALL authorship/operation declaration in qualifying design/configuration"
+            ],
+            "incidental_mentions_qualify": false,
+            "untracked_draft_qualifies": false,
+            "outcome_lookup": false,
+            "known_outcome_condition": false,
+            "stripe_reentry_exception": false,
+            "ambiguous_designation": "BLOCK_REGISTRY",
+            "post_cutoff_new_designation": "contamination halt; no post-hoc registry mutation",
+            "code_paths_alone_qualify": false,
+            "identity_fields": [
+              "vendor",
+              "vendor_id",
+              "target_vendor",
+              "target_vendor_id"
+            ],
+            "projection_roots": [
+              "experiments/",
+              "docs/",
+              "firstcall/"
+            ],
+            "projection_order": "all tracked parent-commit paths in byte order; record projection or exclusion reason for each",
+            "outcome_sections": "not projected or used; mixed-document projection failure blocks registry",
+            "reconstruction": "fixed repository plus complete sealed role-evidence projection ledger; not arbitrary name search",
+            "fuzzy_name_matching": false,
+            "positive_grammar": {
+              "json_experiment_keys": [
+                "experiment",
+                "experiment_id"
+              ],
+              "json_identity_keys": [
+                "vendor",
+                "vendor_id",
+                "target_vendor",
+                "target_vendor_id"
+              ],
+              "values": "nonempty strings at the same experiment-object level",
+              "markdown_metadata": "Experiment: <identifier>",
+              "markdown_heading_labels": [
+                "Target",
+                "Targets",
+                "Experimental target",
+                "Experimental targets"
+              ],
+              "markdown_identity_labels": [
+                "Vendor",
+                "Target vendor"
+              ],
+              "authorship_boolean_keys": [
+                "firstcall_authored",
+                "firstcall_operated"
+              ],
+              "label_normalization": "case-fold; trim; strip leading numeric section label; identity strings preserved",
+              "code_association": "literal runner/verifier path reference in qualifying experiment/identity record",
+              "unrecognized_layout": "UNRECOGNIZED_DESIGNATION => BLOCK_REGISTRY; no ad hoc parser extension",
+              "forbidden_positive_contexts": [
+                "receipts",
+                "results",
+                "outcomes",
+                "traces",
+                "retrospective",
+                "forensic"
+              ]
+            }
+          },
+          "allocation": {
+            "N": 24,
+            "method": "Hamilton proportional apportionment",
+            "base": "floor(24*M_h/M)",
+            "remainder": "24*M_h mod M",
+            "remainder_order": "descending integer remainder",
+            "tie_domain": "FIRSTCALL-A-1.1-ALLOCATION",
+            "tie_hash_input": [
+              "FIRSTCALL-A-1.1-ALLOCATION",
+              "category_id"
+            ],
+            "final_tie": "stable category ID bytes",
+            "each_stratum_min_seats": 1,
+            "reserve_min": "ceil(m_h/4)",
+            "capacity_gate": "all seven strata M_h >= m_h + ceil(m_h/4); otherwise STOP",
+            "modify_strata_sources_or_N_on_failure": false
+          },
+          "later_draw": {
+            "status": "NOT_PERFORMED",
+            "randomness": "later 32*M independent uniform bytes, once, after frame/method seal; hash-commit before interpretation",
+            "tape_bytes_per_unit": 32,
+            "mapping": "successive slices in global canonical-ID byte order",
+            "ordering": "ascending unsigned big-endian priority within assigned stratum",
+            "priority_collision": "HALT_COHORT; no reroll or identity tie-break",
+            "uniformity": "uniform permutation conditional on no tie under independent uniform-byte entropy model",
+            "initial_pi": "m_h/M_h",
+            "minimum_selected_plus_reserves_pi": "(m_h+ceil(m_h/4))/M_h",
+            "seed_value": null,
+            "selected_vendor_ids": [],
+            "replacement_order": [],
+            "entropy_interface": "one os.urandom(32*M) call later; record OS/Python versions; entropy failure STOP without fallback",
+            "commitment": "publish SHA256(raw tape) and frame digest before any interpretation; all failures logged",
+            "frame_lock": "FREEZE_2A before entropy; M=sum(M_h) and IDs/quota/method committed",
+            "custody": "registered independent witnessed custodian with no source/identity/eligibility/apparatus role",
+            "repeat_invocation": "ABORT_COHORT_NO_REROLL",
+            "short_tape_or_commitment_failure": "ABORT_COHORT",
+            "block_mapping": "sorted unique canonical IDs u_j receive tape[32*j:32*(j+1)]",
+            "probability_condition": "successful entropy/commitment and no within-stratum tie; conditional on sealed frame",
+            "priority_access_before_census_seal": "CUSTODIAN_ONLY",
+            "public_beacon": "not adopted; stronger provenance auditability is not necessary for exchangeability under witnessed OS-entropy model"
+          },
+          "replacement": {
+            "within_same_stratum": true,
+            "source": "full previously frozen ordering",
+            "outcome_based": false,
+            "pre_execution_census": "Freeze 5A: all frame-eligible units once, frozen all-frame gates, blinded to tape/order/derived schedule, seal accepted sets and G_h before Freeze 5B reveal",
+            "census_unresolved": "BLOCK_EXECUTION",
+            "insufficient_census_eligible": "G_h < m_h => STOP_COHORT",
+            "final_selection": "first m_h census-eligible units in frozen ordering",
+            "final_pi": "m_h/G_h for census-eligible units, 0 for census-ineligible units, conditional on complete order-independent census and successful draw gates",
+            "log": "all original dispositions, skips, reasons, positions and replacements",
+            "reveal_after_census_seal": true,
+            "repeat_eligibility_adjudication": false,
+            "post_census_change": "ABORT_COHORT; no replacement after census seal or execution",
+            "apparatus_fault_as_exclusion": false,
+            "joint_pi_within": "m_h*(m_h-1)/(G_h*(G_h-1)) for distinct units when G_h>1",
+            "joint_pi_between": "pi_i*pi_j",
+            "initial_joint_pi": "same within formula with M_h; across strata product"
+          },
+          "analysis_consequence": {
+            "support": "census-eligible subset of frozen eligible frame; report frame attrition separately",
+            "weight": "G_h/m_h",
+            "primary_all_defined": "sum_h (G_h/G)*mean_h(r_i)",
+            "primary_with_indeterminate": "sum_defined(w_i*r_i)/sum_defined(w_i); report informative missingness, no unbiased full-population claim",
+            "bootstrap": "SECONDARY_DESCRIPTIVE_ONLY: 10000 within-stratum vendor-cluster replicates; nearest-rank 0.025/0.975; any undefined replicate => null interval, report count; no redrawing",
+            "assignment_bounds": "original raw UNKNOWN assignments remain separate descriptive sensitivity, not a CI for conditional P_v",
+            "unresolved_frame_units": "never enter run denominators",
+            "unrelated_parent_rules": "UNCHANGED",
+            "zero_defined_denominator": "point summary null; conservative band [0,1]; secondary bootstrap interval null when any replicate undefined",
+            "parameter": "P_v=mean_G Pr(PROVEN_SUCCESS | valid determinate run, platform i); conditional parameter requires positive determination probability for every unit",
+            "support_changed_explicitly": true,
+            "structural_zero_determination": "conditional population parameter undefined; never delete platform to manufacture definition",
+            "point_summary": "weighted complete-case ratio, labelled conditional/partial with indeterminate vendors; G unchanged",
+            "primary_interval": {
+              "method": "conservative two-stage bounded-cluster population band",
+              "L_U": "n_i>0: L_i=U_i=S_i/n_i; n_i=0: L_i=0,U_i=1; uncertainty endpoints, not scored outcomes",
+              "weights": "W_h=G_h/G",
+              "a": "sum_h W_h*mean_h(L_i)",
+              "b": "sum_h W_h*mean_h(U_i)",
+              "C": "sum_h W_h^2/m_h",
+              "epsilon": "sqrt(C*ln(40))",
+              "interval": "[max(0,a-epsilon),min(1,b+epsilon)]",
+              "alpha": 0.05,
+              "assumptions": [
+                "stratified SRS conditional on fixed complete census",
+                "independent platform run clusters under frozen environment/schedule and no dependence of cluster laws on selection priorities",
+                "E[r_i | n_i>0]=p_i",
+                "positive determination probability for every unit"
+              ],
+              "proof": "each endpoint one-sided sampling-plus-run-noise tail <= exp(-t^2/C); union at epsilon <=0.05",
+              "joint_probabilities_required": false,
+              "failed_assumptions": "no calibrated-95%-coverage claim or post-result method switch",
+              "all_unidentified": "[0,1], no population point claim"
+            },
+            "bootstrap_parameters": {
+              "replicates": 10000,
+              "seed_definition": "SHA256(canonical JSON [FIRSTCALL-A-1.1-BOOTSTRAP, final_frame_digest]); compute later only",
+              "seed_value": null,
+              "stream": "SHAKE256(UTF8(FIRSTCALL-A-1.1-BOOTSTRAP-STREAM)+NUL+raw_seed_digest)",
+              "integer_mapping": "consume successive unsigned 64-bit big-endian words; L=2^64-(2^64 mod m_h); reject x>=L; index=x mod m_h",
+              "traversal": "replicate ascending; stratum stable ID ascending; draw slot ascending; selected cluster IDs sorted",
+              "quantiles": "nearest rank ceil(p*10000), one based",
+              "undefined_replicates": "null interval if any; count; never drop/redraw"
+            }
+          },
+          "sequence": [
+            "FREEZE_1_IMMUTABLE",
+            "REJECTED_FREEZE_2_DRAFT_DOCUMENTED",
+            "FREEZE_1_1_SEAL_AND_CAPTURE_REGISTRATION",
+            "AUTHORITATIVE_SOURCE_CAPTURE_LOCK_AND_PROVENANCE_REGISTRY",
+            "IDENTITY_ELIGIBILITY_ADJUDICATION",
+            "FREEZE_2A_FRAME_METHOD_SAP_SEAL",
+            "FREEZE_2B_ENTROPY_COMMITMENT",
+            "FREEZE_3_CUSTODIAL_BLIND_DRAW",
+            "FREEZE_4_ALL_FRAME_APPARATUS_AND_GATE_SEAL",
+            "FREEZE_5A_BLINDED_CENSUS_SEAL",
+            "FREEZE_5B_REVEAL_VERIFY_MECHANICAL_REPLACEMENT",
+            "FROZEN_RUN_SCHEDULE",
+            "EXECUTION"
+          ]
+        }
+      },
+      {
+        "op": "test",
+        "path": "/blind_safeguard",
+        "value": "draw + hash now; plaintext vendor list revealed only inside sealed pre-registration bundle at Freeze 5; no operability inspection before protocol freeze"
+      },
+      {
+        "op": "replace",
+        "path": "/blind_safeguard",
+        "value": "Selected status/order/tape hidden from source/identity/mapping/census personnel until Freeze 5B after complete Freeze 5A census seal; public frame names are permitted; see amendment section 8.7"
+      }
+    ],
+    "experiments/programme-a/estimand.schema.json": [
+      {
+        "op": "test",
+        "path": "/version",
+        "value": "1.0.0"
+      },
+      {
+        "op": "replace",
+        "path": "/version",
+        "value": "1.1.0-PROPOSED"
+      },
+      {
+        "op": "add",
+        "path": "/freeze_1_1_sampling_consequence",
+        "value": {
+          "support": "census-eligible subset of frozen eligible frame; report frame attrition separately",
+          "weight": "G_h/m_h",
+          "primary_all_defined": "sum_h (G_h/G)*mean_h(r_i)",
+          "primary_with_indeterminate": "sum_defined(w_i*r_i)/sum_defined(w_i); report informative missingness, no unbiased full-population claim",
+          "bootstrap": "SECONDARY_DESCRIPTIVE_ONLY: 10000 within-stratum vendor-cluster replicates; nearest-rank 0.025/0.975; any undefined replicate => null interval, report count; no redrawing",
+          "assignment_bounds": "original raw UNKNOWN assignments remain separate descriptive sensitivity, not a CI for conditional P_v",
+          "unresolved_frame_units": "never enter run denominators",
+          "unrelated_parent_rules": "UNCHANGED",
+          "zero_defined_denominator": "point summary null; conservative band [0,1]; secondary bootstrap interval null when any replicate undefined",
+          "parameter": "P_v=mean_G Pr(PROVEN_SUCCESS | valid determinate run, platform i); conditional parameter requires positive determination probability for every unit",
+          "support_changed_explicitly": true,
+          "structural_zero_determination": "conditional population parameter undefined; never delete platform to manufacture definition",
+          "point_summary": "weighted complete-case ratio, labelled conditional/partial with indeterminate vendors; G unchanged",
+          "primary_interval": {
+            "method": "conservative two-stage bounded-cluster population band",
+            "L_U": "n_i>0: L_i=U_i=S_i/n_i; n_i=0: L_i=0,U_i=1; uncertainty endpoints, not scored outcomes",
+            "weights": "W_h=G_h/G",
+            "a": "sum_h W_h*mean_h(L_i)",
+            "b": "sum_h W_h*mean_h(U_i)",
+            "C": "sum_h W_h^2/m_h",
+            "epsilon": "sqrt(C*ln(40))",
+            "interval": "[max(0,a-epsilon),min(1,b+epsilon)]",
+            "alpha": 0.05,
+            "assumptions": [
+              "stratified SRS conditional on fixed complete census",
+              "independent platform run clusters under frozen environment/schedule and no dependence of cluster laws on selection priorities",
+              "E[r_i | n_i>0]=p_i",
+              "positive determination probability for every unit"
+            ],
+            "proof": "each endpoint one-sided sampling-plus-run-noise tail <= exp(-t^2/C); union at epsilon <=0.05",
+            "joint_probabilities_required": false,
+            "failed_assumptions": "no calibrated-95%-coverage claim or post-result method switch",
+            "all_unidentified": "[0,1], no population point claim"
+          },
+          "bootstrap_parameters": {
+            "replicates": 10000,
+            "seed_definition": "SHA256(canonical JSON [FIRSTCALL-A-1.1-BOOTSTRAP, final_frame_digest]); compute later only",
+            "seed_value": null,
+            "stream": "SHAKE256(UTF8(FIRSTCALL-A-1.1-BOOTSTRAP-STREAM)+NUL+raw_seed_digest)",
+            "integer_mapping": "consume successive unsigned 64-bit big-endian words; L=2^64-(2^64 mod m_h); reject x>=L; index=x mod m_h",
+            "traversal": "replicate ascending; stratum stable ID ascending; draw slot ascending; selected cluster IDs sorted",
+            "quantiles": "nearest rank ceil(p*10000), one based",
+            "undefined_replicates": "null interval if any; count; never drop/redraw"
+          }
+        }
+      },
+      {
+        "op": "test",
+        "path": "/unit_of_analysis",
+        "value": "vendor"
+      },
+      {
+        "op": "replace",
+        "path": "/unit_of_analysis",
+        "value": "canonical vendor-operated platform control plane"
+      },
+      {
+        "op": "test",
+        "path": "/primary_estimand/definition",
+        "value": "population mean over vendors in the frozen sample frame of the vendor's probability that a single fresh autonomous run PROVEN_SUCCEEDs the canonical journey on its first attempt under the natural customer condition"
+      },
+      {
+        "op": "replace",
+        "path": "/primary_estimand/definition",
+        "value": "P_v=mean_G Pr(PROVEN_SUCCESS | valid determinate run, platform i); conditional parameter requires positive determination probability for every unit; support is the explicitly amended census-eligible captured-source frame"
+      },
+      {
+        "op": "test",
+        "path": "/primary_estimand/estimator",
+        "value": "equal-weight mean of per-vendor PROVEN_SUCCESS rate r_v"
+      },
+      {
+        "op": "replace",
+        "path": "/primary_estimand/estimator",
+        "value": "sum_defined(w_i*r_i)/sum_defined(w_i); report informative missingness, no unbiased full-population claim"
+      },
+      {
+        "op": "test",
+        "path": "/primary_estimand/denominator",
+        "value": "eligible vendors"
+      },
+      {
+        "op": "replace",
+        "path": "/primary_estimand/denominator",
+        "value": "target: all G census-eligible platforms; weighted point-summary denominator: sum of included design weights"
+      },
+      {
+        "op": "test",
+        "path": "/quantities/0/denominator",
+        "value": "eligible vendors"
+      },
+      {
+        "op": "replace",
+        "path": "/quantities/0/denominator",
+        "value": "point-summary sum of design weights for defined sampled rates; target population G is unchanged"
+      },
+      {
+        "op": "test",
+        "path": "/quantities/0/numerator",
+        "value": "vendor-mean of r_v"
+      },
+      {
+        "op": "replace",
+        "path": "/quantities/0/numerator",
+        "value": "sum of design-weighted per-vendor rates; normalize by included design weights"
+      },
+      {
+        "op": "test",
+        "path": "/denominator_rules/denominators_frozen_at_freeze_1",
+        "value": true
+      },
+      {
+        "op": "replace",
+        "path": "/denominator_rules/denominators_frozen_at_freeze_1",
+        "value": false
+      },
+      {
+        "op": "add",
+        "path": "/denominator_rules/freeze_1_1_clarification",
+        "value": "Run denominators unchanged; eligible-frame and census support plus vendor design weights amended prospectively before frame/draw/outcomes"
+      },
+      {
+        "op": "test",
+        "path": "/denominator_rules/indeterminate_vendor",
+        "value": "vendor with zero eligible runs: r_v undefined; excluded from P_v vendor-mean but count+fraction reported as headline; never scored 0; never silently dropped"
+      },
+      {
+        "op": "replace",
+        "path": "/denominator_rules/indeterminate_vendor",
+        "value": "r_i undefined; omitted only from weighted complete-case point summary, never from target population G; report counts/fractions, partial identification and conservative uncertainty endpoints"
+      }
+    ],
+    "experiments/programme-a/analysis-plan.json": [
+      {
+        "op": "test",
+        "path": "/version",
+        "value": "1.0.0"
+      },
+      {
+        "op": "replace",
+        "path": "/version",
+        "value": "1.1.0-PROPOSED"
+      },
+      {
+        "op": "add",
+        "path": "/freeze_1_1_sampling_consequence",
+        "value": {
+          "support": "census-eligible subset of frozen eligible frame; report frame attrition separately",
+          "weight": "G_h/m_h",
+          "primary_all_defined": "sum_h (G_h/G)*mean_h(r_i)",
+          "primary_with_indeterminate": "sum_defined(w_i*r_i)/sum_defined(w_i); report informative missingness, no unbiased full-population claim",
+          "bootstrap": "SECONDARY_DESCRIPTIVE_ONLY: 10000 within-stratum vendor-cluster replicates; nearest-rank 0.025/0.975; any undefined replicate => null interval, report count; no redrawing",
+          "assignment_bounds": "original raw UNKNOWN assignments remain separate descriptive sensitivity, not a CI for conditional P_v",
+          "unresolved_frame_units": "never enter run denominators",
+          "unrelated_parent_rules": "UNCHANGED",
+          "zero_defined_denominator": "point summary null; conservative band [0,1]; secondary bootstrap interval null when any replicate undefined",
+          "parameter": "P_v=mean_G Pr(PROVEN_SUCCESS | valid determinate run, platform i); conditional parameter requires positive determination probability for every unit",
+          "support_changed_explicitly": true,
+          "structural_zero_determination": "conditional population parameter undefined; never delete platform to manufacture definition",
+          "point_summary": "weighted complete-case ratio, labelled conditional/partial with indeterminate vendors; G unchanged",
+          "primary_interval": {
+            "method": "conservative two-stage bounded-cluster population band",
+            "L_U": "n_i>0: L_i=U_i=S_i/n_i; n_i=0: L_i=0,U_i=1; uncertainty endpoints, not scored outcomes",
+            "weights": "W_h=G_h/G",
+            "a": "sum_h W_h*mean_h(L_i)",
+            "b": "sum_h W_h*mean_h(U_i)",
+            "C": "sum_h W_h^2/m_h",
+            "epsilon": "sqrt(C*ln(40))",
+            "interval": "[max(0,a-epsilon),min(1,b+epsilon)]",
+            "alpha": 0.05,
+            "assumptions": [
+              "stratified SRS conditional on fixed complete census",
+              "independent platform run clusters under frozen environment/schedule and no dependence of cluster laws on selection priorities",
+              "E[r_i | n_i>0]=p_i",
+              "positive determination probability for every unit"
+            ],
+            "proof": "each endpoint one-sided sampling-plus-run-noise tail <= exp(-t^2/C); union at epsilon <=0.05",
+            "joint_probabilities_required": false,
+            "failed_assumptions": "no calibrated-95%-coverage claim or post-result method switch",
+            "all_unidentified": "[0,1], no population point claim"
+          },
+          "bootstrap_parameters": {
+            "replicates": 10000,
+            "seed_definition": "SHA256(canonical JSON [FIRSTCALL-A-1.1-BOOTSTRAP, final_frame_digest]); compute later only",
+            "seed_value": null,
+            "stream": "SHAKE256(UTF8(FIRSTCALL-A-1.1-BOOTSTRAP-STREAM)+NUL+raw_seed_digest)",
+            "integer_mapping": "consume successive unsigned 64-bit big-endian words; L=2^64-(2^64 mod m_h); reject x>=L; index=x mod m_h",
+            "traversal": "replicate ascending; stratum stable ID ascending; draw slot ascending; selected cluster IDs sorted",
+            "quantiles": "nearest rank ceil(p*10000), one based",
+            "undefined_replicates": "null interval if any; count; never drop/redraw"
+          }
+        }
+      },
+      {
+        "op": "test",
+        "path": "/primary/estimator",
+        "value": "equal-weight mean of per-vendor r_v"
+      },
+      {
+        "op": "replace",
+        "path": "/primary/estimator",
+        "value": "sum_defined(w_i*r_i)/sum_defined(w_i); report informative missingness, no unbiased full-population claim"
+      },
+      {
+        "op": "test",
+        "path": "/primary/interval",
+        "value": "cluster bootstrap over vendors, >=10000 resamples, fixed bootstrap seed"
+      },
+      {
+        "op": "replace",
+        "path": "/primary/interval",
+        "value": {
+          "method": "conservative two-stage bounded-cluster population band",
+          "L_U": "n_i>0: L_i=U_i=S_i/n_i; n_i=0: L_i=0,U_i=1; uncertainty endpoints, not scored outcomes",
+          "weights": "W_h=G_h/G",
+          "a": "sum_h W_h*mean_h(L_i)",
+          "b": "sum_h W_h*mean_h(U_i)",
+          "C": "sum_h W_h^2/m_h",
+          "epsilon": "sqrt(C*ln(40))",
+          "interval": "[max(0,a-epsilon),min(1,b+epsilon)]",
+          "alpha": 0.05,
+          "assumptions": [
+            "stratified SRS conditional on fixed complete census",
+            "independent platform run clusters under frozen environment/schedule and no dependence of cluster laws on selection priorities",
+            "E[r_i | n_i>0]=p_i",
+            "positive determination probability for every unit"
+          ],
+          "proof": "each endpoint one-sided sampling-plus-run-noise tail <= exp(-t^2/C); union at epsilon <=0.05",
+          "joint_probabilities_required": false,
+          "failed_assumptions": "no calibrated-95%-coverage claim or post-result method switch",
+          "all_unidentified": "[0,1], no population point claim"
+        }
+      },
+      {
+        "op": "add",
+        "path": "/stratification/frame_population_weight",
+        "value": "G_h/G; equal-per-category secondary retained, undefined categories explicitly reported"
+      },
+      {
+        "op": "test",
+        "path": "/informativeness_guarantee/all_pass",
+        "value": "P_v ~ 1 with tight upper interval"
+      },
+      {
+        "op": "replace",
+        "path": "/informativeness_guarantee/all_pass",
+        "value": "High conditional observed rate; conservative primary band retained, no promised tight interval or degenerate bootstrap certainty"
+      },
+      {
+        "op": "test",
+        "path": "/informativeness_guarantee/all_fail",
+        "value": "P_v ~ 0; EFFECT_FAILED reason-codes + stage attribution characterise where"
+      },
+      {
+        "op": "replace",
+        "path": "/informativeness_guarantee/all_fail",
+        "value": "Low conditional observed rate; conservative primary band retained; no degenerate bootstrap certainty"
+      },
+      {
+        "op": "test",
+        "path": "/missing_data_handling/zero_eligible_runs_vendor",
+        "value": "indeterminate: r_v undefined; EXCLUDED from P_v vendor-mean but count+fraction reported as a headline number; never scored 0; never silently dropped"
+      },
+      {
+        "op": "replace",
+        "path": "/missing_data_handling/zero_eligible_runs_vendor",
+        "value": "r_i undefined; omit only from complete-case point summary, never from G; L_i=0,U_i=1 are uncertainty endpoints, not scored outcomes; report counts/fractions"
+      },
+      {
+        "op": "test",
+        "path": "/primary/estimand",
+        "value": "P_v (vendor-mean PROVEN_SUCCESS rate)"
+      },
+      {
+        "op": "replace",
+        "path": "/primary/estimand",
+        "value": "P_v: equal-platform mean conditional PROVEN_SUCCESS probability over complete census-eligible G; positivity and conditional-mean assumptions explicit"
+      }
+    ],
+    "experiments/programme-a/prereg-freeze-sequence.json": [
+      {
+        "op": "test",
+        "path": "/version",
+        "value": "1.0.0"
+      },
+      {
+        "op": "replace",
+        "path": "/version",
+        "value": "1.1.0-PROPOSED"
+      },
+      {
+        "op": "add",
+        "path": "/freeze_1_1_sequence",
+        "value": [
+          "FREEZE_1_IMMUTABLE",
+          "REJECTED_FREEZE_2_DRAFT_DOCUMENTED",
+          "FREEZE_1_1_SEAL_AND_CAPTURE_REGISTRATION",
+          "AUTHORITATIVE_SOURCE_CAPTURE_LOCK_AND_PROVENANCE_REGISTRY",
+          "IDENTITY_ELIGIBILITY_ADJUDICATION",
+          "FREEZE_2A_FRAME_METHOD_SAP_SEAL",
+          "FREEZE_2B_ENTROPY_COMMITMENT",
+          "FREEZE_3_CUSTODIAL_BLIND_DRAW",
+          "FREEZE_4_ALL_FRAME_APPARATUS_AND_GATE_SEAL",
+          "FREEZE_5A_BLINDED_CENSUS_SEAL",
+          "FREEZE_5B_REVEAL_VERIFY_MECHANICAL_REPLACEMENT",
+          "FROZEN_RUN_SCHEDULE",
+          "EXECUTION"
+        ]
+      },
+      {
+        "op": "test",
+        "path": "/freeze_1_boundary/chronology",
+        "value": "Freeze 1 (protocol) -> Freeze 2 (frame & method) -> Freeze 3 (blind draw, hashed) -> Freeze 4 (apparatus & mappings from public docs) -> Freeze 5 (seal & reveal) -> execution"
+      },
+      {
+        "op": "replace",
+        "path": "/freeze_1_boundary/chronology",
+        "value": "FREEZE_1_IMMUTABLE -> REJECTED_FREEZE_2_DRAFT_DOCUMENTED -> FREEZE_1_1_SEAL_AND_CAPTURE_REGISTRATION -> AUTHORITATIVE_SOURCE_CAPTURE_LOCK_AND_PROVENANCE_REGISTRY -> IDENTITY_ELIGIBILITY_ADJUDICATION -> FREEZE_2A_FRAME_METHOD_SAP_SEAL -> FREEZE_2B_ENTROPY_COMMITMENT -> FREEZE_3_CUSTODIAL_BLIND_DRAW -> FREEZE_4_ALL_FRAME_APPARATUS_AND_GATE_SEAL -> FREEZE_5A_BLINDED_CENSUS_SEAL -> FREEZE_5B_REVEAL_VERIFY_MECHANICAL_REPLACEMENT -> FROZEN_RUN_SCHEDULE -> EXECUTION"
+      },
+      {
+        "op": "test",
+        "path": "/freeze_sequence",
+        "value": [
+          {
+            "freeze": 1,
+            "name": "Protocol",
+            "content": "this protocol + schemas hashed (estimand, journey standard, outcome taxonomy, run design, sample-frame RULES, analysis plan, freeze sequence, receipt schema)",
+            "vendor_plaintext_exposed": false
+          },
+          {
+            "freeze": 2,
+            "name": "Frame & method",
+            "content": "snapshot, selection algorithm, RANDOMISATION_SEED as hash, SAP",
+            "vendor_plaintext_exposed": false
+          },
+          {
+            "freeze": 3,
+            "name": "Blind draw",
+            "content": "run deterministic draw; commit HASH of ordered vendor list + reserves",
+            "operability_inspection": false
+          },
+          {
+            "freeze": 4,
+            "name": "Apparatus",
+            "content": "runner/verifier/classifier/analysis code + hostile offline tests pass; per-vendor mappings from public docs only",
+            "runs": false
+          },
+          {
+            "freeze": 5,
+            "name": "Seal & reveal",
+            "content": "reveal seed + vendor plaintext inside sealed bundle; verify matches Freeze-3 hash; only now eligibility checks then runs begin"
+          }
+        ]
+      },
+      {
+        "op": "replace",
+        "path": "/freeze_sequence",
+        "value": [
+          {
+            "freeze": 1,
+            "name": "Immutable parent protocol",
+            "content": "historical Freeze-1 boundary retained"
+          },
+          {
+            "freeze": "1.1",
+            "name": "Sampling amendment",
+            "content": "seal §§1–8 and register authoritative capture before discovery",
+            "status": "PROPOSED_NOT_FROZEN"
+          },
+          {
+            "freeze": "2A",
+            "name": "Frame and method seal",
+            "content": "complete identity/membership/eligibility ledger, M_h, m_h, canonical IDs, algorithm, SAP and hashes locked; no entropy yet",
+            "selected_status_exposed": false
+          },
+          {
+            "freeze": "2B",
+            "name": "Entropy commitment",
+            "content": "independently witnessed one-call tape, hash and frame digest committed before interpretation",
+            "selected_status_exposed": false
+          },
+          {
+            "freeze": 3,
+            "name": "Custodial blind draw",
+            "content": "hash committed ordering; no disclosure outside custody",
+            "selected_status_exposed": false
+          },
+          {
+            "freeze": 4,
+            "name": "All-frame apparatus and gate seal",
+            "content": "all eligible units mapped and identical census predicates/budgets fixed blind to selection; offline tests",
+            "runs": false
+          },
+          {
+            "freeze": "5A",
+            "name": "Blinded census seal",
+            "content": "all M eligible units checked once; complete census accepted sets and G_h sealed before any priority/order disclosure"
+          },
+          {
+            "freeze": "5B",
+            "name": "Reveal and verify",
+            "content": "reveal tape/order; verify commitments; apply sealed census to mechanical same-stratum replacement; then freeze run schedule before execution"
+          }
+        ]
+      },
+      {
+        "op": "test",
+        "path": "/invariant",
+        "value": "no real run before Freeze 5; any change to Sections 1-9 after Freeze 5 invalidates the cohort and requires new pre-registration; vendor selection can never be edited after outcomes visible"
+      },
+      {
+        "op": "replace",
+        "path": "/invariant",
+        "value": "No run before Freeze 5B; all-frame census sealed before reveal; no frame mutation after 2A, no census mutation after 5A, no reroll or post-execution replacement; aborted cohort recorded"
+      }
+    ]
+  },
+  "text_precedence": "amendment sections 1-8 supersede only crosswalk provisions and explicit final-review corrections; section 8 controls any earlier proposal conflict; all unrelated parent provisions unchanged",
+  "quarantine_manifest": "experiments/programme-a/quarantine/INVALID_PRE_FREEZE_2_DRAFT/provenance.json",
+  "final_review": {
+    "initial_decision": "NOT SEALABLE",
+    "corrected_defects": [
+      "nonunique live source capture",
+      "circular pre-identity search budget and URL-based distinction",
+      "path-only prior-target interpretation",
+      "private entropy custody and post-seal mutation",
+      "reveal-before-blind-census chronology",
+      "conditional inclusion-probability scope and joint probabilities",
+      "conditional estimand wording and invalid primary bootstrap coverage claim",
+      "stale duplicate overlay fields"
+    ],
+    "pre_review_file_sha256": {
+      "docs/programme-a-freeze-1.1-amendment.md": "ebd3583604920c8e1ab7e80fa92875ce70a08b483e325949478418116d7b4230",
+      "experiments/programme-a/amendments/hostile-review.md": "f708366cf9abca84507c608a7f476082f1425e0573c84a1c81bd1d7b07f59171",
+      "experiments/programme-a/amendments/test_protocol.py": "dac068729555b9312f6fac1b19aa2881302b7d60b24e3e7801694c7dc2eb0975",
+      "experiments/programme-a/amendments/validation-report.json": "930cb361b91d0da5caaafe6d22033f978247fc5e61adeb36689baf0e5db67c75",
+      "experiments/programme-a/amendments/entry-integrity.json": "0347dd44256be9f95f63a81f1105e4b4ea47a4d7d3d7ce3ff00d09418d45d6c1",
+      "experiments/programme-a/amendments/apply_protocol.py": "a60a559f1662dd6a2a13108264d7ab2538e87f364eac43b60b4f9ab6e2d0a34c",
+      "experiments/programme-a/amendments/freeze-1.1.json": "cd6886f5795bc5c65e130462db3789714a67665047837bd6c070817645cb3b5e"
+    },
+    "research_performed": false,
+    "entropy_generated": false,
+    "reassessment": "SEALABLE_PROSPECTIVE_PROTOCOL_NOT_SEALED",
+    "statistical_assumptions": "explicit in section 8.6; no unconditional 95% coverage claim under failed assumptions"
+  }
+}

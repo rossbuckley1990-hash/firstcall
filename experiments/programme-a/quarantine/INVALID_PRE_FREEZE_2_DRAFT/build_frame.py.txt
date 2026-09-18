@@ -1,0 +1,439 @@
+#!/usr/bin/env python3
+"""
+Programme A -- Freeze 2 sample-frame construction (POPULATION CONSTRUCTION, not selection).
+
+Deterministic, reproducible builder + conservation validator. NO vendor draw, NO selected list,
+NO seed value, NO API calls, NO credentials, NO runs. Re-running reproduces identical bytes.
+
+Anchored to Freeze 1: commit 13ff44c37a96882553ffb9103a5596787555e0f3
+                      tag    programme-a-freeze-1-protocol
+Freeze-1 rules used (verbatim intent from experiments/programme-a/sample-frame.config.json):
+  inclusion: I1 public docs; I2 sandbox/test OR free self-serve tier supporting a reversible
+             effect (public docs only); I3 self-serve signup w/o enterprise contract;
+             I4 supports a journey object meeting effect requirements per public docs;
+             I5 not FIRSTCALL-authored and not a prior FIRSTCALL target with known outcome.
+  exclusion: E1 enterprise-contract-only; E2 no safe test/sandbox capability per public docs;
+             E3 requires real money/PII/irreversible effect with no sandbox;
+             E4 region-locked or KYC-gated beyond a sandbox;
+             E5 duplicate platform of an already-included vendor;
+             E6 prior FIRSTCALL experimental target (Postmark, Resend, CF-001/Acme, Stripe).
+
+Terminal decision space is BINARY: {ELIGIBLE, EXCLUDED}. Conservation: TOTAL = ELIGIBLE + EXCLUDED.
+An E2 exclusion whose sandbox route could not be AFFIRMATIVELY established from stable public
+documentary knowledge at Freeze 2 is flagged unresolved=True (conservative exclusion, reported as
+UNRESOLVED ELIGIBILITY, never silently dropped, never counted eligible).
+
+Category system = the seven frozen example categories, verbatim (no invented categories).
+Deterministic category-resolution rule (RULE-P) for a multi-service platform (one signup / one
+vendor platform spanning >=2 frozen categories): faithful reading of frozen E5 admits the platform
+ONCE, in the ALPHABETICALLY-FIRST frozen category it serves; every other category it serves is an
+explicit E5 exclusion record. Alphabetical-first is chosen because it is independent of any draw
+outcome (we must not move vendors to improve the draw).
+
+Evidence policy: eligibility rests on stable, publicly-documented platform properties as of
+2026-09-18. Authoritative per-vendor public-doc capture is DEFERRED TO FREEZE 4 by the frozen
+sequence; Freeze 2 establishes only the minimum documentary basis for population membership.
+"""
+import json, hashlib, os, sys
+
+FREEZE1_COMMIT = "13ff44c37a96882553ffb9103a5596787555e0f3"
+FRAME_VERSION = "0.2.0-freeze2-candidate"
+CONSTRUCTION_DATE = "2026-09-18"
+
+CATEGORIES = [  # frozen example categories, verbatim, alphabetical for RULE-P
+    "data/CRM", "docs/e-sign", "identity/auth", "messaging/email",
+    "payments", "scheduling/calendar", "storage/object",
+]
+
+E6_PRIOR_FIRSTCALL = ["Postmark", "Resend", "CF-001/Acme", "Stripe"]
+
+# Each candidate: (vendor, parent, category, decision, criterion, unresolved, evidence)
+# criterion is None for ELIGIBLE, else a frozen code E1..E6.
+# For RULE-P multi-service platforms, the assigned-category service is ELIGIBLE and the other
+# served categories appear as explicit E5 records (evidence names the RULE-P assignment).
+C = [
+    # ---------------- data/CRM ----------------
+    ("HubSpot", "HubSpot", "data/CRM", "ELIGIBLE", None, False,
+     "Free developer/test account; create a Contact via CRM API; reversible."),
+    ("Salesforce", "Salesforce", "data/CRM", "ELIGIBLE", None, False,
+     "Free self-serve Developer Edition org (developer.salesforce.com); create a record; reversible; not enterprise-contract."),
+    ("Zoho CRM", "Zoho", "data/CRM", "ELIGIBLE", None, False,
+     "Free tier; create a record via CRM API. RULE-P: Zoho (multi-service) assigned to alphabetical-first served category data/CRM."),
+    ("Airtable", "Airtable", "data/CRM", "ELIGIBLE", None, False,
+     "Free tier; create a record via API; reversible."),
+    ("Notion", "Notion", "data/CRM", "ELIGIBLE", None, False,
+     "Free tier; create a page/database row via API; reversible."),
+    ("Supabase", "Supabase", "data/CRM", "ELIGIBLE", None, False,
+     "Free tier; create a row via PostgREST. RULE-P: Supabase (multi-service: data/auth/storage) assigned to alphabetical-first served category data/CRM."),
+    ("Freshsales", "Freshworks", "data/CRM", "ELIGIBLE", None, False,
+     "Free tier; create a contact via API. RULE-P: Freshworks assigned to alphabetical-first served category data/CRM."),
+    ("Pipedrive", "Pipedrive", "data/CRM", "ELIGIBLE", None, False,
+     "Documented developer sandbox account; create a deal/person; reversible."),
+    ("Attio", "Attio", "data/CRM", "EXCLUDED", "E2", True,
+     "Free tier + API exist, but a clean reversible create-effect via a self-serve sandbox not affirmatively established from stable public docs at Freeze 2."),
+
+    # ---------------- docs/e-sign ----------------
+    ("DocuSign", "DocuSign", "docs/e-sign", "ELIGIBLE", None, False,
+     "Free developer demo/sandbox; create an envelope; reversible in demo environment."),
+    ("Dropbox Sign", "Dropbox", "docs/e-sign", "ELIGIBLE", None, False,
+     "Documented test-mode API keys; create a signature request; reversible. Distinct platform from Dropbox core storage (separate API/console); parent Dropbox recorded."),
+    ("PandaDoc", "PandaDoc", "docs/e-sign", "ELIGIBLE", None, False,
+     "Documented sandbox API key; create a document; reversible."),
+    ("SignNow", "airSlate", "docs/e-sign", "ELIGIBLE", None, False,
+     "Documented evaluation/sandbox API; create a document/invite; reversible."),
+    ("Adobe Acrobat Sign", "Adobe", "docs/e-sign", "EXCLUDED", "E1", False,
+     "Acrobat Sign API access is via enterprise/contract onboarding rather than self-serve signup."),
+    ("BoldSign", "Syncfusion", "docs/e-sign", "EXCLUDED", "E2", True,
+     "Free API/sandbox advertised but a self-serve reversible create-effect not affirmatively established from stable public docs at Freeze 2."),
+    ("eSignatures.io", "eSignatures.io", "docs/e-sign", "EXCLUDED", "E2", True,
+     "Test/sandbox route not affirmatively established from stable public docs at Freeze 2."),
+    ("Zoho Sign", "Zoho", "docs/e-sign", "EXCLUDED", "E5", False,
+     "Duplicate platform: Zoho already admitted (data/CRM) under RULE-P; Zoho Sign is the same vendor platform."),
+
+    # ---------------- identity/auth ----------------
+    ("Auth0", "Okta", "identity/auth", "ELIGIBLE", None, False,
+     "Free tier; create a user via Management API; reversible. Distinct platform from Okta (auth0.com vs okta.com); parent Okta recorded."),
+    ("Okta", "Okta", "identity/auth", "ELIGIBLE", None, False,
+     "Free developer/Integrator tier; create a user; reversible. Distinct platform from Auth0; parent Okta recorded."),
+    ("Clerk", "Clerk", "identity/auth", "ELIGIBLE", None, False,
+     "Free tier; create a user via Backend API; reversible. NOTE: appeared as a MULTI-001 prospective candidate but was never executed and has NO known FIRSTCALL outcome; NOT on the frozen E6 list -> not excluded (frozen rule applied verbatim)."),
+    ("Stytch", "Stytch", "identity/auth", "ELIGIBLE", None, False,
+     "Free tier; create a user via API; reversible."),
+    ("FusionAuth", "FusionAuth", "identity/auth", "ELIGIBLE", None, False,
+     "Free community edition; create a user via API; reversible; self-serve."),
+    ("WorkOS", "WorkOS", "identity/auth", "ELIGIBLE", None, False,
+     "Free tier; self-serve; create a user/organization via API; reversible."),
+    ("Kinde", "Kinde", "identity/auth", "ELIGIBLE", None, False,
+     "Free tier; create a user via Management API; reversible; self-serve."),
+    ("Amazon Web Services", "Amazon", "identity/auth", "ELIGIBLE", None, False,
+     "RULE-P: AWS (multi-service: Cognito/SES/S3) admitted ONCE in alphabetical-first served category identity/auth (Cognito user pool: create a user; free tier; reversible; self-serve)."),
+    ("Google Cloud / Firebase", "Google", "identity/auth", "ELIGIBLE", None, False,
+     "RULE-P: Google (multi-service: Firebase Auth/GCS/Calendar) admitted ONCE in alphabetical-first served category identity/auth (Firebase Authentication: create a user; free tier; reversible)."),
+    ("Microsoft", "Microsoft", "identity/auth", "ELIGIBLE", None, False,
+     "RULE-P: Microsoft (multi-service: Entra External ID/Azure Blob/Graph Calendar) admitted ONCE in alphabetical-first served category identity/auth (Entra External ID: create a user; self-serve Azure free account; reversible)."),
+    ("Supabase Auth", "Supabase", "identity/auth", "EXCLUDED", "E5", False,
+     "Duplicate platform: Supabase already admitted (data/CRM) under RULE-P."),
+    ("Amazon Cognito", "Amazon", "identity/auth", "EXCLUDED", "E5", False,
+     "Duplicate platform: AWS already admitted (identity/auth as its RULE-P assignment); this is the same AWS platform/service and is represented by the AWS record."),
+
+    # ---------------- messaging/email ----------------
+    ("Postmark", "ActiveCampaign", "messaging/email", "EXCLUDED", "E6", False,
+     "Prior FIRSTCALL experimental target on the frozen E6 list. Exclusion recorded WITHOUT reference to any historical outcome."),
+    ("Resend", "Resend", "messaging/email", "EXCLUDED", "E6", False,
+     "Prior FIRSTCALL experimental target on the frozen E6 list. Exclusion recorded WITHOUT reference to any historical outcome."),
+    ("SendGrid", "Twilio", "messaging/email", "ELIGIBLE", None, False,
+     "Documented sandbox mode (mail_settings.sandbox_mode); send a validated-but-not-delivered email; reversible/safe. Distinct platform from Twilio SMS; parent Twilio recorded."),
+    ("Mailgun", "Sinch", "messaging/email", "ELIGIBLE", None, False,
+     "Documented sandbox domain (authorized recipients) + free tier; send a test email; reversible. Distinct platform from Mailjet; parent Sinch recorded."),
+    ("Mailjet", "Sinch", "messaging/email", "ELIGIBLE", None, False,
+     "Documented Send API sandbox mode + free tier; send a test email; reversible. Distinct platform from Mailgun; parent Sinch recorded."),
+    ("Brevo", "Brevo", "messaging/email", "ELIGIBLE", None, False,
+     "Transactional email free tier; send a test email via API; reversible."),
+    ("Twilio", "Twilio", "messaging/email", "ELIGIBLE", None, False,
+     "Documented Test Credentials + magic numbers -> no real SMS delivered; reversible/safe. Distinct platform from SendGrid; parent Twilio recorded."),
+    ("Vonage", "Ericsson", "messaging/email", "ELIGIBLE", None, False,
+     "Documented Messages API sandbox; send a test message; reversible."),
+    ("SparkPost", "Bird", "messaging/email", "EXCLUDED", "E2", True,
+     "Post-acquisition (Bird) self-serve sandbox/free reversible-send route not affirmatively established from stable public docs at Freeze 2."),
+    ("Amazon SES", "Amazon", "messaging/email", "EXCLUDED", "E5", False,
+     "Duplicate platform: AWS already admitted (identity/auth) under RULE-P."),
+    ("Mandrill", "Intuit Mailchimp", "messaging/email", "EXCLUDED", "E3", False,
+     "No free self-serve reversible tier: requires a paid Mailchimp plan to obtain Mandrill; effect not achievable without payment."),
+
+    # ---------------- payments ----------------
+    ("Stripe", "Stripe", "payments", "EXCLUDED", "E6", False,
+     "Prior FIRSTCALL experimental target (MULTI-002) on the frozen E6 list. Exclusion recorded WITHOUT reference to any historical outcome."),
+    ("PayPal", "PayPal", "payments", "ELIGIBLE", None, False,
+     "Documented developer Sandbox; create an order in sandbox; reversible. Distinct platform from Braintree; parent PayPal recorded."),
+    ("Braintree", "PayPal", "payments", "ELIGIBLE", None, False,
+     "Documented Sandbox; create a transaction; reversible. Distinct platform from PayPal REST; parent PayPal recorded."),
+    ("Square", "Block", "payments", "ELIGIBLE", None, False,
+     "Documented Sandbox; create a payment; reversible."),
+    ("Authorize.Net", "Visa", "payments", "ELIGIBLE", None, False,
+     "Free self-serve Sandbox account; create a transaction; reversible."),
+    ("Mollie", "Mollie", "payments", "ELIGIBLE", None, False,
+     "Documented test mode; self-serve; create a payment; reversible."),
+    ("Adyen", "Adyen", "payments", "EXCLUDED", "E1", False,
+     "Account access via application/enterprise onboarding rather than fully self-serve signup."),
+    ("Checkout.com", "Checkout.com", "payments", "EXCLUDED", "E1", False,
+     "Enterprise onboarding rather than self-serve signup."),
+    ("Razorpay", "Razorpay", "payments", "EXCLUDED", "E4", False,
+     "Account signup region/KYC-gated (India business) beyond the sandbox."),
+    ("Paystack", "Stripe", "payments", "EXCLUDED", "E4", False,
+     "Account signup region/KYC-gated (Nigeria/Ghana/South Africa business) beyond the sandbox."),
+    ("Paddle", "Paddle", "payments", "EXCLUDED", "E2", True,
+     "Sandbox requires account approval; self-serve reversible-effect sandbox not affirmatively established from stable public docs at Freeze 2."),
+
+    # ---------------- scheduling/calendar ----------------
+    ("Cal.com", "Cal.com", "scheduling/calendar", "ELIGIBLE", None, False,
+     "Free/self-serve cloud tier + open API; create a booking; reversible."),
+    ("Nylas", "Nylas", "scheduling/calendar", "ELIGIBLE", None, False,
+     "Free tier / trial; create a calendar event via API; reversible."),
+    ("Cronofy", "Cronofy", "scheduling/calendar", "ELIGIBLE", None, False,
+     "Free developer tier; create an event via API; reversible."),
+    ("Timekit", "Timekit", "scheduling/calendar", "ELIGIBLE", None, False,
+     "Documented booking-create API; free trial/self-serve; reversible."),
+    ("Google Calendar", "Google", "scheduling/calendar", "EXCLUDED", "E5", False,
+     "Duplicate platform: Google already admitted (identity/auth) under RULE-P."),
+    ("Microsoft Outlook Calendar", "Microsoft", "scheduling/calendar", "EXCLUDED", "E5", False,
+     "Duplicate platform: Microsoft already admitted (identity/auth) under RULE-P."),
+    ("Calendly", "Calendly", "scheduling/calendar", "EXCLUDED", "E2", True,
+     "API centers on scheduling links/read; a direct reversible create-event effect not affirmatively established from stable public docs at Freeze 2."),
+    ("Acuity Scheduling", "Squarespace", "scheduling/calendar", "EXCLUDED", "E2", True,
+     "Self-serve free reversible create-appointment API route not affirmatively established from stable public docs at Freeze 2."),
+
+    # ---------------- storage/object ----------------
+    ("Backblaze B2", "Backblaze", "storage/object", "ELIGIBLE", None, False,
+     "Free tier (10GB); create (upload) an object; reversible (delete); self-serve."),
+    ("Wasabi", "Wasabi", "storage/object", "ELIGIBLE", None, False,
+     "Free trial; S3-compatible; create an object; reversible; self-serve."),
+    ("DigitalOcean Spaces", "DigitalOcean", "storage/object", "ELIGIBLE", None, False,
+     "Free trial credit; S3-compatible; create an object; reversible; self-serve."),
+    ("Cloudflare R2", "Cloudflare", "storage/object", "ELIGIBLE", None, False,
+     "Free tier; create an object; reversible; self-serve. RULE-P: Cloudflare's clean reversible-effect service is R2 -> storage/object."),
+    ("Dropbox", "Dropbox", "storage/object", "ELIGIBLE", None, False,
+     "Free tier; upload/create a file via API; reversible. Distinct platform from Dropbox Sign; parent Dropbox recorded."),
+    ("Storj", "Storj", "storage/object", "ELIGIBLE", None, False,
+     "Free tier; S3-compatible; create an object; reversible; self-serve."),
+    ("Scaleway Object Storage", "Scaleway", "storage/object", "ELIGIBLE", None, False,
+     "Free-tier object storage; create an object; reversible; self-serve."),
+    ("Amazon S3", "Amazon", "storage/object", "EXCLUDED", "E5", False,
+     "Duplicate platform: AWS already admitted (identity/auth) under RULE-P."),
+    ("Google Cloud Storage", "Google", "storage/object", "EXCLUDED", "E5", False,
+     "Duplicate platform: Google already admitted (identity/auth) under RULE-P."),
+    ("Azure Blob Storage", "Microsoft", "storage/object", "EXCLUDED", "E5", False,
+     "Duplicate platform: Microsoft already admitted (identity/auth) under RULE-P."),
+    ("Supabase Storage", "Supabase", "storage/object", "EXCLUDED", "E5", False,
+     "Duplicate platform: Supabase already admitted (data/CRM) under RULE-P."),
+]
+
+
+def slug(s):
+    return "".join(ch.lower() if ch.isalnum() else "-" for ch in s).strip("-").replace("--", "-")
+
+
+def build():
+    universe = []
+    seen_ids = set()
+    for vendor, parent, cat, decision, criterion, unresolved, evidence in C:
+        assert cat in CATEGORIES, f"unknown category {cat}"
+        assert decision in ("ELIGIBLE", "EXCLUDED")
+        if decision == "ELIGIBLE":
+            assert criterion is None and not unresolved
+        else:
+            assert criterion in ("E1", "E2", "E3", "E4", "E5", "E6"), f"bad criterion {criterion}"
+        cid = f"{slug(cat)}__{slug(vendor)}"
+        assert cid not in seen_ids, f"duplicate id {cid}"
+        seen_ids.add(cid)
+        rec = {
+            "id": cid,
+            "vendor": vendor,
+            "parent_company": parent,
+            "category": cat,
+            "provenance": "Source universe U1: curated enumeration of established, publicly-documented "
+                          "commercial developer platforms across the seven frozen Programme-A categories, "
+                          "compiled from general public knowledge of category-defining API vendors as of "
+                          f"{CONSTRUCTION_DATE}. Membership rule is independent of any FIRSTCALL outcome, "
+                          "agent difficulty, or documentation quality.",
+            "source": "U1",
+            "decision": decision,
+            "exclusion_criterion": criterion,
+            "unresolved_evidence": bool(unresolved),
+            "evidence": evidence,
+            "evidence_authority": "stable public documentary knowledge (2026-09-18); authoritative "
+                                  "per-vendor public-doc capture DEFERRED TO FREEZE 4 per frozen sequence",
+        }
+        universe.append(rec)
+    universe.sort(key=lambda r: r["id"])
+    return universe
+
+
+def validate(universe):
+    errs = []
+    total = len(universe)
+    eligible = [r for r in universe if r["decision"] == "ELIGIBLE"]
+    excluded = [r for r in universe if r["decision"] == "EXCLUDED"]
+    # conservation
+    if total != len(eligible) + len(excluded):
+        errs.append("CONSERVATION FAIL: total != eligible + excluded")
+    # exactly one terminal decision each
+    for r in universe:
+        if r["decision"] not in ("ELIGIBLE", "EXCLUDED"):
+            errs.append(f"non-terminal decision {r['id']}")
+    # no duplicate identity (by id and by (category,vendor))
+    ids = [r["id"] for r in universe]
+    if len(ids) != len(set(ids)):
+        errs.append("duplicate id")
+    cv = [(r["category"], r["vendor"]) for r in universe]
+    if len(cv) != len(set(cv)):
+        errs.append("duplicate (category,vendor)")
+    # every eligible has exactly one category in the frozen set
+    for r in eligible:
+        if r["category"] not in CATEGORIES:
+            errs.append(f"eligible {r['id']} bad category")
+        if r["exclusion_criterion"] is not None:
+            errs.append(f"eligible {r['id']} has exclusion criterion")
+    # every exclusion has a frozen criterion
+    for r in excluded:
+        if r["exclusion_criterion"] not in ("E1", "E2", "E3", "E4", "E5", "E6"):
+            errs.append(f"exclusion {r['id']} lacks frozen criterion")
+    # prior-FIRSTCALL exclusions follow Freeze 1: every E6 vendor is on the frozen list,
+    # and every named frozen E6 real vendor that appears in the universe is excluded E6.
+    e6 = [r for r in universe if r["exclusion_criterion"] == "E6"]
+    for r in e6:
+        if r["vendor"] not in E6_PRIOR_FIRSTCALL:
+            errs.append(f"E6 {r['vendor']} not on frozen list")
+    present = {r["vendor"] for r in universe}
+    for v in E6_PRIOR_FIRSTCALL:
+        if v == "CF-001/Acme":
+            continue  # internal fixture, not a real external vendor; noted in report, not in U1
+        if v in present:
+            rr = [r for r in universe if r["vendor"] == v]
+            if not all(x["exclusion_criterion"] == "E6" for x in rr):
+                errs.append(f"frozen E6 vendor {v} present but not excluded E6")
+    # counts
+    by_cat = {c: len([r for r in eligible if r["category"] == c]) for c in CATEGORIES}
+    by_reason = {}
+    for r in excluded:
+        by_reason[r["exclusion_criterion"]] = by_reason.get(r["exclusion_criterion"], 0) + 1
+    unresolved = [r for r in excluded if r["unresolved_evidence"]]
+    return {
+        "errors": errs,
+        "total": total,
+        "eligible": len(eligible),
+        "excluded": len(excluded),
+        "eligible_by_category": by_cat,
+        "excluded_by_reason": by_reason,
+        "unresolved_eligibility": len(unresolved),
+        "unresolved_ids": sorted(r["id"] for r in unresolved),
+        "e6_excluded": sorted(r["vendor"] for r in e6),
+    }
+
+
+def main():
+    here = os.path.dirname(os.path.abspath(__file__))
+    universe = build()
+    report = validate(universe)
+
+    eligible = [r for r in universe if r["decision"] == "ELIGIBLE"]
+    excluded = [r for r in universe if r["decision"] == "EXCLUDED"]
+
+    frame_doc = {
+        "schema": "firstcall.programmeA.sample_frame.freeze2",
+        "frame_version": FRAME_VERSION,
+        "construction_date": CONSTRUCTION_DATE,
+        "freeze1_commit": FREEZE1_COMMIT,
+        "freeze1_tag": "programme-a-freeze-1-protocol",
+        "phase": "FREEZE_2_FRAME_CONSTRUCTION_POPULATION_ONLY",
+        "source_universe": {
+            "id": "U1",
+            "description": "Curated enumeration of established, publicly-documented commercial "
+                           "developer platforms across the seven frozen categories, from general public "
+                           "knowledge as of 2026-09-18; membership independent of FIRSTCALL outcomes, "
+                           "agent difficulty, and documentation quality.",
+            "reproducibility": "reproducible from the recorded candidate list + frozen criteria + RULE-P; "
+                               "no external file was fetched, so no external snapshot hash is claimed",
+            "disclosed_bias": "popularity/availability bias inherent to any public developer-platform "
+                              "enumeration; disclosed, not corrected; selection within U1 is mechanical",
+        },
+        "category_system": CATEGORIES,
+        "deterministic_rules": {
+            "RULE-P_category_resolution": "a multi-service platform (one vendor platform spanning >=2 "
+                "frozen categories) is admitted ONCE in the alphabetically-first frozen category it serves; "
+                "every other served category is an explicit E5 exclusion. Alphabetical-first is draw-agnostic.",
+            "platform_vs_parent": "distinct products with distinct APIs/consoles under one parent are distinct "
+                "platforms (not E5); parent_company recorded for every candidate; E5 fires only for the SAME "
+                "vendor platform.",
+            "unconfirmed_sandbox": "if a safe test/sandbox reversible-effect route cannot be AFFIRMATIVELY "
+                "established from stable public docs at Freeze 2, the candidate is conservatively EXCLUDED under "
+                "frozen criterion E2 with unresolved_evidence=true and reported as UNRESOLVED ELIGIBILITY.",
+            "prior_firstcall_E6": "applied to the exact frozen list only: " + ", ".join(E6_PRIOR_FIRSTCALL) +
+                ". Exclusions recorded WITHOUT reference to historical outcomes. Vendors NOT on this list "
+                "(e.g. Clerk, Supabase) are NOT excluded even if mentioned in prior prospective designs, "
+                "because they have no known FIRSTCALL outcome.",
+        },
+        "counts": {
+            "total_candidates": report["total"],
+            "eligible": report["eligible"],
+            "excluded": report["excluded"],
+            "eligible_by_category": report["eligible_by_category"],
+            "excluded_by_reason": report["excluded_by_reason"],
+            "unresolved_eligibility": report["unresolved_eligibility"],
+        },
+        "prior_firstcall_exclusions": report["e6_excluded"],
+        "no_draw_performed": True,
+        "no_selected_vendor_list": True,
+        "no_replacement_ordering": True,
+        "no_randomisation_seed_value": True,
+        "real_vendor_runs": 0,
+        "candidate_universe": universe,
+        "eligible_frame": eligible,
+        "exclusions": excluded,
+    }
+
+    def write_json(name, obj):
+        p = os.path.join(here, name)
+        with open(p, "w") as f:
+            json.dump(obj, f, indent=2, sort_keys=False)
+            f.write("\n")
+        return p, hashlib.sha256(open(p, "rb").read()).hexdigest()
+
+    _, uh = write_json("candidate-universe.json", frame_doc)
+
+    # conservation validator artifact (re-reads and re-checks)
+    with open(os.path.join(here, "candidate-universe.json")) as f:
+        reload = json.load(f)
+    re_report = validate(reload["candidate_universe"])
+    checks = {
+        "conservation_total_eq_eligible_plus_excluded":
+            reload["counts"]["total_candidates"] == reload["counts"]["eligible"] + reload["counts"]["excluded"],
+        "every_candidate_exactly_one_terminal_decision":
+            all(r["decision"] in ("ELIGIBLE", "EXCLUDED") for r in reload["candidate_universe"]),
+        "no_duplicate_vendor_identity":
+            len({r["id"] for r in reload["candidate_universe"]}) == len(reload["candidate_universe"]),
+        "every_eligible_exactly_one_category":
+            all(r["category"] in CATEGORIES and r["exclusion_criterion"] is None
+                for r in reload["eligible_frame"]),
+        "every_exclusion_has_frozen_criterion":
+            all(r["exclusion_criterion"] in ("E1", "E2", "E3", "E4", "E5", "E6") for r in reload["exclusions"]),
+        "prior_firstcall_exclusions_follow_freeze1":
+            all(v in E6_PRIOR_FIRSTCALL for v in re_report["e6_excluded"]),
+        "no_selected_vendor_artifact": not any(
+            os.path.exists(os.path.join(here, n)) for n in
+            ("selected-vendors.json", "draw.json", "vendor-draw.json", "reserves.json", "seed.txt")),
+        "no_programme_a_run_artifact": not any(
+            os.path.exists(os.path.join(here, n)) for n in ("runs", "receipts", "outcomes.json")),
+        "real_vendor_runs_zero": reload["real_vendor_runs"] == 0,
+        "validator_no_errors": re_report["errors"] == [],
+    }
+    validator = {
+        "schema": "firstcall.programmeA.frame_validator",
+        "frame_version": FRAME_VERSION,
+        "candidate_universe_sha256": uh,
+        "checks": checks,
+        "all_pass": all(checks.values()),
+        "counts": reload["counts"],
+        "unresolved_ids": re_report["unresolved_ids"],
+    }
+    write_json("frame-validation.json", validator)
+
+    # human summary to stdout
+    print("FRAME VERSION:", FRAME_VERSION)
+    print("candidate-universe.json sha256:", uh)
+    print("TOTAL:", report["total"], "ELIGIBLE:", report["eligible"], "EXCLUDED:", report["excluded"])
+    print("ELIGIBLE by category:")
+    for c in CATEGORIES:
+        print(f"   {report['eligible_by_category'][c]:2}  {c}")
+    print("EXCLUDED by reason:", report["excluded_by_reason"])
+    print("UNRESOLVED ELIGIBILITY (E2-unconfirmed):", report["unresolved_eligibility"])
+    print("PRIOR-FIRSTCALL (E6) excluded:", report["e6_excluded"])
+    print("VALIDATOR all_pass:", validator["all_pass"])
+    if re_report["errors"]:
+        print("ERRORS:", re_report["errors"]); sys.exit(1)
+    if not validator["all_pass"]:
+        print("CHECK FAIL:", {k: v for k, v in checks.items() if not v}); sys.exit(1)
+    print("OK")
+
+
+if __name__ == "__main__":
+    main()
