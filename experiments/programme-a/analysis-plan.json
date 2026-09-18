@@ -1,0 +1,74 @@
+{
+  "schema": "firstcall.programmeA.analysis_plan",
+  "version": "1.0.0",
+  "status": "PROSPECTIVE_DESIGN_FROZEN_BEFORE_DATA",
+  "primary": {
+    "estimand": "P_v (vendor-mean PROVEN_SUCCESS rate)",
+    "estimator": "equal-weight mean of per-vendor r_v",
+    "interval": "cluster bootstrap over vendors, >=10000 resamples, fixed bootstrap seed"
+  },
+  "wilson": {
+    "z_95": 1.959964,
+    "applied_to": ["pooled AFCR_run", "each per-vendor r_v"],
+    "center": "(phat + z^2/(2n)) / (1 + z^2/n)",
+    "half": "z*sqrt(phat*(1-phat)/n + z^2/(4n^2)) / (1 + z^2/n)",
+    "clamp": "[0,1]",
+    "n_zero_interval": "null (undefined, never [0,0])"
+  },
+  "near_zero_serialization_fix": {
+    "round_decimal_places": 6,
+    "snap_below_abs_1e-9_to_zero": true,
+    "store_as_fixed_precision_decimal_strings_not_floats": true,
+    "prevents_artifacts_like": "5.55e-17"
+  },
+  "variance_guard": {
+    "clamp_variance_term_nonnegative_before_sqrt": "max(phat*(1-phat), 0)",
+    "clamp_final_bounds": "[0,1]",
+    "prevents": "NaN/negative root at phat in {0,1}"
+  },
+  "unknown_handling": {
+    "primary": "excluded from success denominators; reported as UNK rate by sub-code",
+    "sub_codes": ["transport_exhaustion","incomplete_pagination","timing_ambiguity","identity_ambiguity","accepted_but_unobserved","verifier_path_disagreement","missing_integrity_evidence","rate_limited_after_wait_budget"],
+    "run_level_assignment_bounds": {"lower": "S/started", "upper": "(S+UNKNOWN)/started"},
+    "vendor_level_bounds": ["all-UNKNOWN-as-failure", "all-UNKNOWN-as-success"],
+    "no_causal_or_complete_cohort_claim_unless_bounds_tight": true
+  },
+  "missing_data_handling": {
+    "k_is_attempted_runs_not_eligible": true,
+    "per_vendor_r_v_uses_eligible_runs": true,
+    "zero_eligible_runs_vendor": "indeterminate: r_v undefined; EXCLUDED from P_v vendor-mean but count+fraction reported as a headline number; never scored 0; never silently dropped"
+  },
+  "ineligible_pre_execution_handling": {
+    "excluded_from_success_denominators": true,
+    "handled_by": "frozen replacement",
+    "decision_uses_public_docs_and_safe_read_only_only_never_agent_outcome": true,
+    "ineligibility_rate_is_a_reported_finding": true
+  },
+  "informativeness_guarantee": {
+    "all_pass": "P_v ~ 1 with tight upper interval",
+    "all_fail": "P_v ~ 0; EFFECT_FAILED reason-codes + stage attribution characterise where",
+    "mostly_unknown": "UNK-by-sub-code and indeterminate-vendor fraction are the headline; P_v over eligible subset with assignment bounds; never inflated",
+    "mostly_ineligible": "pre-execution ineligibility rate is the headline; frozen replacement keeps eligible cohort at N",
+    "no_regime_is_spoilage": true
+  },
+  "secondary_estimands": ["AFCR_run", "FA", "IVER", "FS", "UNK", "TTE_distribution_and_median", "ACT_distribution", "RESQ(must=0)"],
+  "stratification": {
+    "per_category_P_v": true,
+    "category_weighted_overall_P_v": "equal weight per category (pre-registered secondary)"
+  },
+  "sensitivity_analyses_pre_registered": [
+    "all UNKNOWN as failures (lower bound)",
+    "all UNKNOWN as successes (upper bound)",
+    "exclude vendors requiring rate-limit waits",
+    "daypart covariate",
+    "secondary-model arm if run",
+    "leave-one-vendor-out on P_v"
+  ],
+  "discipline": {
+    "no_post_hoc_denominator_changes": true,
+    "no_optional_stopping": true,
+    "no_test_swapped_after_seeing_data": true
+  },
+  "no_scoring_or_ranking_product": true,
+  "real_vendor_runs": 0
+}

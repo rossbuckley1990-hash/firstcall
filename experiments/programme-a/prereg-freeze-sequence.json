@@ -1,0 +1,43 @@
+{
+  "schema": "firstcall.programmeA.prereg_freeze_sequence",
+  "version": "1.0.0",
+  "status": "PROSPECTIVE_DESIGN",
+  "artefacts_to_freeze": [
+    "sample-frame snapshot file + source + date + retrieval method + SHA256",
+    "selection algorithm code + parameters + SHA256",
+    "RANDOMISATION_SEED (committed as hash first)",
+    "selected vendor list + full ordered draw + reserves (committed as hash first; plaintext only in sealed bundle)",
+    "journey mapping per vendor (object, effect, nonce field, fixtures, pre-existing setup)",
+    "agent configuration (model id+version, settings, tool policy, timeout, network policy) + SHA256",
+    "credential/configuration policy (scopes; supplied vs discovered; keyed fingerprints only, no secret values)",
+    "verifier specifications + code hash + passing hostile-offline-test hashes",
+    "outcome taxonomy + classifier + code hash",
+    "statistical analysis plan (Wilson params, bootstrap seed, sensitivity list)",
+    "exclusion/replacement rules",
+    "run IDs / run matrix (NxK) with seed-derived randomised order",
+    "evidence schema firstcall.programmeA.receipt.v1 + canonical-JSON hashing algorithm",
+    "code/test hashes (runner, verifier, classifier, analysis)"
+  ],
+  "freeze_1_boundary": {
+    "scope": "protocol + experiments/programme-a/*.json only",
+    "must_not_exist_yet": [
+      "sample-frame snapshot",
+      "deterministic vendor draw / RANDOMISATION_SEED value",
+      "selected vendor list (plaintext or hashed)",
+      "per-vendor journey mappings",
+      "vendor-specific apparatus (runner/verifier/fixtures)",
+      "any real vendor run, credential use, or outcome datum"
+    ],
+    "chronology": "Freeze 1 (protocol) -> Freeze 2 (frame & method) -> Freeze 3 (blind draw, hashed) -> Freeze 4 (apparatus & mappings from public docs) -> Freeze 5 (seal & reveal) -> execution",
+    "invariant": "science sealed before selection; vendor list hash-committed before reveal; editing Freeze-1 content after Freeze 2 voids dependent selection"
+  },
+  "freeze_sequence": [
+    {"freeze": 1, "name": "Protocol", "content": "this protocol + schemas hashed (estimand, journey standard, outcome taxonomy, run design, sample-frame RULES, analysis plan, freeze sequence, receipt schema)", "vendor_plaintext_exposed": false},
+    {"freeze": 2, "name": "Frame & method", "content": "snapshot, selection algorithm, RANDOMISATION_SEED as hash, SAP", "vendor_plaintext_exposed": false},
+    {"freeze": 3, "name": "Blind draw", "content": "run deterministic draw; commit HASH of ordered vendor list + reserves", "operability_inspection": false},
+    {"freeze": 4, "name": "Apparatus", "content": "runner/verifier/classifier/analysis code + hostile offline tests pass; per-vendor mappings from public docs only", "runs": false},
+    {"freeze": 5, "name": "Seal & reveal", "content": "reveal seed + vendor plaintext inside sealed bundle; verify matches Freeze-3 hash; only now eligibility checks then runs begin"}
+  ],
+  "invariant": "no real run before Freeze 5; any change to Sections 1-9 after Freeze 5 invalidates the cohort and requires new pre-registration; vendor selection can never be edited after outcomes visible",
+  "real_vendor_runs": 0
+}

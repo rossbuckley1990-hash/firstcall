@@ -1,0 +1,23 @@
+{
+  "schema": "firstcall.programmeA.receipt.v1",
+  "version": "1.0.0",
+  "status": "PROSPECTIVE_DESIGN_FROZEN_BEFORE_OUTCOMES",
+  "canonical_hashing": "versioned canonical JSON (sort_keys, no whitespace); receipt sealed by canonical_receipt_hash",
+  "groups": {
+    "identity": ["experiment", "programme=A", "vendor_id", "category", "run_id", "execution_nonce", "run_nonce", "block", "randomised_order", "start_utc", "end_utc", "monotonic_duration"],
+    "preregistration": ["design_hash", "sample_frame_hash", "selection_algorithm_hash", "randomisation_seed_commit_hash", "vendor_list_commit_hash", "journey_mapping_hash", "sap_hash", "verifier_spec_hash"],
+    "apparatus": ["source_file_hashes", "git_commit", "dirty_state_manifest", "runner_version", "verifier_version", "classifier_version", "policy_hash", "runtime_client_api_versions"],
+    "agent": ["requested_model", "observed_model_identity", "settings", "invocation_hash", "isolated_workspace_proof", "timeout", "tool_network_policy_hash"],
+    "configuration": ["allowed_variable_names", "presence_assertions", "supplied_vs_discovered", "account_test_mode_proof", "customer_credential_fingerprint", "verifier_credential_fingerprint", "no_secret_values"],
+    "journey": ["discover_evidence", "authenticate_evidence", "construct_request_prehash", "effect_attempt_count", "candidate_execution_observed", "operation_request_evidence", "synchronous_vendor_acceptance", "final_structured_claim", "generated_file_manifest_and_hashes"],
+    "verification": ["immutable_schedule", "all_attempt_records", "observation_paths", "full_pagination_coverage", "safe_response_projections", "claimed_ids", "independently_discovered_ids", "new_effect_set", "terminal_sweep_agreement", "path_agreement", "bounded_predicates"],
+    "result": ["outcome", "reason_code", "false_success_contradiction_code", "unknown_sub_code", "claim_effect_agreement", "eligibility", "unsafe_flags", "halt_reason", "exclusion_reason", "time_to_effect", "action_count"],
+    "supplemental_append_only": ["later_authoritative_observation", "upgrade_from_unknown_to_proven", "bound_to_primary_receipt_hash", "never_mutates_primary"],
+    "integrity": ["redactions", "safe_byte_sizes_and_digests", "evidence_file_hashes", "canonical_receipt_hash"]
+  },
+  "synchronous_vendor_acceptance_fields": ["http_status", "vendor_error_or_ok_code", "vendor_assigned_object_id"],
+  "false_success_contradiction_codes": ["C-DENY", "C-PRED", "C-DUP", "C-AUDIT"],
+  "unknown_sub_codes": ["transport_exhaustion", "incomplete_pagination", "timing_ambiguity", "identity_ambiguity", "accepted_but_unobserved", "verifier_path_disagreement", "missing_integrity_evidence", "rate_limited_after_wait_budget"],
+  "credential_safety": "credentials never in argv/repo/prompts/unredacted traces; keyed fingerprints only; scan-in-memory before persist; halt if safe sanitization loses verifiability",
+  "real_vendor_runs": 0
+}

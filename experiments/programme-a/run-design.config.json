@@ -1,0 +1,55 @@
+{
+  "schema": "firstcall.programmeA.run_design",
+  "version": "1.0.0",
+  "status": "PROSPECTIVE_DESIGN_FROZEN_BEFORE_OUTCOMES",
+  "vendors_N": 24,
+  "runs_per_vendor_k": 5,
+  "k_is_attempted_runs_not_eligible": true,
+  "target_attempted_runs": 120,
+  "note_attrition": "UNKNOWN attrition can make eligible runs < 5 per vendor; per-vendor r_v uses eligible runs; zero-eligible vendors are indeterminate (reported, not scored 0); no top-up / no optional stopping",
+  "runs_per_vendor_rationale": "inference is vendor-level; precision comes from N; k=5 gives per-vendor rates in {0,.2,.4,.6,.8,1} and a usable within-vendor variance; >5 wastes budget, <3 cannot separate flaky from hard",
+  "tool_version_pinning": {
+    "sdk_cli_mcp_versions_pinned_identical_across_a_vendors_runs": true,
+    "mid_cohort_version_change": "halts and is recorded, never silently mixed"
+  },
+  "model": {
+    "fixed_and_frozen": true,
+    "primary_single_model_id_plus_version": "FROZEN_AT_PREREG",
+    "served_model_identity_captured_per_run": true,
+    "drift_or_identity_change": "halts comparison for affected runs (counted, excluded)",
+    "secondary_model_arm": "optional pre-registered sensitivity only; analysed separately; never pooled into P_v"
+  },
+  "settings": {
+    "temperature": "low/deterministic where supported (frozen exact value at prereg)",
+    "frozen": true
+  },
+  "isolation": {
+    "fresh_context_per_run": true,
+    "workspace_reset_per_run": true,
+    "isolated_home_and_config": true,
+    "no_inherited_credentials_beyond_frozen_allowlist": true,
+    "unique_nonce_per_run": true,
+    "pre_run_inventory_snapshot_per_vendor": true
+  },
+  "scheduling": {
+    "order_randomised_across_full_NxK_matrix_using_frozen_seed": true,
+    "interleave_vendors_and_categories": true,
+    "no_all_of_one_vendor_then_next": true,
+    "spread_across_dayparts_min": 2,
+    "per_vendor_min_spacing_between_runs": true,
+    "rate_limit_429_backoff_is_harness_wait_not_rescue": true,
+    "run_blocked_by_rate_limit_after_wait_budget": "UNKNOWN (not EFFECT_FAILED)"
+  },
+  "account_isolation": {
+    "one_sandbox_account_per_vendor_allowed_iff": [
+      "test objects cheap and reversible",
+      "nonce + temporal boundary make runs independently verifiable",
+      "no run observes another run's objects as its own",
+      "rate/quota supports k runs"
+    ],
+    "else": "provision k isolated sub-accounts OR mark vendor INELIGIBLE_PRE_EXECUTION and replace"
+  },
+  "stopping_rule": "run the full frozen N x k attempts regardless of interim rates; NO early stop for favourable or unfavourable results; halts occur ONLY for safety or apparatus faults, are recorded, and are reported; never stop for outcome",
+  "cheapest_defensible": "~24x5 runs, one frozen model, sandbox reversible effects, one account per vendor where safe, evidence captured once/run, no pilots folded in, no optional stopping",
+  "real_vendor_runs": 0
+}
