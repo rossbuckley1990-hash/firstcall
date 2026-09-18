@@ -40,3 +40,23 @@ verified successful first product outcome.
 ## Principle
 
 > Agent says success != proof of success.
+
+## v0.4 benchmark integrity
+
+RESEND-001 Phase 3 is implemented. Future executions write under
+`artifacts/resend-001/executions/<execution_nonce>/<run_id>/`, with
+content-addressed receipts and a cohort summary. Historical evidence is immutable.
+
+Each run preserves captured Codex exec JSONL, stderr, completed command events,
+a sorted workspace manifest, and safe copies of generated files before cleanup.
+`candidate_execution_observed` means at least one completed `command_execution`
+event was observed; it does not establish that the integration or vendor effect
+succeeded. Agent prose and result claims cannot set this field.
+
+Manifests record observed byte sizes and SHA256 hashes, plus separate hashes for
+persisted copies. Caches, virtual environments, bytecode, internal metadata, and
+all symlinks are excluded. Both run credentials and repository secret patterns
+are checked before persistence; redactions and omitted unsafe paths are explicit
+in `evidence_integrity`. Receipt proofs bind temporal identity, apparatus and
+credential provenance, commands, and evidence hashes. Cohort summary proofs bind
+the execution nonce, provenance, and ordered run proofs.
