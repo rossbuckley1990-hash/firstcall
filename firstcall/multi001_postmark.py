@@ -1,12 +1,13 @@
 """MULTI-001 baseline; explicit invocation: python -m firstcall.multi001_postmark --execute.
 
-No onboarding material is added: the frozen Postmark apparatus contains only
-its task, policy and subject contract. Importing this module does no live work.
+Each fresh workspace receives the exact pinned official onboarding snapshot.
+Importing this module does no live work.
 """
 from __future__ import annotations
 
 import argparse
 from dataclasses import asdict
+from hashlib import sha256
 import json
 import os
 from pathlib import Path
@@ -29,6 +30,8 @@ ROOT = Path(__file__).resolve().parents[1]
 EXP = ROOT / 'experiments/multi-001'
 OUT = ROOT / 'artifacts/multi-001/postmark/baseline'
 RUN_IDS = ('R01', 'R02', 'R03')
+ONBOARDING_SHA256 = '8410998e0f53c0d56b8804fab215dce9955dbcb6a81d70b2bd88a39cee2ca4cc'
+ONBOARDING_FILENAME = 'postmark-official-get-started.html'
 
 
 def frozen_inputs():
@@ -107,6 +110,13 @@ def run_one(*, run_id, nonce, token, task, contract, provenance, directory, runn
     safety = EvidenceSafety(token)
     workspace = create_workspace()
     try:
+        onboarding = (EXP / 'postmark/official-onboarding/get-started.html').read_bytes()
+        if sha256(onboarding).hexdigest() != ONBOARDING_SHA256:
+            raise RuntimeError('official onboarding source SHA256 mismatch')
+        supplied = workspace.path / ONBOARDING_FILENAME
+        supplied.write_bytes(onboarding)
+        if file_sha256(supplied) != ONBOARDING_SHA256:
+            raise RuntimeError('official onboarding workspace SHA256 mismatch')
         started_at = utc_now()
         try:
             agent = runner.run(cwd=workspace.path, prompt=prompt, experiment_env={

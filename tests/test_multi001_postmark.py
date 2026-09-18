@@ -1,6 +1,8 @@
 """Mock-only cohort checks; subprocess and network are blocked in every test."""
 from hashlib import sha256
 import json
+from pathlib import Path
+import shutil
 from types import SimpleNamespace
 from unittest.mock import Mock
 
@@ -13,16 +15,19 @@ from firstcall.postmark_preflight import PostmarkPreflight
 
 TOKEN = 'synthetic-postmark-credential'
 NONCE = 'abcdef123456'
+ONBOARDING_SHA256 = '8410998e0f53c0d56b8804fab215dce9955dbcb6a81d70b2bd88a39cee2ca4cc'
+ONBOARDING_FILENAME = 'postmark-official-get-started.html'
 
 
 @pytest.fixture(autouse=True)
 def no_live_work(monkeypatch):
-    def blocked(*args, **kwargs):
-        raise AssertionError('real processes/network forbidden')
+    blocked = Mock(side_effect=AssertionError('real processes/network forbidden'))
     monkeypatch.setattr('subprocess.run', blocked)
     monkeypatch.setattr('subprocess.Popen', blocked)
     monkeypatch.setattr('socket.socket', blocked)
     monkeypatch.setattr('urllib.request.urlopen', blocked)
+    yield
+    blocked.assert_not_called()
 
 
 @pytest.fixture
@@ -37,8 +42,19 @@ def cohort(tmp_path, monkeypatch):
     monkeypatch.setattr(r, 'new_execution_nonce', nonce)
     preflight = Mock(return_value=PostmarkPreflight(True, 'Sandbox', 123, 'sandbox confirmed'))
     monkeypatch.setattr(r, 'inspect_server', preflight)
-    state = SimpleNamespace(paths=[], calls=[], timeline=[], messages='one', claim='true',
+    state = SimpleNamespace(paths=[], workspaces=[], supplied=[], calls=[], timeline=[],
+                            messages='one', claim='true',
                             exit_code=0, leak=None, preflight=preflight, nonce=nonce)
+    frozen_onboarding = (r.EXP / 'postmark/official-onboarding/get-started.html').read_bytes()
+    create_workspace = r.create_workspace
+
+    def fresh_workspace():
+        workspace = create_workspace()
+        assert list(workspace.path.iterdir()) == []
+        state.workspaces.append(workspace.path)
+        return workspace
+
+    monkeypatch.setattr(r, 'create_workspace', fresh_workspace)
 
     def now():
         state.timeline.append('started_at')
@@ -48,7 +64,11 @@ def cohort(tmp_path, monkeypatch):
     def run(**kwargs):
         state.timeline.append('customer')
         path = kwargs['cwd']
-        assert list(path.iterdir()) == []
+        assert list(path.iterdir()) == [path / ONBOARDING_FILENAME]
+        supplied = (path / ONBOARDING_FILENAME).read_bytes()
+        assert supplied == frozen_onboarding
+        assert sha256(supplied).hexdigest() == ONBOARDING_SHA256
+        state.supplied.append(supplied)
         assert all(not p.exists() for p in state.paths)
         state.paths.append(path)
         state.calls.append(kwargs)
@@ -137,6 +157,68 @@ def test_three_fresh_ordered_runs_shared_nonce_exact_task_and_no_intervention(co
         assert receipt['candidate_execution_observed'] is True
         assert receipt['verification']['message_id'] == 'verified-id'
     assert {p: p.read_bytes() for p in frozen_before} == frozen_before
+
+
+def test_onboarding_source_hash_is_pinned():
+    source = r.EXP / 'postmark/official-onboarding/get-started.html'
+    manifest = json.loads(source.with_name('manifest.json').read_bytes())
+    assert r.ONBOARDING_SHA256 == ONBOARDING_SHA256
+    assert r.ONBOARDING_FILENAME == ONBOARDING_FILENAME
+    assert sha256(source.read_bytes()).hexdigest() == ONBOARDING_SHA256
+    assert manifest['sha256'] == ONBOARDING_SHA256
+    assert len(source.read_bytes()) == manifest['bytes']
+
+
+def test_same_exact_onboarding_bytes_delivered_and_captured_for_each_run(cohort):
+    frozen = (r.EXP / 'postmark/official-onboarding/get-started.html').read_bytes()
+    summary = cohort.execute()
+    assert cohort.supplied == [frozen] * 3
+    for run_id in r.RUN_IDS:
+        directory = r.OUT / NONCE / run_id
+        relative = 'workspace/' + ONBOARDING_FILENAME
+        assert (directory / relative).read_bytes() == frozen
+        manifest = json.loads((directory / 'workspace-manifest.json').read_bytes())
+        entry = next(item for item in manifest if item['path'] == ONBOARDING_FILENAME)
+        assert entry['sha256'] == entry['persisted_sha256'] == ONBOARDING_SHA256
+        assert entry['bytes'] == entry['persisted_bytes'] == len(frozen)
+        evidence = summary['evidence_hashes'][run_id]['files']
+        assert next(item for item in evidence if item['path'] == relative)['sha256'] == ONBOARDING_SHA256
+
+
+@pytest.mark.parametrize('failed_run', [1, 2, 3])
+@pytest.mark.parametrize('corruption', ['source', 'workspace'])
+def test_onboarding_hash_mismatch_fails_closed_before_affected_customer(
+    cohort, monkeypatch, tmp_path, failed_run, corruption,
+):
+    exp = tmp_path / 'frozen-copy'
+    shutil.copytree(r.EXP, exp)
+    monkeypatch.setattr(r, 'EXP', exp)
+    source = exp / 'postmark/official-onboarding/get-started.html'
+    create_workspace = r.create_workspace
+    write_bytes = Path.write_bytes
+
+    def fresh_workspace():
+        workspace = create_workspace()
+        if corruption == 'source' and len(cohort.workspaces) == failed_run:
+            source.write_bytes(source.read_bytes() + b'\n')
+        return workspace
+
+    def corrupt_copy(path, data):
+        if (corruption == 'workspace' and path.name == ONBOARDING_FILENAME
+                and len(cohort.workspaces) == failed_run):
+            data += b'\n'
+        return write_bytes(path, data)
+
+    monkeypatch.setattr(r, 'create_workspace', fresh_workspace)
+    monkeypatch.setattr(Path, 'write_bytes', corrupt_copy)
+    with pytest.raises(RuntimeError, match=f'official onboarding {corruption} SHA256 mismatch'):
+        cohort.execute()
+    assert cohort.runner.run.call_count == failed_run - 1
+    assert cohort.timeline == ['started_at', 'customer', 'verify'] * (failed_run - 1)
+    assert len(cohort.workspaces) == failed_run
+    assert all(not path.exists() for path in cohort.workspaces)
+    assert not (r.OUT / NONCE / f'R{failed_run:02d}').exists()
+    assert not (r.OUT / NONCE / 'summary.json').exists()
 
 
 @pytest.mark.parametrize('safe,delivery', [(False, 'Live'), (True, 'Live'), (True, None), (False, 'Sandbox')])
