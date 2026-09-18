@@ -1,0 +1,12 @@
+{
+  "format": "FIRSTCALL MULTI-001 POSTMARK <execution_nonce> <run_id>",
+  "run_ids": [
+    "R01",
+    "R02",
+    "R03"
+  ],
+  "nonce_scope": "one nonce shared by the complete three-run Postmark discovery cohort",
+  "recipient": "test@blackhole.postmarkapp.com",
+  "body_equals_subject": true,
+  "maximum_send_cardinality": 1
+}
