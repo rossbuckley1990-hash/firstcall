@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from dataclasses import asdict
 from hashlib import sha256
 from pathlib import Path
 import json
@@ -7,17 +8,17 @@ import os
 import re
 import shutil
 import subprocess
-import uuid
+import secrets
+from datetime import datetime, timezone
 
 from firstcall.agents.codex_live import (
     CodexLiveRunner,
 )
 from firstcall.agents.codex_events import (
     extract_codex_evidence,
+    extract_completed_commands,
 )
-from firstcall.runtime.files import (
-    read_text_files,
-)
+from firstcall.journey_evidence import EvidenceSafety, capture_journey
 from firstcall.runtime.workspace import (
     create_workspace,
 )
@@ -40,32 +41,142 @@ def digest(text: str) -> str:
     ).hexdigest()
 
 
-def redact(
-    text: str,
-    secret: str,
-) -> str:
-    text = text.replace(
-        secret,
-        "[REDACTED]",
+def git_output(*args: str) -> str:
+    return subprocess.run(
+        ["git", *args],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout.strip()
+
+
+def credential_fingerprint(value: str) -> str:
+    return sha256(
+        value.encode()
+    ).hexdigest()[:12]
+
+
+def utc_now() -> str:
+    return datetime.now(
+        timezone.utc
+    ).isoformat()
+
+
+def file_sha256(path: Path) -> str:
+    return sha256(path.read_bytes()).hexdigest()
+
+
+def tracked_repo_dirty() -> bool:
+    """Return whether tracked repository content differs from HEAD."""
+    unstaged = subprocess.run(
+        ["git", "diff", "--quiet", "HEAD", "--"],
+        cwd=ROOT,
+        check=False,
+    )
+    staged = subprocess.run(
+        ["git", "diff", "--cached", "--quiet", "HEAD", "--"],
+        cwd=ROOT,
+        check=False,
     )
 
-    return re.sub(
-        r"\bre_[A-Za-z0-9-]{12,}\b",
-        "[REDACTED_RESEND_KEY]",
-        text,
+    if unstaged.returncode not in (0, 1):
+        raise RuntimeError(
+            "unable to determine unstaged repository state"
+        )
+    if staged.returncode not in (0, 1):
+        raise RuntimeError(
+            "unable to determine staged repository state"
+        )
+
+    return (
+        unstaged.returncode == 1
+        or staged.returncode == 1
+    )
+
+
+def apparatus_provenance() -> dict[str, object]:
+    experiment = ROOT / "experiments" / "resend-001"
+
+    docs = experiment / "docs.md"
+    task = experiment / "task.txt"
+    policy = experiment / "policy.json"
+
+    return {
+        "apparatus_commit": git_output(
+            "rev-parse",
+            "HEAD",
+        ),
+        "apparatus_dirty": tracked_repo_dirty(),
+        "docs_sha256": file_sha256(docs),
+        "task_sha256": file_sha256(task),
+        "policy_sha256": file_sha256(policy),
+    }
+
+
+def credential_provenance(
+    agent_key: str,
+    verifier_key: str,
+) -> dict[str, object]:
+    if not agent_key:
+        raise RuntimeError(
+            "RESEND_API_KEY is required"
+        )
+
+    if not verifier_key:
+        raise RuntimeError(
+            "FIRSTCALL_RESEND_VERIFIER_KEY is required"
+        )
+
+    if agent_key == verifier_key:
+        raise RuntimeError(
+            "agent and verifier credentials must differ"
+        )
+
+    return {
+        "agent_credential_fingerprint":
+            credential_fingerprint(agent_key),
+        "verifier_credential_fingerprint":
+            credential_fingerprint(verifier_key),
+        "credential_separation": True,
+    }
+
+
+def new_execution_nonce() -> str:
+    return secrets.token_hex(6)
+
+
+def build_run_subject(
+    execution_nonce: str,
+    run_id: str,
+) -> str:
+    return (
+        f"FIRSTCALL RESEND-001 "
+        f"{execution_nonce} {run_id}"
     )
 
 
 def run_one(
+    provenance: dict[str, object],
+    execution_nonce: str,
     number: int,
     key: str,
     version: str,
 ) -> dict:
 
     run_id = f"R{number:02d}"
+    if not re.fullmatch(r"[0-9a-f]{12}", execution_nonce):
+        raise ValueError("invalid execution nonce")
+    verifier_key = os.environ["FIRSTCALL_RESEND_VERIFIER_KEY"]
+    credentials = credential_provenance(key, verifier_key)
+    if any(provenance.get(name) != value for name, value in credentials.items()):
+        raise RuntimeError("credential provenance mismatch")
+    safety = EvidenceSafety(key, verifier_key)
+    destination = OUT / "executions" / execution_nonce / run_id
 
-    subject = (
-        f"FIRSTCALL RESEND-001 {run_id}"
+    subject = build_run_subject(
+        execution_nonce,
+        run_id,
     )
 
     docs = (
@@ -91,6 +202,7 @@ def run_one(
             timeout=300
         )
 
+        started_at = utc_now()
         agent = runner.run(
             cwd=workspace.path,
             prompt=prompt,
@@ -101,53 +213,27 @@ def run_one(
         # FIRSTCALL DOES NOT EXECUTE
         # integration.py here.
 
-        verifier_key = os.environ[
-            "FIRSTCALL_RESEND_VERIFIER_KEY"
-        ]
+        commands = extract_completed_commands(agent.events)
+        journey, generated, forbidden, manifest = capture_journey(
+            workspace.path, destination, agent, commands, safety,
+        )
+        journey["base_path"] = f"executions/{execution_nonce}/{run_id}"
+        candidate_commands = safety.object(
+            [asdict(command) for command in commands], "candidate-commands.json",
+        )
+        secret_leaked = bool(safety.redacted)
+        docs_unchanged = any(
+            entry["path"] == "docs.md" and entry["sha256"] == digest(docs)
+            for entry in manifest
+        )
+        codex_evidence = extract_codex_evidence(agent.stdout)
 
         verifier = ResendVerifier(
             api_key=verifier_key,
             subject=subject,
+            created_after=started_at,
         )
-
         verification = verifier.verify()
-
-        generated_raw = read_text_files(
-            workspace.path
-        )
-
-        combined = (
-            agent.stdout
-            + "\n"
-            + agent.stderr
-            + "\n"
-            + "\n".join(
-                generated_raw.values()
-            )
-        )
-
-        secret_leaked = key in combined
-
-        forbidden = [
-            name
-            for name in generated_raw
-            if (
-                name == ".env"
-                or name.startswith(".env.")
-            )
-        ]
-
-        docs_unchanged = (
-            (
-                workspace.path
-                / "docs.md"
-            ).read_text()
-            == docs
-        )
-
-        codex_evidence = extract_codex_evidence(
-            agent.stdout
-        )
 
         claim = codex_evidence.claim
 
@@ -179,16 +265,19 @@ def run_one(
         else:
             verdict = "EFFECT_FAILED"
 
-        generated = {
-            name: redact(
-                content,
-                key,
-            )
-            for name, content
-            in generated_raw.items()
-        }
-
         receipt = {
+            "apparatus_commit": provenance["apparatus_commit"],
+            "apparatus_dirty": provenance["apparatus_dirty"],
+            "task_sha256": provenance["task_sha256"],
+            "policy_sha256": provenance["policy_sha256"],
+            "agent_credential_fingerprint": provenance["agent_credential_fingerprint"],
+            "verifier_credential_fingerprint": provenance["verifier_credential_fingerprint"],
+            "credential_separation": provenance["credential_separation"],
+            "execution_nonce": execution_nonce,
+            "started_at": started_at,
+            "candidate_commands": candidate_commands,
+            "candidate_execution_observed": bool(candidate_commands),
+            "journey_evidence": journey,
             "experiment":
                 "RESEND-001",
             "run_number":
@@ -202,7 +291,7 @@ def run_one(
             "prompt_sha256":
                 digest(prompt),
             "docs_sha256":
-                digest(docs),
+                provenance["docs_sha256"],
             "controls": {
                 "fresh_workspace":
                     True,
@@ -224,23 +313,12 @@ def run_one(
                     claim.ok,
                 "claim_error":
                     claim.error,
-                "candidate_execution_observed":
-                    codex_evidence.candidate_execution_observed,
-                "candidate_exit_code":
-                    codex_evidence.candidate_exit_code,
-                "candidate_commands": [
-                    {
-                        "command": command.command,
-                        "exit_code": command.exit_code,
-                        "output": redact(
-                            command.output or "",
-                            key,
-                        ),
-                        "source": command.source,
-                    }
-                    for command
-                    in codex_evidence.candidate_commands
-                ],
+                "candidate_execution_observed": bool(candidate_commands),
+                "candidate_exit_code": next(
+                    (c.exit_code for c in reversed(commands) if c.exit_code is not None),
+                    None,
+                ),
+                "candidate_commands": candidate_commands,
             },
             "verification": {
                 "observed":
@@ -266,6 +344,10 @@ def run_one(
                 verdict,
         }
 
+        receipt = safety.object(receipt, "receipt")
+        receipt["evidence_integrity"] = safety.integrity()
+        receipt["journey_evidence"]["evidence_integrity"] = safety.integrity()
+
         canonical = json.dumps(
             receipt,
             sort_keys=True,
@@ -284,19 +366,9 @@ def run_one(
             sort_keys=True,
         )
 
-        if key in serialized:
-            raise RuntimeError(
-                "CREDENTIAL ENTERED RECEIPT"
-            )
-
-        path = (
-            OUT
-            / f"{number:02d}-{proof}.json"
-        )
-
-        path.write_text(
-            serialized
-        )
+        safety.check(serialized.encode())
+        path = destination / f"receipt-{proof}.json"
+        path.write_text(serialized)
 
         return receipt
 
@@ -314,17 +386,25 @@ def main():
             "RESEND_API_KEY not loaded"
         )
 
+    verifier_key = os.environ.get("FIRSTCALL_RESEND_VERIFIER_KEY", "")
+    provenance = apparatus_provenance()
+    provenance.update(credential_provenance(key, verifier_key))
+    safety = EvidenceSafety(key, verifier_key)
+    execution_nonce = new_execution_nonce()
+    execution_dir = OUT / "executions" / execution_nonce
+    execution_dir.mkdir(parents=True, exist_ok=False)
+
     from firstcall.preflight import (
         run_preflight,
-        write_preflight_receipt,
     )
 
     preflight = run_preflight(key)
 
-    write_preflight_receipt(
-        preflight,
-        OUT / "preflight.json",
-    )
+    safe_preflight = safety.object(asdict(preflight), "preflight.json")
+    safe_preflight["evidence_integrity"] = safety.integrity()
+    preflight_bytes = json.dumps(safe_preflight, indent=2, sort_keys=True).encode()
+    safety.check(preflight_bytes)
+    (execution_dir / "preflight.json").write_bytes(preflight_bytes)
 
     print()
     print("HARNESS PREFLIGHT")
@@ -401,9 +481,11 @@ def main():
         )
 
         result = run_one(
-            i,
-            key,
-            version,
+            number=i,
+            key=key,
+            version=version,
+            execution_nonce=execution_nonce,
+            provenance=provenance,
         )
 
         results.append(
@@ -494,6 +576,8 @@ def main():
     )
 
     summary = {
+        **provenance,
+        "execution_nonce": execution_nonce,
         "experiment":
             "RESEND-001",
         "runs":
@@ -518,6 +602,9 @@ def main():
         ],
     }
 
+    summary = safety.object(summary, "summary")
+    summary["evidence_integrity"] = safety.integrity()
+
     canonical = json.dumps(
         summary,
         sort_keys=True,
@@ -528,14 +615,10 @@ def main():
         "proof_sha256"
     ] = digest(canonical)
 
-    (
-        OUT / "summary.json"
-    ).write_text(
-        json.dumps(
-            summary,
-            indent=2,
-            sort_keys=True,
-        )
+    serialized_summary = json.dumps(summary, indent=2, sort_keys=True)
+    safety.check(serialized_summary.encode())
+    (execution_dir / f"summary-{summary['proof_sha256']}.json").write_text(
+        serialized_summary
     )
 
 
