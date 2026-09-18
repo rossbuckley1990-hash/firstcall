@@ -1,9 +1,13 @@
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import datetime
 import json
+import math
+import re
 import subprocess
+import time
 from typing import Any
 
 
@@ -22,7 +26,13 @@ class PostmarkVerifier:
     Independent Postmark vendor-side verifier.
 
     Verification requires exactly one matching outbound message created
-    at or after the current FIRSTCALL run boundary.
+    at or after the current FIRSTCALL run boundary. An optional candidate ID
+    constrains independent evidence; it is never evidence itself. By default,
+    observe immediately, then after each of two five-second waits. Return on
+    success or conclusive unsafe/malformed evidence. Each request has a ten-
+    second timeout (at most 40 seconds of requests + waits, plus local overhead).
+    No send is performed. Historical cohort pins must not be updated to this
+    changed measurement protocol.
     """
 
     def __init__(
@@ -33,7 +43,27 @@ class PostmarkVerifier:
         recipient: str,
         created_after: str,
         attempts: int = 3,
+        retry_delay: float = 5.0,
+        wait: Callable[[float], None] | None = None,
+        expected_message_id: str | None = None,
     ) -> None:
+        if type(attempts) is not int or attempts < 1:
+            raise ValueError("attempts must be a positive integer")
+        if not math.isfinite(retry_delay) or retry_delay <= 0:
+            raise ValueError("retry_delay must be finite and positive")
+        if expected_message_id is not None and (
+            not isinstance(expected_message_id, str)
+            or re.fullmatch(
+                r"[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}",
+                expected_message_id,
+            ) is None
+        ):
+            raise ValueError("expected_message_id must be a canonical UUID")
+        self.expected_message_id = (
+            expected_message_id.lower() if expected_message_id is not None else None
+        )
+        self.retry_delay = retry_delay
+        self.wait = wait if wait is not None else time.sleep
         self.server_token = server_token
         self.subject = subject
         self.recipient = recipient
@@ -42,9 +72,10 @@ class PostmarkVerifier:
 
     @staticmethod
     def _parse_time(value: str) -> datetime:
-        return datetime.fromisoformat(
-            value.replace("Z", "+00:00")
-        )
+        parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+        if parsed.utcoffset() is None:
+            raise ValueError("Postmark timestamps require a timezone")
+        return parsed
 
     def _list(self) -> dict[str, Any]:
         completed = subprocess.run(
@@ -52,6 +83,8 @@ class PostmarkVerifier:
                 "curl",
                 "-sS",
                 "--fail-with-body",
+                "--max-time",
+                "10",
                 "-H",
                 (
                     "X-Postmark-Server-Token: "
@@ -66,6 +99,7 @@ class PostmarkVerifier:
             capture_output=True,
             text=True,
             check=False,
+            timeout=10,
         )
 
         if completed.returncode != 0:
@@ -87,6 +121,11 @@ class PostmarkVerifier:
 
         return payload
 
+    def _failure(self, reason: str) -> PostmarkObservation:
+        return PostmarkObservation(
+            False, None, self.subject, self.recipient, None, reason,
+        )
+
     def verify(self) -> PostmarkObservation:
         boundary = self._parse_time(
             self.created_after
@@ -94,12 +133,24 @@ class PostmarkVerifier:
 
         last_reason = "vendor effect not observed"
 
-        for _ in range(self.attempts):
+        for attempt in range(self.attempts):
+            if attempt:
+                self.wait(self.retry_delay)
             try:
                 payload = self._list()
-            except RuntimeError as exc:
-                last_reason = str(exc)
+            except (RuntimeError, OSError, subprocess.TimeoutExpired) as exc:
+                # Never copy transport exceptions/argv (which can contain the
+                # server token) into an observation or receipt.
+                if isinstance(exc, RuntimeError) and str(exc) in {
+                    "Postmark verifier received invalid JSON",
+                    "Postmark verifier received malformed response",
+                }:
+                    return self._failure(str(exc))
+                last_reason = "Postmark verification request failed"
                 continue
+
+            if not isinstance(payload, dict):
+                return self._failure("malformed Postmark message list")
 
             messages = payload.get("Messages")
 
@@ -115,25 +166,37 @@ class PostmarkVerifier:
                     ),
                 )
 
+            # A truncated page cannot establish exactly one effect. Keep the
+            # existing endpoint; fail closed instead of inventing pagination.
+            total = payload.get("TotalCount", len(messages))
+            if type(total) is not int or total != len(messages) or len(messages) >= 100:
+                return self._failure("malformed Postmark message list")
+
             matches: list[dict[str, Any]] = []
 
             for item in messages:
-                if not isinstance(item, dict):
-                    continue
+                if not isinstance(item, dict) or not isinstance(item.get("Subject"), str):
+                    return self._failure("malformed Postmark message list")
 
                 if item.get("Subject") != self.subject:
                     continue
 
                 recipients = item.get("Recipients")
 
-                if isinstance(recipients, list):
+                if "Recipients" in item:
+                    if not isinstance(recipients, list) or not all(
+                        isinstance(r, str) for r in recipients
+                    ):
+                        return self._failure("malformed Postmark message list")
                     recipient_match = (
                         self.recipient in recipients
                     )
-                else:
+                elif isinstance(item.get("To"), str):
                     recipient_match = (
                         item.get("To") == self.recipient
                     )
+                else:
+                    return self._failure("malformed Postmark message list")
 
                 if not recipient_match:
                     continue
@@ -147,14 +210,14 @@ class PostmarkVerifier:
                     received_at,
                     str,
                 ):
-                    continue
+                    return self._failure("malformed Postmark message list")
 
                 try:
                     observed_at = self._parse_time(
                         received_at
                     )
                 except ValueError:
-                    continue
+                    return self._failure("malformed Postmark message list")
 
                 if observed_at < boundary:
                     continue
@@ -175,6 +238,8 @@ class PostmarkVerifier:
                         ),
                     )
 
+                if not isinstance(item.get("MessageID"), str) or not item["MessageID"]:
+                    return self._failure("malformed Postmark message list")
                 matches.append(item)
 
                 if len(matches) > 1:
@@ -192,6 +257,11 @@ class PostmarkVerifier:
 
             if len(matches) == 1:
                 match = matches[0]
+                # Count the entire subject/recipient cohort BEFORE applying
+                # the untrusted ID constraint: an ID must never hide a duplicate.
+                if (self.expected_message_id is not None
+                        and match["MessageID"].lower() != self.expected_message_id):
+                    return self._failure("vendor-side MessageID mismatch")
 
                 return PostmarkObservation(
                     observed=True,

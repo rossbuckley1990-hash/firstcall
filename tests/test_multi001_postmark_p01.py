@@ -534,7 +534,6 @@ def test_frozen_files_and_historical_baseline_evidence_untouched(cohort):
 
 @pytest.mark.parametrize('relative,expected', [
     ('firstcall/multi001_postmark.py', '47557898ff255d8d244971194a51ff8b1cf4494b851affea1f6832c373e705e3'),
-    ('firstcall/verifiers/postmark.py', '7ac6b91fc78190e566e887e7bfaf6e105b049f676919c77e4b81eaa350ef9cf6'),
     ('firstcall/postmark_preflight.py', '967f92f90dc49cb87ed52056d14e32203624fffc0cfa81dbbcc63ee547570ddc'),
     ('firstcall/agents/codex_live.py', '1265f353e531c7940e09203ea6a63e5ed76d63a4a9da79ee3f1a7cc84b2c79e0'),
     ('firstcall/agents/codex_events.py', 'c61e063a85499e2a46b26df4e4d580590bf43aab8fa2b5edcb9500a297f2eb9c'),
@@ -546,3 +545,12 @@ def test_baseline_apparatus_semantics_unchanged(relative, expected):
 
 def test_p01_output_cannot_rewrite_baseline():
     assert r.OUT == r.ROOT / 'artifacts/multi-001/postmark/p01-counterfactual'
+
+
+def test_historical_verifier_pin_remains_frozen_after_repair():
+    expected = '7ac6b91fc78190e566e887e7bfaf6e105b049f676919c77e4b81eaa350ef9cf6'
+    receipts = sorted((r.ROOT / 'artifacts/multi-001/postmark/p01-counterfactual').glob('*/P01-R*/receipt.json'))
+    assert receipts
+    for path in receipts:
+        assert json.loads(path.read_bytes())['apparatus_files']['firstcall/verifiers/postmark.py'] == expected
+    assert sha256((r.ROOT / 'firstcall/verifiers/postmark.py').read_bytes()).hexdigest() != expected

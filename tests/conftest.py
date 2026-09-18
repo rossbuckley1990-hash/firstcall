@@ -96,3 +96,10 @@ def resend_run(tmp_path, monkeypatch):
     state.execute = execute
     state.out = r.OUT
     return state
+
+
+@pytest.fixture(autouse=True)
+def postmark_wait_is_mocked(monkeypatch):
+    # Retry scheduling is asserted with an injected recorder in verifier tests.
+    # Mock-only cohort tests must never spend wall time waiting for a vendor.
+    monkeypatch.setattr('firstcall.verifiers.postmark.time', SimpleNamespace(sleep=Mock()))
