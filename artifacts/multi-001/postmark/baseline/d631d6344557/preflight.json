@@ -1,0 +1,16 @@
+{
+  "content_sha256": "9b186bfeefa158b0159c96ac64f79bf5fffd8c5674c397c26eb7cb822836778e",
+  "delivery_type": "Sandbox",
+  "evidence_integrity": {
+    "checks": [
+      "exact_agent_credential",
+      "exact_verifier_credential",
+      "repository_secret_patterns"
+    ],
+    "redacted_locations": [],
+    "status": "clean"
+  },
+  "reason": "Postmark Sandbox server confirmed",
+  "safe": true,
+  "server_id": 21000061
+}

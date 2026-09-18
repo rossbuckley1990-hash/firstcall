@@ -1,0 +1,222 @@
+{
+  "afcr": 0.0,
+  "apparatus_commit": "5ac92e1d3971bba8a061405d6c9173b1baaed218",
+  "apparatus_dirty": false,
+  "apparatus_files": {
+    "firstcall/agents/codex_events.py": "c61e063a85499e2a46b26df4e4d580590bf43aab8fa2b5edcb9500a297f2eb9c",
+    "firstcall/agents/codex_live.py": "1265f353e531c7940e09203ea6a63e5ed76d63a4a9da79ee3f1a7cc84b2c79e0",
+    "firstcall/grade.py": "4ba7304bc5f1ffa79f4500cfc0145c7cabb5535842bee5cff6ba9e3bc0e72244",
+    "firstcall/journey_evidence.py": "2cab91da7fcdf34c70d02061174560ea6443147ba39eeba8abcc237e55c400bb",
+    "firstcall/postmark_preflight.py": "967f92f90dc49cb87ed52056d14e32203624fffc0cfa81dbbcc63ee547570ddc",
+    "firstcall/verifiers/postmark.py": "7ac6b91fc78190e566e887e7bfaf6e105b049f676919c77e4b81eaa350ef9cf6"
+  },
+  "content_sha256": "0fb90aaab4eb312c9dc567c1202b0b9447aceb15a87bf510b823622f1d9b86cc",
+  "eligible_runs": [
+    "R01",
+    "R02",
+    "R03"
+  ],
+  "evidence_hashes": {
+    "R01": {
+      "files": [
+        {
+          "bytes": 1058,
+          "evidence_integrity": "clean",
+          "path": "candidate-commands.json",
+          "sha256": "7c16379a081e7f4fa53284d23d6e9876c34afd3920a17242e9ff5f803cf3b27f"
+        },
+        {
+          "bytes": 0,
+          "evidence_integrity": "clean",
+          "path": "codex.stderr.txt",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "bytes": 76564,
+          "evidence_integrity": "clean",
+          "path": "codex.stdout.jsonl",
+          "sha256": "687595bd6c6331cda3529db42a8fec040cd30a459605562221ec67900b10f83a"
+        },
+        {
+          "bytes": 166,
+          "evidence_integrity": "clean",
+          "path": "evidence-integrity.json",
+          "sha256": "889980a875b3ca5e55dfc97ecd49f37bac47d11045e06c91979ae4b511fddaea"
+        },
+        {
+          "bytes": 2,
+          "evidence_integrity": "clean",
+          "path": "workspace-manifest.json",
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        }
+      ],
+      "receipt_content_sha256": "90b45320217918fcb8e3fcb3c237bc07556758a98944a6acb80f3037c025efd1"
+    },
+    "R02": {
+      "files": [
+        {
+          "bytes": 1025,
+          "evidence_integrity": "clean",
+          "path": "candidate-commands.json",
+          "sha256": "ad60bcf429821336fbb4b39ade39ac546eec856087b1388060bbae076b60dac2"
+        },
+        {
+          "bytes": 0,
+          "evidence_integrity": "clean",
+          "path": "codex.stderr.txt",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "bytes": 76420,
+          "evidence_integrity": "clean",
+          "path": "codex.stdout.jsonl",
+          "sha256": "1065dc1eac1fe31d93a3f638a1eb56d1e5a4a60d4d476b77f37941e1bf22d5a8"
+        },
+        {
+          "bytes": 166,
+          "evidence_integrity": "clean",
+          "path": "evidence-integrity.json",
+          "sha256": "889980a875b3ca5e55dfc97ecd49f37bac47d11045e06c91979ae4b511fddaea"
+        },
+        {
+          "bytes": 2,
+          "evidence_integrity": "clean",
+          "path": "workspace-manifest.json",
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        }
+      ],
+      "receipt_content_sha256": "ac4d7f17b8d4e138bb5120ff53cb4970b83c3dd56150232d66fc9d2c9367dc4f"
+    },
+    "R03": {
+      "files": [
+        {
+          "bytes": 1209,
+          "evidence_integrity": "clean",
+          "path": "candidate-commands.json",
+          "sha256": "322ad128c23d18f6d2b9273db249766e018ef4156a98e0131121bd058242fcc8"
+        },
+        {
+          "bytes": 0,
+          "evidence_integrity": "clean",
+          "path": "codex.stderr.txt",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "bytes": 76864,
+          "evidence_integrity": "clean",
+          "path": "codex.stdout.jsonl",
+          "sha256": "b581750538d7f0cb4773ec8534f9052d2e7b3abdac2f20c2d2c2c9700dcf015a"
+        },
+        {
+          "bytes": 166,
+          "evidence_integrity": "clean",
+          "path": "evidence-integrity.json",
+          "sha256": "889980a875b3ca5e55dfc97ecd49f37bac47d11045e06c91979ae4b511fddaea"
+        },
+        {
+          "bytes": 2,
+          "evidence_integrity": "clean",
+          "path": "workspace-manifest.json",
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        }
+      ],
+      "receipt_content_sha256": "7b14f9665a5f79594448ef1fd2ff7aca9d3d97ab84ab3ad89c85b264fd41edbf"
+    }
+  },
+  "evidence_integrity": {
+    "checks": [
+      "exact_agent_credential",
+      "exact_verifier_credential",
+      "repository_secret_patterns"
+    ],
+    "redacted_locations": [],
+    "status": "clean"
+  },
+  "execution_nonce": "d631d6344557",
+  "experiment": "MULTI-001",
+  "frozen_provenance": {
+    "README.md": {
+      "bytes": 553,
+      "sha256": "732e2584bf65b8f0bacef07c0f08c8e2216d06a3b19479a8e74655e414f50f29"
+    },
+    "candidates.json": {
+      "bytes": 1162,
+      "sha256": "85f78fb75aedebfccc4cb380c3de5ac87d40bc0380ae36953180cfec49677012"
+    },
+    "intent-manifest.json": {
+      "bytes": 474,
+      "sha256": "1b73a8b764e95fd157e4302da15577d6eb8ce7ae5eb8cd6b89516634083e44db"
+    },
+    "postmark/apparatus-manifest.json": {
+      "bytes": 613,
+      "sha256": "7bb258f82058346b9d85a88ba11fa1d70eddb113ef5c8a9ba623368f486ea4e6"
+    },
+    "postmark/policy.json": {
+      "bytes": 402,
+      "sha256": "01a69e8c3ec080ef0802d33096e903db4563f3fab20316fdb0d1f88bef68206e"
+    },
+    "postmark/subject-contract.json": {
+      "bytes": 328,
+      "sha256": "244732f4518aa18261656ec9c2fe48da10436d73607ac7efd09cf3a5a26351e7"
+    },
+    "postmark/task.txt": {
+      "bytes": 701,
+      "sha256": "168eb6ae140021c001ca9802f43a6ba4649bc737189d422fef256b1b3e3e7456"
+    },
+    "protocol.md": {
+      "bytes": 5075,
+      "sha256": "634b10f94d8a82ce23548aedac955ffa09cfa1cca231922ac5006b9eb28afc07"
+    }
+  },
+  "metric": {
+    "determinate": 3,
+    "high": 0.5614970317550454,
+    "low": 5.551115123125783e-17,
+    "rate": 0.0,
+    "successes": 0,
+    "unknown": 0
+  },
+  "outcomes": {
+    "R01": "EFFECT_FAILED",
+    "R02": "EFFECT_FAILED",
+    "R03": "EFFECT_FAILED"
+  },
+  "planned_runs": [
+    "R01",
+    "R02",
+    "R03"
+  ],
+  "preflight_content_sha256": "9b186bfeefa158b0159c96ac64f79bf5fffd8c5674c397c26eb7cb822836778e",
+  "product": "POSTMARK",
+  "proven_successes": 0,
+  "runner_sha256": "b0b85f5677e06c64afed40d6dbef9a3836204a8107d91e8472616d71411827bc",
+  "runs": 3,
+  "stage": "BASELINE_DISCOVERY",
+  "status": "complete",
+  "verification_results": {
+    "R01": {
+      "message_id": null,
+      "observed": false,
+      "reason": "vendor effect not observed",
+      "recipient": "test@blackhole.postmarkapp.com",
+      "status": null,
+      "subject": "FIRSTCALL MULTI-001 POSTMARK d631d6344557 R01"
+    },
+    "R02": {
+      "message_id": null,
+      "observed": false,
+      "reason": "vendor effect not observed",
+      "recipient": "test@blackhole.postmarkapp.com",
+      "status": null,
+      "subject": "FIRSTCALL MULTI-001 POSTMARK d631d6344557 R02"
+    },
+    "R03": {
+      "message_id": null,
+      "observed": false,
+      "reason": "vendor effect not observed",
+      "recipient": "test@blackhole.postmarkapp.com",
+      "status": null,
+      "subject": "FIRSTCALL MULTI-001 POSTMARK d631d6344557 R03"
+    }
+  }
+}

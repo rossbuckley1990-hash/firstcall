@@ -1,0 +1,9 @@
+{
+  "checks": [
+    "exact_agent_credential",
+    "exact_verifier_credential",
+    "repository_secret_patterns"
+  ],
+  "redacted_locations": [],
+  "status": "clean"
+}
