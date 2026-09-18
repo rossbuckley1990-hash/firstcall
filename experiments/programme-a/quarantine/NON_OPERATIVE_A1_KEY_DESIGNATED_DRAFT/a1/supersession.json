@@ -1,0 +1,514 @@
+{
+  "schema": "firstcall.programmeA.a1_supersession.v1",
+  "discovery_stages": {
+    "D0": "2026-09-18 ~20:00Z: Freeze-2 implementation attempt halted before any source request (missing registrations)",
+    "D1": "2026-09-18: external review of uncommitted Freeze-1.2 rev1 (Bing HTML terms uncertainty)",
+    "D2": "2026-09-18: reviewer rejection of uncommitted Freeze-1.2 rev2 (GitHub-only search discovery)",
+    "D3": "2026-09-18/19: source-metadata feasibility study",
+    "D4": "2026-09-19: hostile statistical design review",
+    "D5": "2026-09-19: documentary access-model review",
+    "D6": "2026-09-19: consolidation (this amendment)"
+  },
+  "evidence_classes": {
+    "EV0": "protocol text and repository structure only; no source or vendor observation",
+    "EV1": "terms, robots.txt and API-documentation pages (GitHub, Zenodo); zero discovery requests",
+    "EV2": "APIs.guru repository metadata, commit dates, aggregate metrics, README criteria; one listing reduced to a count (701) without display; Wikidata aggregate counts",
+    "EV3": "offline calculations only",
+    "EV4": "UK statute text (CDPA ss.29A, 30)",
+    "EV5": "prior-FIRSTCALL projector dry-run summaries at 13ff44c (statuses, paths, key names only; no outcome values)",
+    "EV6": "git ls-remote of APIs.guru (ref names and one SHA)"
+  },
+  "rows": [
+    {
+      "id": "SUP-01",
+      "old_rule": "Choose one public reproducible enumeration; alternates recorded but unused",
+      "source_clause": "Freeze 1 §4.1(1); sample-frame.config frozen_snapshot",
+      "new_rule": "A1 is defined by one named, pinned source: APIs.guru openapi-directory commit f04b8d0 (a1-population.json)",
+      "why_changed": "Freeze 1.1 had already replaced it with search discovery; that mechanism failed (SUP-02)",
+      "when_discovered": "2026-09-18/19: source-metadata feasibility study",
+      "evidence_observed_before_change": [
+        "APIs.guru repository metadata, commit dates, aggregate metrics, README criteria; one listing reduced to a count (701) without display; Wikidata aggregate counts",
+        "git ls-remote of APIs.guru (ref names and one SHA)"
+      ],
+      "bias_risk": "source chosen by the researchers from metadata; OpenAPI-listing bias declared in the estimand",
+      "status": "SUPERSEDED"
+    },
+    {
+      "id": "SUP-02",
+      "old_rule": "Discovery by public Bing web-search HTML: four queries, logged-out GB/English, top 20 organic",
+      "source_clause": "Freeze 1.1 §3 para 1; §8.2; rules.source_universe.engine/queries/capture",
+      "new_rule": "No discovery step. A1 membership is the pinned snapshot's structural entries",
+      "why_changed": "terms uncertainty over automated retrieval, parsing and archival of Bing HTML",
+      "when_discovered": "2026-09-18: external review of uncommitted Freeze-1.2 rev1 (Bing HTML terms uncertainty)",
+      "evidence_observed_before_change": [
+        "protocol text and repository structure only; no source or vendor observation"
+      ],
+      "bias_risk": "none introduced; removes search-ranking dependence",
+      "status": "SUPERSEDED"
+    },
+    {
+      "id": "SUP-03",
+      "old_rule": "Use all qualifying enumerations; union; >=2 independently controlled maintainers",
+      "source_clause": "Freeze 1.1 §3 para 4",
+      "new_rule": "Single-source population A1; other sources become separately registered populations A2, A3, ... (never pooled automatically)",
+      "why_changed": "no second licensed machine-readable enumeration with a compatible population definition was found from metadata; a heterogeneous union would not define a population",
+      "when_discovered": "2026-09-18/19: source-metadata feasibility study",
+      "evidence_observed_before_change": [
+        "APIs.guru repository metadata, commit dates, aggregate metrics, README criteria; one listing reduced to a count (701) without display; Wikidata aggregate counts"
+      ],
+      "bias_risk": "single-source coverage; addressed by explicit A1-only claim and the multi-population architecture",
+      "status": "SUPERSEDED"
+    },
+    {
+      "id": "SUP-04",
+      "old_rule": "Source screening of discovered results: four metadata pages, 20 min per source, SOURCE_ELIGIBLE/INELIGIBLE/UNRESOLVED, source lock",
+      "source_clause": "Freeze 1.1 §3 paras 2-3; §8.2 para 3",
+      "new_rule": "Removed; the source is fixed by this amendment and its metadata recorded in a1-population.json",
+      "why_changed": "no discovery results exist to screen",
+      "when_discovered": "2026-09-18/19: source-metadata feasibility study",
+      "evidence_observed_before_change": [
+        "APIs.guru repository metadata, commit dates, aggregate metrics, README criteria; one listing reduced to a count (701) without display; Wikidata aggregate counts"
+      ],
+      "bias_risk": "source suitability judged once, at design, by the researchers",
+      "status": "SUPERSEDED"
+    },
+    {
+      "id": "SUP-05",
+      "old_rule": "Latest complete immutable version <= T0 of each qualifying source",
+      "source_clause": "Freeze 1.1 §3 para 5",
+      "new_rule": "Pinned commit f04b8d0; at retrieval it must exist and have committer date <= T0 = 2026-09-17T00:00:00Z, else HALT; T0 unchanged",
+      "why_changed": "pinning removes any retrieval-time choice; T0 kept",
+      "when_discovered": "2026-09-19: consolidation (this amendment)",
+      "evidence_observed_before_change": [
+        "APIs.guru repository metadata, commit dates, aggregate metrics, README criteria; one listing reduced to a count (701) without display; Wikidata aggregate counts",
+        "git ls-remote of APIs.guru (ref names and one SHA)"
+      ],
+      "bias_risk": "none; listing vintage (automated refresh stopped 2024-03-01) is a declared staleness limitation",
+      "status": "RETAINED_MODIFIED"
+    },
+    {
+      "id": "SUP-06",
+      "old_rule": "Per-source parser locked from documented schema; source_record_id [source, version, native id, row address]; preserve every row",
+      "source_clause": "Freeze 1.1 §3 para 6",
+      "new_rule": "Raw entry = spec file path under APIs/<provider>/ at the pinned commit; source_record_id [FIRSTCALL-A1, commit, null, path]; a1_frame.py frozen by digest",
+      "why_changed": "source is now a repository tree, not a tabular export",
+      "when_discovered": "2026-09-19: consolidation (this amendment)",
+      "evidence_observed_before_change": [
+        "APIs.guru repository metadata, commit dates, aggregate metrics, README criteria; one listing reduced to a count (701) without display; Wikidata aggregate counts"
+      ],
+      "bias_risk": "structural definition could over- or under-count providers with unusual layouts; conservation checks and published ledger",
+      "status": "RETAINED_MODIFIED"
+    },
+    {
+      "id": "SUP-07",
+      "old_rule": "Sampling unit = control plane; all pairwise identity relations recorded; any UNRESOLVED relation or missing anchor blocks the entire Freeze 2",
+      "source_clause": "Freeze 1.1 §2 paras 1-4; §8.3 paras 2-4",
+      "new_rule": "Randomisation unit = structural key; identity components by registrable domain computed mechanically; per-component identity adjudication only when a member is screened; designated key = byte-smallest key of each platform; UNRESOLVED_IDENTITY is a unit-level terminal state",
+      "why_changed": "all-pairs identity over the whole frame requires full-population adjudication before sampling, which the sequential design removes; the designated-key indicator is order-independent (proof §7)",
+      "when_discovered": "2026-09-19: hostile statistical design review",
+      "evidence_observed_before_change": [
+        "offline calculations only"
+      ],
+      "bias_risk": "cross-registrable-domain duplicates of one platform get extra entry points (declared residual; flagged and sensitivity-tested if two selected units prove identical)",
+      "status": "SUPERSEDED"
+    },
+    {
+      "id": "SUP-08",
+      "old_rule": "Identity capture per distinct lead group (16 pages, 60 min) before unit resolution",
+      "source_clause": "Freeze 1.1 §8.3 para 1",
+      "new_rule": "Identity capture per component, only for components reached in the permutation; 16 pages / 60 min per adjudicator; input is the whole component",
+      "why_changed": "workload; keeps identity input independent of which member is reached first",
+      "when_discovered": "2026-09-19: hostile statistical design review",
+      "evidence_observed_before_change": [
+        "offline calculations only"
+      ],
+      "bias_risk": "none beyond SUP-07",
+      "status": "SUPERSEDED"
+    },
+    {
+      "id": "SUP-09",
+      "old_rule": "Partition into >=6 categories; stratified selection",
+      "source_clause": "Freeze 1 §4.1(2); sample-frame.config categories_min, stratified",
+      "new_rule": "S0 unstratified primary sampling; C01-C07 descriptive only",
+      "why_changed": "stratum sizes of the eligible population are unknown without full screening; stratified sequential designs need estimated weights, invalidate the bounded band and let the rarest stratum drive workload",
+      "when_discovered": "2026-09-19: hostile statistical design review",
+      "evidence_observed_before_change": [
+        "offline calculations only"
+      ],
+      "bias_risk": "category mix of the sample is random (reported), no category balance guarantee",
+      "status": "SUPERSEDED"
+    },
+    {
+      "id": "SUP-10",
+      "old_rule": "Complete membership vector required; any UNRESOLVED membership => UNRESOLVED_ELIGIBILITY; hash assignment fixes the stratum",
+      "source_clause": "Freeze 1.1 §2 paras 6-7; §8.1",
+      "new_rule": "Scope requires >=1 category agreed TRUE; all seven agreed FALSE => SCOPE_OUTSIDE; an incomplete vector is reported INCOMPLETE and does not block eligibility; the Freeze-1.1 hash assignment is computed only descriptively, after the sample is sealed",
+      "why_changed": "membership completeness only mattered for stratum assignment, which no longer controls inclusion; avoids unnecessary UNRESOLVED shrinkage",
+      "when_discovered": "2026-09-19: consolidation (this amendment)",
+      "evidence_observed_before_change": [
+        "protocol text and repository structure only; no source or vendor observation"
+      ],
+      "bias_risk": "reduces, not increases, documentation-quality shrinkage",
+      "status": "RETAINED_MODIFIED"
+    },
+    {
+      "id": "SUP-11",
+      "old_rule": "Hamilton proportional allocation of N=24 across seven strata; Freeze 2 fails if any stratum lacks capacity",
+      "source_clause": "Freeze 1.1 §6 para 1",
+      "new_rule": "Removed",
+      "why_changed": "no strata in the primary design",
+      "when_discovered": "2026-09-19: hostile statistical design review",
+      "evidence_observed_before_change": [
+        "offline calculations only"
+      ],
+      "bias_risk": "none",
+      "status": "SUPERSEDED"
+    },
+    {
+      "id": "SUP-12",
+      "old_rule": "Salted vendor-name hash ordering (Freeze 1); per-stratum permutation from a 32*M tape generated after the eligible frame is sealed (Freeze 1.1)",
+      "source_clause": "Freeze 1 §4.1(5); sample-frame.config ordering; Freeze 1.1 §6 paras 2-3; §8.5 paras 3-4",
+      "new_rule": "ONE uniform permutation of sealed K from a 32*|K| os.urandom tape generated after K is sealed and BEFORE any eligibility adjudication; tie aborts; commitment before interpretation",
+      "why_changed": "eligibility is no longer known before ordering",
+      "when_discovered": "2026-09-19: hostile statistical design review",
+      "evidence_observed_before_change": [
+        "offline calculations only"
+      ],
+      "bias_risk": "order becomes visible to screening (see SUP-15 mitigations)",
+      "status": "SUPERSEDED"
+    },
+    {
+      "id": "SUP-13",
+      "old_rule": "INELIGIBLE_PRE_EXECUTION => replaced by next vendor in the same category's frozen ordering; Freeze-5A census of all eligible units; final pi = m_h/G_h",
+      "source_clause": "Freeze 1 §4.2; §6 table; §7.3; sample-frame.config replacements; Freeze 1.1 §6 paras 5-6; §8.5 paras 5-6",
+      "new_rule": "No replacement of any kind. Documentary and terms gates are part of S and are applied BEFORE a unit is counted; post-selection non-executability => SELECTED_NOT_EXECUTABLE, indeterminate, never replaced",
+      "why_changed": "replacement after selection is outcome-adjacent discretion; gating inside S keeps the SRS proof exact",
+      "when_discovered": "2026-09-19: hostile statistical design review",
+      "evidence_observed_before_change": [
+        "offline calculations only"
+      ],
+      "bias_risk": "post-selection failures widen the band rather than being hidden",
+      "status": "SUPERSEDED"
+    },
+    {
+      "id": "SUP-14",
+      "old_rule": "Reserves >= 6; reserve budget 25%",
+      "source_clause": "Freeze 1 §4.4; sample-frame.config reserves_min, reserve_budget_fraction",
+      "new_rule": "Removed; the permutation remainder is the only candidate source",
+      "why_changed": "no reserve concept under sequential selection",
+      "when_discovered": "2026-09-19: hostile statistical design review",
+      "evidence_observed_before_change": [
+        "offline calculations only"
+      ],
+      "bias_risk": "none",
+      "status": "SUPERSEDED"
+    },
+    {
+      "id": "SUP-15",
+      "old_rule": "Draw hashed and blind; selection status and order withheld until Freeze 5B; census personnel blind to ordering",
+      "source_clause": "Freeze 1 §4.5; §9.2; Freeze 1.1 §8.5 para 4; §8.7",
+      "new_rule": "Order held in custody by R03; one block of 6 released at a time in hash-shuffled presentation order without positions; statuses sealed before selection is computed mechanically",
+      "why_changed": "sequential screening necessarily exposes the current block",
+      "when_discovered": "2026-09-19: hostile statistical design review",
+      "evidence_observed_before_change": [
+        "offline calculations only"
+      ],
+      "bias_risk": "screeners can guess that eligible units in early blocks are likely selected; mitigated by blocks, sealing, dual independent coding, drift and per-adjudicator diagnostics; residual declared",
+      "status": "SUPERSEDED"
+    },
+    {
+      "id": "SUP-16",
+      "old_rule": "Single seven-calendar-day documentary capture window for the whole batch; missing it blocks the batch",
+      "source_clause": "Freeze 1.1 §4 para 2; §8.3 para 1",
+      "new_rule": "Per-block 48-hour windows; at most 3 blocks/week; 26-week planning bound (exceeding it is a recorded deviation, never a truncation)",
+      "why_changed": "human reading of ~100-250 keys cannot fit seven days",
+      "when_discovered": "2026-09-19: documentary access-model review",
+      "evidence_observed_before_change": [
+        "offline calculations only"
+      ],
+      "bias_risk": "documentary drift over a longer campaign; position-drift diagnostic",
+      "status": "SUPERSEDED"
+    },
+    {
+      "id": "SUP-17",
+      "old_rule": "Automated byte-ordered BFS frontier, 2 MiB/page, 30 s requests, one retry on timeout/429/5xx, automated archive",
+      "source_clause": "Freeze 1.1 §4 para 3",
+      "new_rule": "Human logged-out browser reading from E2 leads via visible first-party links with the frozen vocabulary; 16 pages, depth 2, 60 min; frozen target order; one retry after >= 30 min",
+      "why_changed": "automated retrieval and archival of arbitrary vendor sites has no established access basis",
+      "when_discovered": "2026-09-19: documentary access-model review",
+      "evidence_observed_before_change": [
+        "UK statute text (CDPA ss.29A, 30)"
+      ],
+      "bias_risk": "human navigation varies; disagreement becomes UNRESOLVED (shrinkage declared)",
+      "status": "SUPERSEDED"
+    },
+    {
+      "id": "SUP-18",
+      "old_rule": "Two adjudicators receive identical captured packets",
+      "source_clause": "Freeze 1.1 §4 para 4",
+      "new_rule": "Identical inputs (E1 material, E2 leads, protocol); independent reading and evidence records",
+      "why_changed": "no automated packet exists; a single collector would be an unregistered third adjudicator",
+      "when_discovered": "2026-09-19: documentary access-model review",
+      "evidence_observed_before_change": [
+        "protocol text and repository structure only; no source or vendor observation"
+      ],
+      "bias_risk": "more UNRESOLVED from navigation differences (declared)",
+      "status": "SUPERSEDED"
+    },
+    {
+      "id": "SUP-19",
+      "old_rule": "Collect the whole permitted frontier even after an exclusion is found",
+      "source_clause": "Freeze 1.1 §4 para 3",
+      "new_rule": "Fatal-exclusion early stop: an adjudicator who affirms a fatal predicate seals and stops; both affirming the same fatal predicate => EXCLUDED",
+      "why_changed": "workload; proof §8 shows S-membership cannot change",
+      "when_discovered": "2026-09-19: documentary access-model review",
+      "evidence_observed_before_change": [
+        "offline calculations only"
+      ],
+      "bias_risk": "fewer co-occurring exclusion reasons recorded (reason reporting is per affirmed predicate)",
+      "status": "SUPERSEDED"
+    },
+    {
+      "id": "SUP-20",
+      "old_rule": "Captured evidence with source URL/hash/excerpt, archived pages and error metadata",
+      "source_clause": "Freeze 1.1 §4 paras 1, 3",
+      "new_rule": "Minimal evidence record (URL, UTC time, title, tier, proposition, predicate, code, reason, minimal excerpt, adjudicator, record SHA256, optional existing archive pointer); no page copies or screenshots by default",
+      "why_changed": "raw archival is not needed for decisions and its permission is not established",
+      "when_discovered": "2026-09-19: documentary access-model review",
+      "evidence_observed_before_change": [
+        "UK statute text (CDPA ss.29A, 30)"
+      ],
+      "bias_risk": "observations are auditable but not re-observable; declared",
+      "status": "SUPERSEDED"
+    },
+    {
+      "id": "SUP-21",
+      "old_rule": "Terminal states ELIGIBLE/EXCLUDED/UNRESOLVED_ELIGIBILITY over the canonical union; conservation TOTAL = E + X + U",
+      "source_clause": "Freeze 1.1 §4 paras 5-6; rules.eligibility.conservation",
+      "new_rule": "Terminal states over K: RESOLVED_ELIGIBLE, EXCLUDED, UNRESOLVED_ELIGIBILITY, UNRESOLVED_IDENTITY, STRUCTURAL_DUPLICATE, plus UNSCREENED; |K| = sum of all; SELECTED_NOT_EXECUTABLE recorded post-selection",
+      "why_changed": "sequential design leaves most of K unscreened by construction",
+      "when_discovered": "2026-09-19: hostile statistical design review",
+      "evidence_observed_before_change": [
+        "offline calculations only"
+      ],
+      "bias_risk": "none; every key accounted",
+      "status": "RETAINED_MODIFIED"
+    },
+    {
+      "id": "SUP-22",
+      "old_rule": "(none) no explicit terms-of-use predicates",
+      "source_clause": "Freeze 1 §4.1(3)-(4); Freeze 1.1 rules.eligibility",
+      "new_rule": "New predicates T1-T3 (automated-agent, benchmarking/testing, publication prohibitions) inside S; login-gated or ambiguous terms => UNRESOLVED; absence => NO_EXPLICIT_RESTRICTION_OBSERVED (neutral)",
+      "why_changed": "a post-selection terms gate would require replacement or break the SRS proof",
+      "when_discovered": "2026-09-19: documentary access-model review",
+      "evidence_observed_before_change": [
+        "protocol text and repository structure only; no source or vendor observation"
+      ],
+      "bias_risk": "excludes platforms with restrictive or unreadable terms from S (declared population restriction)",
+      "status": "NEW_RULE"
+    },
+    {
+      "id": "SUP-23",
+      "old_rule": "60 active minutes per unit per adjudicator for eligibility/category",
+      "source_clause": "Freeze 1.1 §4 para 4",
+      "new_rule": "Eligibility and category 60 min / 16 pages; terms 20 min / 6 pages; identity 60 min / 16 pages per component",
+      "why_changed": "terms gate added; identity stage restructured",
+      "when_discovered": "2026-09-19: consolidation (this amendment)",
+      "evidence_observed_before_change": [
+        "protocol text and repository structure only; no source or vendor observation"
+      ],
+      "bias_risk": "identical budgets for every key",
+      "status": "RETAINED_MODIFIED"
+    },
+    {
+      "id": "SUP-24",
+      "old_rule": "P_v over census-eligible G; W_h = G_h/G; band C = sum W_h^2/m_h; within-stratum bootstrap",
+      "source_clause": "Freeze 1.1 §8.6",
+      "new_rule": "P_A1 over S; band with W = 1, C = 1/n_selected; bootstrap over selected platforms; post-selection non-executable = indeterminate",
+      "why_changed": "census and strata removed",
+      "when_discovered": "2026-09-19: hostile statistical design review",
+      "evidence_observed_before_change": [
+        "offline calculations only"
+      ],
+      "bias_risk": "none; the band remains conservative (half-width ~0.39 at n = 24)",
+      "status": "RETAINED_MODIFIED"
+    },
+    {
+      "id": "SUP-25",
+      "old_rule": "Category-weighted overall P_v as a preregistered secondary",
+      "source_clause": "Freeze 1 §7.5",
+      "new_rule": "Removed; per-category rates of selected platforms are descriptive only",
+      "why_changed": "category sizes in S are unknown; weights would be estimated from a small sample",
+      "when_discovered": "2026-09-19: hostile statistical design review",
+      "evidence_observed_before_change": [
+        "offline calculations only"
+      ],
+      "bias_risk": "none",
+      "status": "SUPERSEDED"
+    },
+    {
+      "id": "SUP-26",
+      "old_rule": "Design weights w_i = G_h/m_h; weighted complete-case ratio",
+      "source_clause": "Freeze 1.1 §6 para 7",
+      "new_rule": "Equal weights (SRS from S): plain complete-case mean",
+      "why_changed": "SRS makes the Hajek estimator the plain mean",
+      "when_discovered": "2026-09-19: hostile statistical design review",
+      "evidence_observed_before_change": [
+        "offline calculations only"
+      ],
+      "bias_risk": "none",
+      "status": "SUPERSEDED"
+    },
+    {
+      "id": "SUP-27",
+      "old_rule": "Freeze sequence 1 -> 2 -> 3 -> 4 -> 5 and the Freeze-1.1 §8.7 chronology",
+      "source_clause": "Freeze 1 §9.2-9.3; prereg-freeze-sequence.json; Freeze 1.1 §7, §8.7",
+      "new_rule": "A1 chronology (amendment §5): anchor -> snapshot/K seal -> registry approval -> adjudicator/translation registration -> entropy -> permutation seal -> block screening -> sample seal -> Freeze-4 apparatus -> execution",
+      "why_changed": "ordering now precedes eligibility",
+      "when_discovered": "2026-09-19: hostile statistical design review",
+      "evidence_observed_before_change": [
+        "offline calculations only"
+      ],
+      "bias_risk": "none",
+      "status": "SUPERSEDED"
+    },
+    {
+      "id": "SUP-28",
+      "old_rule": "N = 24 justified as >=6 categories x ~4 vendors",
+      "source_clause": "Freeze 1 §4.4; §5.1",
+      "new_rule": "n = 24 resolved-eligible platforms, k = 5, 120 target runs; justification is cost, not category balance; precision stated honestly",
+      "why_changed": "stratification removed; n = 60 was considered and not adopted",
+      "when_discovered": "2026-09-19: consolidation (this amendment)",
+      "evidence_observed_before_change": [
+        "offline calculations only"
+      ],
+      "bias_risk": "wide primary band; no narrow-precision claim",
+      "status": "RETAINED_MODIFIED"
+    },
+    {
+      "id": "SUP-29",
+      "old_rule": "INELIGIBLE_PRE_EXECUTION as a pre-run grade that triggers replacement",
+      "source_clause": "Freeze 1 §6 table; outcome-taxonomy INELIGIBLE_PRE_EXECUTION",
+      "new_rule": "Documentary pre-execution ineligibility is an EXCLUDED reason inside S (T1-T3, E1-E4); post-selection non-executability is SELECTED_NOT_EXECUTABLE (indeterminate), never replaced",
+      "why_changed": "see SUP-13",
+      "when_discovered": "2026-09-19: hostile statistical design review",
+      "evidence_observed_before_change": [
+        "offline calculations only"
+      ],
+      "bias_risk": "none",
+      "status": "RETAINED_MODIFIED"
+    },
+    {
+      "id": "SUP-30",
+      "old_rule": "Exhaustion: G_h < m_h stops the cohort",
+      "source_clause": "Freeze 1.1 §6 para 5; §8.5",
+      "new_rule": "Permutation exhausted with M < 24 => select all M; M < 16 => reported underpowered/uninformative; no substitute population",
+      "why_changed": "no strata; M is a population fact, not an outcome",
+      "when_discovered": "2026-09-19: hostile statistical design review",
+      "evidence_observed_before_change": [
+        "offline calculations only"
+      ],
+      "bias_risk": "none",
+      "status": "SUPERSEDED"
+    },
+    {
+      "id": "SUP-31",
+      "old_rule": "Source-level coverage reporting (overlap matrix, union size, source-exclusive units)",
+      "source_clause": "Freeze 1.1 §3 para 9",
+      "new_rule": "A1 reporting list (estimand.json reported_separately)",
+      "why_changed": "single source",
+      "when_discovered": "2026-09-19: consolidation (this amendment)",
+      "evidence_observed_before_change": [
+        "protocol text and repository structure only; no source or vendor observation"
+      ],
+      "bias_risk": "none",
+      "status": "SUPERSEDED"
+    },
+    {
+      "id": "SUP-32",
+      "old_rule": "Prior-FIRSTCALL designation projection (rev1 trigger: any vendor|target|provider-named key)",
+      "source_clause": "Freeze 1.1 §5; §8.4 (projector first implemented in uncommitted Freeze-1.2 rev1)",
+      "new_rule": "Projector v1.2.1: value-type structural trigger, fenced Markdown ignored, example paths block; approval by both adjudicators before entropy",
+      "why_changed": "rev1 trigger false-positive on a boolean policy field (experiments/resend-001/policy.json)",
+      "when_discovered": "2026-09-18: reviewer rejection of uncommitted Freeze-1.2 rev2 (GitHub-only search discovery)",
+      "evidence_observed_before_change": [
+        "prior-FIRSTCALL projector dry-run summaries at 13ff44c (statuses, paths, key names only; no outcome values)"
+      ],
+      "bias_risk": "structural rule tuned after one false positive; hostile tests cover true targets, nesting and examples",
+      "status": "RETAINED_MODIFIED"
+    },
+    {
+      "id": "SUP-33",
+      "old_rule": "Freeze-1.1 sealing certificate names capture custodian and runner; registration of roles implicit",
+      "source_clause": "Freeze 1.1 §8.2 para 2; §4 para 4; §8.5",
+      "new_rule": "A1 roles and gates (roles.json); registration records anchored before each gate; adjudicators and translation registered before entropy",
+      "why_changed": "certificate never issued; no mechanism existed",
+      "when_discovered": "2026-09-18 ~20:00Z: Freeze-2 implementation attempt halted before any source request (missing registrations)",
+      "evidence_observed_before_change": [
+        "protocol text and repository structure only; no source or vendor observation"
+      ],
+      "bias_risk": "none",
+      "status": "SUPERSEDED"
+    },
+    {
+      "id": "SUP-34",
+      "old_rule": "Freeze-1.2 rev1 draft: Bing capture runner, 2026-09-19T09:00Z schedule, capture registration",
+      "source_clause": "uncommitted Freeze-1.2 rev1",
+      "new_rule": "NON-OPERATIVE; preserved in quarantine/NON_OPERATIVE_BING_CAPTURE_DRAFT",
+      "why_changed": "see SUP-02",
+      "when_discovered": "2026-09-18: external review of uncommitted Freeze-1.2 rev1 (Bing HTML terms uncertainty)",
+      "evidence_observed_before_change": [
+        "protocol text and repository structure only; no source or vendor observation"
+      ],
+      "bias_risk": "none (never run; no Bing request)",
+      "status": "SUPERSEDED_NON_OPERATIVE"
+    },
+    {
+      "id": "SUP-35",
+      "old_rule": "Freeze-1.2 rev2 draft: GitHub REST search runner, 2026-09-23 schedule, S-LIC/S-ACCESS, custody model",
+      "source_clause": "uncommitted Freeze-1.2 rev2",
+      "new_rule": "NON-OPERATIVE; preserved in quarantine/NON_OPERATIVE_FREEZE_1_2_REV2_DRAFT",
+      "why_changed": "coverage change toward GitHub-hosted/developer ecosystems; undocumented ranking; top-20 truncation",
+      "when_discovered": "2026-09-18: reviewer rejection of uncommitted Freeze-1.2 rev2 (GitHub-only search discovery)",
+      "evidence_observed_before_change": [
+        "terms, robots.txt and API-documentation pages (GitHub, Zenodo); zero discovery requests"
+      ],
+      "bias_risk": "none (never run; no search request)",
+      "status": "SUPERSEDED_NON_OPERATIVE"
+    },
+    {
+      "id": "SUP-36",
+      "old_rule": "Programme A estimates one rate over one frozen frame",
+      "source_clause": "Freeze 1 §1.1-1.2; §4",
+      "new_rule": "Multi-population programme; A1 first; no automatic pooling; cross-population consistency = replication evidence only",
+      "why_changed": "avoid presenting one source's population as the vendor universe",
+      "when_discovered": "2026-09-19: hostile statistical design review",
+      "evidence_observed_before_change": [
+        "offline calculations only"
+      ],
+      "bias_risk": "none",
+      "status": "NEW_RULE"
+    },
+    {
+      "id": "SUP-37",
+      "old_rule": "Pre-execution ineligibility rate reported as headline in the 'many ineligible' regime",
+      "source_clause": "Freeze 1 §7.7",
+      "new_rule": "S-prevalence (n-1)/(T-1) and unresolved rates reported beside, never multiplied into, the success estimate",
+      "why_changed": "stopping biases naive prevalence; combined metrics overstate",
+      "when_discovered": "2026-09-19: hostile statistical design review",
+      "evidence_observed_before_change": [
+        "offline calculations only"
+      ],
+      "bias_risk": "none",
+      "status": "RETAINED_MODIFIED"
+    }
+  ],
+  "unchanged_operative": [
+    "Freeze-1 journey standard, effect requirements, natural customer condition, credentials policy (§2-§3)",
+    "k = 5 runs per platform; model and run isolation (§5)",
+    "outcome taxonomy, FALSE_SUCCESS minimum evidence, R02 generalisation, append-only later observation (§6)",
+    "verifier hardening (§2.3), Wilson and serialisation rules (§7.2), UNKNOWN sub-codes (§7.3), sensitivity analyses a-f except the category-weighted secondary (§7.5)",
+    "anti-bias controls not listed above (§8)",
+    "Freeze-1.1 T0, canonical JSON, URI normalisation, UK-customer context, identity definitions of namespace/authority (§8.3 bullets), Freeze-1.1 prior-FIRSTCALL rules (§5, §8.4) as implemented by SUP-32, entropy custody and one-call generation (§8.5 para 2), conservative band derivation and assumptions (§8.6)"
+  ]
+}

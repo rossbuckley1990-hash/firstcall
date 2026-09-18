@@ -1,0 +1,537 @@
+#!/usr/bin/env python3
+"""Offline tests for the Freeze-1.2 registration package.
+
+Every test runs under a socket ban: any attempt to open a network connection fails the
+test. Search responses are synthetic HTML built here (example.invalid URLs); nothing is
+derived from a real discovery response.
+"""
+import base64
+import copy
+import json
+import socket
+import subprocess
+import sys
+import tempfile
+import unittest
+import urllib.parse
+from pathlib import Path
+
+HERE = Path(__file__).resolve().parent
+sys.path.insert(0, str(HERE))
+sys.dont_write_bytecode = True
+
+import source_capture_runner as cr  # noqa: E402
+import prior_firstcall_projector as pj  # noqa: E402
+import validate_registration as vr  # noqa: E402
+
+START = cr.parse_utc(cr.SCHEDULED_START_UTC)
+
+
+class NetworkBan(unittest.TestCase):
+    def setUp(self):
+        self._orig = (socket.socket.connect, socket.create_connection, socket.getaddrinfo)
+
+        def banned(*a, **k):
+            raise AssertionError("network access attempted during offline test")
+        socket.socket.connect = banned
+        socket.create_connection = banned
+        socket.getaddrinfo = banned
+
+    def tearDown(self):
+        socket.socket.connect, socket.create_connection, socket.getaddrinfo = self._orig
+
+
+def gh(n, total=None, incomplete=False, owner_type="Organization"):
+    total = n if total is None else total
+    items = [{"id": 1000 + i, "full_name": f"org{i}/catalog{i}", "html_url": f"https://example.invalid/org{i}/catalog{i}",
+              "owner": {"login": f"person{i}", "type": owner_type, "avatar_url": "https://example.invalid/a.png"},
+              "fork": False, "archived": False, "created_at": "2020-01-01T00:00:00Z",
+              "pushed_at": "2026-01-01T00:00:00Z", "default_branch": "main",
+              "license": {"spdx_id": "CC0-1.0"}, "stargazers_count": 5, "description": "synthetic"}
+             for i in range(1, n + 1)]
+    return json.dumps({"total_count": total, "incomplete_results": incomplete, "items": items}).encode()
+
+
+AUP = ("<html><body><p>You may use information from our Service for the following reasons, "
+       "<em>regardless of whether the information was scraped, collected through our API, or obtained otherwise</em>:</p>"
+       "<ul><li>Researchers may use public, non-personal information from the Service for research purposes, "
+       "only if any publications resulting from that research are open access <span>.</span></li></ul>"
+       "<p>Scraping does not refer to the collection of information through our API.</p></body></html>").encode()
+
+
+class FakeEnv:
+    def __init__(self, t, responses=None, sntp=(0.0, 0.0), egress=("192.0.2.1", "192.0.2.1"),
+                 reg_ok=True, inject_late=None, terms=AUP, robots=(404, b"{}")):
+        self.t = t
+        self.responses = list(responses if responses is not None else [cr.Response(200, [], gh(20, 500))] * 4)
+        self.sntp = list(sntp)
+        self.egress = list(egress)
+        self.reg_ok = reg_ok
+        self.inject_late = inject_late
+        self.terms = terms
+        self.robots = robots
+        self.armed = None
+        self.source_calls = []
+        self.aux_calls = []
+
+    def now(self):
+        return self.t
+
+    def sleep(self, s):
+        self.t += max(0.0, s)
+        if self.inject_late and self.t >= self.inject_late[0]:
+            self.t += self.inject_late[1]
+            self.inject_late = None
+
+    def arm_source(self, until):
+        self.armed = until
+
+    def disarm_source(self):
+        self.armed = None
+
+    def http_get(self, url, headers, timeout):
+        if cr.is_source_url(url):
+            if self.armed is None or self.t > self.armed:
+                raise cr.SourceGuardError("unarmed")
+            self.source_calls.append((self.t, url, headers))
+            r = self.responses.pop(0)
+            if isinstance(r, Exception):
+                raise r
+            return r
+        raise AssertionError("unexpected http " + url)
+
+    def aux_get(self, url):
+        self.aux_calls.append((self.t, url))
+        if cr.is_source_url(url):
+            raise AssertionError("aux path reached discovery endpoint")
+        if url == cr.ROBOTS_URL:
+            if isinstance(self.robots, Exception):
+                raise self.robots
+            return cr.Response(self.robots[0], [], self.robots[1])
+        if isinstance(self.terms, Exception):
+            raise self.terms
+        return cr.Response(200, [], self.terms)
+
+    def sntp_offset(self):
+        v = self.sntp.pop(0) if self.sntp else 0.0
+        if isinstance(v, Exception):
+            raise v
+        return {"offset_seconds": v, "server": "fake"}
+
+    def egress_ip(self):
+        return self.egress.pop(0)
+
+    def verify_registration(self):
+        return {"ok": self.reg_ok, "checks": {"fake": self.reg_ok}}
+
+    def keep_awake(self):
+        return {"fake": True}
+
+    def runtime_facts(self):
+        return {"fake": True}
+
+
+class RunnerTests(NetworkBan):
+    def run_env(self, env, tmp=None):
+        tmp = Path(tmp or tempfile.mkdtemp())
+        return cr.run_capture(env, tmp / "cap", tmp / "custody"), tmp
+
+    def test_request_plan_is_the_frozen_procedure(self):
+        plan = cr.request_plan()
+        self.assertEqual([p["query"] for p in plan], [
+            "public API directory downloadable dataset", "open software API catalog CSV JSON",
+            "public developer platform registry bulk export", "open API index data repository"])
+        self.assertEqual([p["scheduled_utc"][:19] for p in plan],
+                         ["2026-09-23T09:00:00", "2026-09-23T09:01:00", "2026-09-23T09:02:00", "2026-09-23T09:03:00"])
+        parts = urllib.parse.urlsplit(plan[0]["url"])
+        self.assertEqual((parts.scheme, parts.hostname, parts.path), ("https", "api.github.com", "/search/repositories"))
+        self.assertEqual(urllib.parse.parse_qs(parts.query), {
+            "q": ["public API directory downloadable dataset in:name,description,topics,readme"],
+            "per_page": ["20"], "page": ["1"]})
+        self.assertNotIn("sort", parts.query)
+        self.assertEqual(cr.T0_UTC, "2026-09-17T00:00:00Z")
+        self.assertEqual(cr.MAX_START_LATENESS_SECONDS, 5.0)
+        self.assertNotIn(("Authorization",), [h[:1] for h in cr.REQUEST_HEADERS])
+
+    def test_no_bing_or_search_engine_html_anywhere(self):
+        src = (HERE / "source_capture_runner.py").read_text().lower()
+        for token in ("bing", "google", "duckduckgo", "b_algo", "ck/a", "text/html"):
+            self.assertNotIn(token, src)
+
+    def test_happy_path_exact_times_custody_before_projection(self):
+        env = FakeEnv(START - 3600)
+        m, tmp = self.run_env(env)
+        self.assertEqual(m["status"], "CAPTURED_COMPLETE")
+        self.assertEqual([round(c[0] - START, 6) for c in env.source_calls], [0, 60, 120, 180])
+        self.assertTrue(all(t < START for t, _ in env.aux_calls))
+        for i in range(1, 5):
+            self.assertEqual(cr.sha256((tmp / f"custody/raw/q{i}.json").read_bytes()), m["ordered_raw_sha256"][i - 1])
+            self.assertFalse((tmp / f"cap/raw/q{i}.json").exists())
+        events = [(e["event"], e.get("index")) for e in map(json.loads, (tmp / "cap/events.jsonl").read_text().splitlines())]
+        for i in range(1, 5):
+            self.assertLess(events.index(("response_archived", i)), events.index(("response_projected", i)))
+        self.assertLess(events.index(("policies_verified", None)), events.index(("request_due", 1)))
+        proj = json.loads((tmp / "cap/projection/q1.json").read_bytes())
+        self.assertEqual(len(proj["items"]), 20)
+        published = b"".join(p.read_bytes() for p in (tmp / "cap").rglob("*") if p.is_file())
+        for personal in (b"person1", b"avatar_url", b"stargazers"):
+            self.assertNotIn(personal, published)
+        data = (tmp / "cap/session-manifest.json").read_bytes()
+        self.assertEqual(data, cr.canonical(json.loads(data)))
+
+    def test_fewer_than_20_is_complete_when_total_is_small(self):
+        env = FakeEnv(START - 3600, responses=[cr.Response(200, [], gh(3, 3))] + [cr.Response(200, [], gh(0, 0))] * 3)
+        m, _ = self.run_env(env)
+        self.assertEqual(m["status"], "CAPTURED_COMPLETE")
+        self.assertEqual([r["positions"] for r in m["responses"]], [3, 0, 0, 0])
+
+    def test_partial_enumeration_halts(self):
+        env = FakeEnv(START - 3600, responses=[cr.Response(200, [], gh(12, 500))])
+        m, _ = self.run_env(env)
+        self.assertEqual(m["halt"]["code"], "MALFORMED_RESPONSE")
+        self.assertEqual(len(env.source_calls), 1)
+
+    def test_incomplete_results_halts(self):
+        env = FakeEnv(START - 3600, responses=[cr.Response(200, [], gh(20, 900, incomplete=True))])
+        m, tmp = self.run_env(env)
+        self.assertEqual(m["halt"]["code"], "INCOMPLETE_RESULTS")
+        self.assertTrue((tmp / "custody/raw/q1.json").exists())
+
+    def test_malformed_json_halts_after_custody(self):
+        env = FakeEnv(START - 3600, responses=[cr.Response(200, [], b"<html>not json</html>")])
+        m, tmp = self.run_env(env)
+        self.assertEqual(m["halt"]["code"], "MALFORMED_RESPONSE")
+        self.assertTrue((tmp / "custody/raw/q1.json").exists())
+
+    def test_rate_limited_halts_no_retry(self):
+        env = FakeEnv(START - 3600, responses=[cr.Response(403, [("x-ratelimit-remaining", "0")], b"{}")])
+        m, _ = self.run_env(env)
+        self.assertEqual(m["halt"]["code"], "RATE_LIMITED")
+        self.assertEqual(len(env.source_calls), 1)
+
+    def test_redirect_is_not_followed(self):
+        env = FakeEnv(START - 3600, responses=[cr.Response(301, [("Location", "https://example.invalid/")], b"")])
+        m, _ = self.run_env(env)
+        self.assertEqual(m["halt"]["code"], "UNAVAILABLE_OR_REJECTED")
+        self.assertEqual(len(env.source_calls), 1)
+
+    def test_network_failure_no_retry(self):
+        env = FakeEnv(START - 3600, responses=[OSError("reset")])
+        m, _ = self.run_env(env)
+        self.assertEqual(m["halt"]["code"], "NETWORK_FAILURE")
+        self.assertEqual(len(env.source_calls), 1)
+
+    def test_terms_changed_halts_before_any_request(self):
+        env = FakeEnv(START - 3600, terms=b"<html>new terms</html>")
+        m, _ = self.run_env(env)
+        self.assertEqual(m["halt"]["code"], "TERMS_CHANGED")
+        self.assertEqual(env.source_calls, [])
+
+    def test_terms_unreachable_halts(self):
+        env = FakeEnv(START - 3600, terms=OSError("down"))
+        m, _ = self.run_env(env)
+        self.assertEqual(m["halt"]["code"], "TERMS_UNVERIFIED")
+        self.assertEqual(env.source_calls, [])
+
+    def test_robots_disallow_halts(self):
+        env = FakeEnv(START - 3600, robots=(200, b"User-agent: *\nDisallow: /search\n"))
+        m, _ = self.run_env(env)
+        self.assertEqual(m["halt"]["code"], "ROBOTS_DISALLOW")
+        self.assertEqual(env.source_calls, [])
+
+    def test_robots_rules(self):
+        self.assertEqual(cr.robots_decision(404, b""), "ALLOWED_NO_ROBOTS")
+        self.assertEqual(cr.robots_decision(503, b""), "UNVERIFIED")
+        self.assertEqual(cr.robots_decision(None, b""), "UNVERIFIED")
+        self.assertEqual(cr.robots_decision(200, b"User-agent: *\nDisallow: /\n"), "DISALLOWED")
+        self.assertEqual(cr.robots_decision(200, b"User-agent: *\nDisallow: /repos\n"), "ALLOWED")
+        self.assertEqual(cr.robots_decision(200, b"User-agent: *\nDisallow: /\nAllow: /search/repositories\n"), "ALLOWED")
+        self.assertEqual(cr.robots_decision(200, b"User-agent: otherbot\nDisallow: /\n"), "ALLOWED")
+
+    def test_robots_server_error_halts(self):
+        env = FakeEnv(START - 3600, robots=(500, b""))
+        m, _ = self.run_env(env)
+        self.assertEqual(m["halt"]["code"], "ROBOTS_UNVERIFIED")
+
+    def test_late_start_halts_without_request(self):
+        env = FakeEnv(START - 3600, inject_late=(START, 5.5))
+        m, _ = self.run_env(env)
+        self.assertEqual(m["halt"]["code"], "LATE_START")
+        self.assertEqual(env.source_calls, [])
+
+    def test_late_third_query_stops_remaining(self):
+        env = FakeEnv(START - 3600, inject_late=(START + 120, 6.0))
+        m, _ = self.run_env(env)
+        self.assertEqual(m["halt"]["code"], "LATE_START")
+        self.assertEqual(len(env.source_calls), 2)
+
+    def test_sntp_correction_and_limits(self):
+        env = FakeEnv(START - 3600, sntp=(1.5, 1.5))
+        m, _ = self.run_env(env)
+        self.assertAlmostEqual(env.source_calls[0][0], START - 1.5, places=6)
+        m, _ = self.run_env(FakeEnv(START - 3600, sntp=(2.5,)))
+        self.assertEqual(m["halt"]["code"], "PREFLIGHT_CLOCK_UNVERIFIED")
+        m, _ = self.run_env(FakeEnv(START - 3600, sntp=(0.0, 6.0)))
+        self.assertEqual(m["halt"]["code"], "LATE_START_POST_CHECK")
+
+    def test_egress_change_halts(self):
+        m, _ = self.run_env(FakeEnv(START - 3600, egress=("192.0.2.1", "198.51.100.7")))
+        self.assertEqual(m["halt"]["code"], "EGRESS_CHANGED")
+
+    def test_registration_failures_halt_before_requests(self):
+        env = FakeEnv(START - 3600, reg_ok=False)
+        m, _ = self.run_env(env)
+        self.assertEqual(m["halt"]["code"], "PREFLIGHT_REGISTRATION_MISMATCH")
+        env = FakeEnv(START - 3600)
+        env.verify_registration = lambda: (_ for _ in ()).throw(RuntimeError("tag missing"))
+        m, _ = self.run_env(env)
+        self.assertEqual(m["halt"]["code"], "PREFLIGHT_REGISTRATION_MISMATCH")
+        self.assertEqual(env.source_calls, [])
+
+    def test_unexpected_fault_still_writes_manifest(self):
+        env = FakeEnv(START - 3600)
+        env.runtime_facts = lambda: {"bad": object()}
+        m, tmp = self.run_env(env)
+        self.assertEqual(m["halt"]["code"], "RUNNER_EXCEPTION")
+        self.assertTrue((tmp / "cap/session-manifest.json").exists())
+        self.assertEqual(env.source_calls, [])
+
+    def test_rerun_refused_and_logged(self):
+        tmp = Path(tempfile.mkdtemp())
+        self.run_env(FakeEnv(START - 3600), tmp)
+        env2 = FakeEnv(START - 3600)
+        with self.assertRaises(cr.CaptureHalt) as ctx:
+            cr.run_capture(env2, tmp / "cap", tmp / "custody")
+        self.assertEqual(ctx.exception.code, "REFUSED_RERUN")
+        self.assertEqual(env2.source_calls, [])
+        self.assertIn("REFUSED_RERUN_DIRECTORY_EXISTS", (tmp / "attempts.jsonl").read_text())
+
+    def test_invoked_after_preflight_deadline(self):
+        m, _ = self.run_env(FakeEnv(cr.parse_utc(cr.PREFLIGHT_DEADLINE_UTC) + 1))
+        self.assertEqual(m["halt"]["code"], "INVOKED_TOO_LATE")
+
+    def test_preflight_check_never_contacts_discovery_endpoint(self):
+        env = FakeEnv(START - 86400)
+        res = cr.preflight_check(env)
+        self.assertFalse(res["discovery_endpoint_contacted"])
+        self.assertEqual(env.source_calls, [])
+        self.assertEqual(res["policies"]["robots"]["decision"], "ALLOWED_NO_ROBOTS")
+
+    def test_live_env_refuses_unarmed_discovery_endpoint_without_socket(self):
+        env = cr.LiveEnv(HERE)
+        with self.assertRaises(cr.SourceGuardError):
+            env.http_get(cr.query_url(cr.QUERIES[0]), cr.REQUEST_HEADERS, 30)
+        env.arm_source(env.now() - 1)
+        with self.assertRaises(cr.SourceGuardError):
+            env.http_get("https://api.github.com/search/code?q=x", cr.REQUEST_HEADERS, 30)
+        with self.assertRaises(cr.SourceGuardError):
+            env.http_get("http://api.github.com/search/repositories?q=x", cr.REQUEST_HEADERS, 30)
+
+    def test_terms_sentence_normalisation(self):
+        present = cr.terms_sentences_present(AUP, cr.TERMS_CHECKS[0]["required_sentences"])
+        self.assertTrue(all(present.values()))
+
+    def test_projection_is_deterministic_and_minimal(self):
+        a = cr.project_response(gh(20, 40), 1)
+        self.assertEqual(cr.canonical(a), cr.canonical(cr.project_response(gh(20, 40), 1)))
+        self.assertEqual(set(a["items"][0]), set(cr.PROJECTED_ITEM_FIELDS) | {"position", "owner_type", "license_spdx_id"})
+
+    def test_no_cache_or_prefetch_surface(self):
+        src = (HERE / "source_capture_runner.py").read_text()
+        for token in ("lru_cache", "requests_cache", "shelve", "pickle", "page=2", '"sort"'):
+            self.assertNotIn(token, src)
+
+
+def make_repo(files):
+    d = Path(tempfile.mkdtemp())
+    subprocess.run(["git", "init", "-q", str(d)], check=True)
+    for path, text in files.items():
+        p = d / path
+        p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_text(text)
+    subprocess.run(["git", "-C", str(d), "add", "-A"], check=True)
+    subprocess.run(["git", "-C", str(d), "-c", "user.name=t", "-c", "user.email=t@example.invalid",
+                    "commit", "-q", "-m", "fixture"], check=True)
+    return d, subprocess.run(["git", "-C", str(d), "rev-parse", "HEAD"], check=True,
+                             capture_output=True).stdout.decode().strip()
+
+
+class ProjectorTests(unittest.TestCase):
+    def test_grammar_and_exclusions(self):
+        repo, commit = make_repo({
+            "experiments/x/config.json": json.dumps({"experiment": "EXP-9", "vendor": "Alpha Mail",
+                                                     "firstcall_operated": True,
+                                                     "runner": "firstcall/run_alpha.py"}),
+            "experiments/x/receipt.json": json.dumps({"experiment": "EXP-9", "vendor": "Leaky", "grade": "FAIL"}),
+            "experiments/y/plain.json": json.dumps({"vendor_id": "Beta"}),
+            "docs/design.md": "Experiment: EXP-10\n\n## 2. Targets\n\n| Vendor | Result |\n|---|---|\n| Gamma | SECRET |\n\n## Results\nVendor: NotThis\n",
+            "docs/other.md": "# Target selection\ntext\n",
+            "firstcall/run_alpha.py": "print('never executed')\n",
+            "artifacts/z.json": json.dumps({"experiment": "E", "vendor": "Out"}),
+        })
+        r = pj.project(repo, commit)
+        self.assertEqual([e["path"] for e in r["ledger"]], sorted((e["path"] for e in r["ledger"]), key=str.encode))
+        pos = {(d["path"], d["identity"]) for d in r["positive_json_designations"]}
+        self.assertEqual(pos, {("experiments/x/config.json", "Alpha Mail")})
+        self.assertTrue(r["positive_json_designations"][0]["firstcall_operated"])
+        md = r["positive_markdown_designations"]
+        self.assertEqual([(d["path"], d["vendor_column_values"]) for d in md], [("docs/design.md", ["Gamma"])])
+        dumped = json.dumps(r)
+        for secret in ("SECRET", "Leaky", "NotThis", "FAIL", "Out"):
+            self.assertNotIn(secret, dumped)
+        reasons = {(u["path"], u["reason"]) for u in r["unrecognized_designations"]}
+        self.assertIn(("experiments/y/plain.json", "IDENTITY_KEY_WITHOUT_SAME_LEVEL_EXPERIMENT"), reasons)
+        self.assertIn(("docs/other.md", "NON_GRAMMAR_TARGET_HEADING"), reasons)
+        self.assertEqual(r["status"], "BLOCKED_UNRECOGNIZED_DESIGNATION")
+        cls = {e["path"]: e["class"] for e in r["ledger"]}
+        self.assertEqual(cls["experiments/x/receipt.json"], "EXCLUDED_RESULT_OR_EVIDENCE_CONTEXT")
+        self.assertEqual(cls["artifacts/z.json"], "OUT_OF_PROJECTION_SCOPE_S8_4")
+        self.assertEqual(cls["firstcall/run_alpha.py"], "CODE_PATH_ONLY")
+        cfg = next(e for e in r["ledger"] if e["path"] == "experiments/x/config.json")
+        self.assertEqual(cfg["literal_code_path_references"], ["firstcall/run_alpha.py"])
+        self.assertEqual(r["adjudicator_approvals"], {"ADJ-1": None, "ADJ-2": None})
+
+    def test_hostile_designation_cases(self):
+        repo, commit = make_repo({
+            # incidental vendor mention in a config (not a target key)
+            "experiments/a/config.json": json.dumps({"experiment": "A-1", "notes": "compared against VendorNotes"}),
+            # policy field: boolean/null vendor-named keys cannot carry an identity
+            "experiments/b/policy.json": json.dumps({"experiment": "B-1", "independent_vendor_verification_required": True,
+                                                     "target_timeout_override": None}),
+            # actual experiment target
+            "experiments/c/manifest.json": json.dumps({"experiment_id": "C-1", "target_vendor": "RealTarget"}),
+            # renamed experiment (id string records history) is still positive
+            "experiments/d/manifest.json": json.dumps({"experiment": "D-2 (formerly D-1)", "vendor_id": "RenamedTarget"}),
+            # nested experiment: identity below the experiment object is not grammar -> blocks
+            "experiments/e/manifest.json": json.dumps({"experiment": "E-1", "runs": [{"vendor": "NestedTarget"}]}),
+            # policy-like key holding an identity-capable value -> blocks
+            "experiments/f/policy.json": json.dumps({"experiment": "F-1", "provider_under_test": "HiddenTarget"}),
+            # documentation example in a fenced block and in an example path
+            "docs/guide.md": "Intro.\n\n```\nExperiment: X-1\n## Targets\nVendor: FencedExample\n```\n",
+            "experiments/examples/sample.json": json.dumps({"experiment": "X-2", "vendor": "ExampleVendor"}),
+            # vendor appearing in prose only
+            "docs/prose.md": "# Notes\nWe read about Vendor: ProseOnly in passing and ProseTwo elsewhere.\n",
+            # historical artifact and receipt contexts
+            "artifacts/old/manifest.json": json.dumps({"experiment": "H-1", "vendor": "ArtifactVendor"}),
+            "experiments/h/receipt.json": json.dumps({"experiment": "H-2", "vendor": "ReceiptVendor"}),
+        })
+        r = pj.project(repo, commit)
+        pos = {(d["path"], d["identity"]) for d in r["positive_json_designations"]}
+        self.assertEqual(pos, {("experiments/c/manifest.json", "RealTarget"),
+                               ("experiments/d/manifest.json", "RenamedTarget")})
+        self.assertEqual(r["positive_markdown_designations"], [])
+        reasons = {(u["path"], u["reason"]) for u in r["unrecognized_designations"]}
+        self.assertEqual(reasons, {
+            ("experiments/e/manifest.json", "IDENTITY_KEY_WITHOUT_SAME_LEVEL_EXPERIMENT"),
+            ("experiments/f/policy.json", "EXPERIMENT_OBJECT_WITH_NON_GRAMMAR_TARGET_KEY"),
+            ("experiments/examples/sample.json", "DESIGNATION_SHAPE_IN_EXAMPLE_PATH"),
+        })
+        b = next(e for e in r["ledger"] if e["path"] == "experiments/b/policy.json")
+        self.assertEqual([f["key"] for f in b["projection"]["incidental_non_identity_fields"]],
+                         ["independent_vendor_verification_required", "target_timeout_override"])
+        dumped = json.dumps(r)
+        for leaked in ("VendorNotes", "FencedExample", "ExampleVendor", "ProseOnly", "ProseTwo",
+                       "ArtifactVendor", "ReceiptVendor", "NestedTarget", "HiddenTarget"):
+            self.assertNotIn(leaked, dumped)
+
+    def test_clean_repo_is_draft_not_approved(self):
+        repo, commit = make_repo({"experiments/x/config.json": json.dumps({"experiment": "E", "vendor": "A"})})
+        r = pj.project(repo, commit)
+        self.assertEqual(r["status"], "DRAFT_REQUIRES_TWO_ADJUDICATOR_APPROVAL")
+
+    def test_deterministic(self):
+        repo, commit = make_repo({"docs/a.md": "x", "experiments/b.json": "{}"})
+        self.assertEqual(pj.canonical(pj.project(repo, commit)), pj.canonical(pj.project(repo, commit)))
+
+
+def adjudicator(slot, name, contact):
+    return {"schema": "firstcall.programmeA.adjudicator_registration.v1", "slot": slot, "kind": "natural_person",
+            "full_name": name, "public_contact": contact, "registered_utc": "2026-09-19T12:00:00Z",
+            "functions": sorted(vr.FUNCTIONS), "attestations": {k: True for k in vr.ATTESTATION_KEYS},
+            "disclosures": {k: False for k in vr.DISCLOSURE_KEYS}, "conflicts": []}
+
+
+class ValidatorTests(unittest.TestCase):
+    def setUp(self):
+        self.roles = json.loads((HERE / "roles.json").read_text())
+
+    def fill_all(self, roles):
+        for r in roles["roles"]:
+            if r["status"] == "UNFILLED" and r["id"] not in ("R06", "R07", "R14"):
+                r["status"] = "FILLED"
+                r["registrant"] = {"name": f"Person {r['id']}"}
+        return roles
+
+    def test_current_package_is_incomplete_not_ready(self):
+        errors, st = vr.evaluate_roles(self.roles, {})
+        self.assertEqual(errors, [])
+        self.assertEqual(st["decision"], "SEALABLE_BUT_REGISTRATIONS_INCOMPLETE")
+        self.assertTrue(st["capture_roles_filled"])
+        for rid in ("R06", "R07", "R08", "R09", "R10", "R15", "R16"):
+            self.assertIn(rid, st["unfilled"])
+
+    def test_ready_only_when_everything_registrable_is_filled(self):
+        roles = self.fill_all(copy.deepcopy(self.roles))
+        adj = {"ADJ-1": adjudicator("ADJ-1", "A Person", "a@example.invalid"),
+               "ADJ-2": adjudicator("ADJ-2", "B Person", "b@example.invalid")}
+        errors, st = vr.evaluate_roles(roles, adj)
+        self.assertEqual(errors, [])
+        self.assertEqual(st["decision"], "SEALABLE_AND_CAPTURE_READY")
+        errors, st = vr.evaluate_roles(roles, {"ADJ-1": adj["ADJ-1"]})
+        self.assertEqual(st["decision"], "SEALABLE_BUT_REGISTRATIONS_INCOMPLETE")
+
+    def test_same_person_twice_is_not_independent(self):
+        adj = {"ADJ-1": adjudicator("ADJ-1", "Same  Person", "x@example.invalid"),
+               "ADJ-2": adjudicator("ADJ-2", "same person", "y@example.invalid")}
+        errors, st = vr.evaluate_roles(self.roles, adj)
+        self.assertEqual(st["decision"], "NOT_SEALABLE")
+
+    def test_model_adjudicator_rejected(self):
+        rec = adjudicator("ADJ-1", "Claude instance A", "n/a")
+        rec["kind"] = "model"
+        errors, st = vr.evaluate_roles(self.roles, {"ADJ-1": rec})
+        self.assertTrue(any("natural_person" in e for e in errors))
+        self.assertEqual(st["decision"], "NOT_SEALABLE")
+
+    def test_missing_attestation_rejected(self):
+        rec = adjudicator("ADJ-1", "A", "a@example.invalid")
+        rec["attestations"].pop(vr.ATTESTATION_KEYS[0])
+        errors, _ = vr.evaluate_roles(self.roles, {"ADJ-1": rec})
+        self.assertTrue(errors)
+
+    def test_entropy_custodian_cannot_be_capture_custodian_or_adjudicator(self):
+        roles = copy.deepcopy(self.roles)
+        r15 = next(r for r in roles["roles"] if r["id"] == "R15")
+        r15["status"], r15["registrant"] = "FILLED", {"name": "Ross Buckley"}
+        errors, _ = vr.evaluate_roles(roles, {})
+        self.assertTrue(any("R15 and R01" in e for e in errors))
+        r15["registrant"] = {"name": "A Person"}
+        errors, _ = vr.evaluate_roles(roles, {"ADJ-1": adjudicator("ADJ-1", "A Person", "a@example.invalid")})
+        self.assertTrue(any("R15 and R06" in e for e in errors))
+
+    def test_replacement_after_packet_opened_invalidates(self):
+        a1 = adjudicator("ADJ-1", "A", "a@example.invalid")
+        a2 = adjudicator("ADJ-2", "B", "b@example.invalid")
+        frozen = {s: vr.sha(json.dumps(r, sort_keys=True).encode()) for s, r in {"ADJ-1": a1, "ADJ-2": a2}.items()}
+        a2b = adjudicator("ADJ-2", "C", "c@example.invalid")
+        errors, _ = vr.evaluate_roles(self.roles, {"ADJ-1": a1, "ADJ-2": a2b}, packet_opened=True,
+                                      frozen_adjudicator_hashes=frozen)
+        self.assertTrue(any("after a packet was opened" in e for e in errors))
+
+    def test_adjudicator_slot_cannot_be_filled_in_roles_json(self):
+        roles = copy.deepcopy(self.roles)
+        r6 = next(r for r in roles["roles"] if r["id"] == "R06")
+        r6["status"], r6["registrant"] = "FILLED", {"name": "X"}
+        errors, _ = vr.evaluate_roles(roles, {})
+        self.assertTrue(errors)
+
+    def test_missing_role_fails_closed(self):
+        roles = copy.deepcopy(self.roles)
+        roles["roles"] = [r for r in roles["roles"] if r["id"] != "R09"]
+        errors, st = vr.evaluate_roles(roles, {})
+        self.assertTrue(errors)
+        self.assertEqual(st["decision"], "NOT_SEALABLE")
+
+
+if __name__ == "__main__":
+    unittest.main(verbosity=1)

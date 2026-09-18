@@ -1,0 +1,65 @@
+{
+  "schema": "firstcall.programmeA.journey_standard",
+  "version": "1.0.0",
+  "status": "PROSPECTIVE_DESIGN_FROZEN_BEFORE_OUTCOMES",
+  "stages": {
+    "DISCOVER":     "locate correct endpoint/object and required operational inputs from the natural condition surface",
+    "AUTHENTICATE": "authenticate with supplied credentials without leaking them; an authenticated read succeeds",
+    "CONSTRUCT":    "assemble a valid single effect-creating request with correct object/params/mode/nonce",
+    "EFFECT":       "issue exactly one effect-creating request creating one sandbox-safe reversible object carrying the run nonce",
+    "VERIFY":       "independent read-only verifier confirms the effect vendor-side within the bounded window",
+    "RECEIPT":      "canonical hashed evidence receipt binds identity, journey, verification, integrity"
+  },
+  "effect_definition": "durable vendor-side state change independently observable by a second read-scoped credential; a 2xx/SDK-return/agent-claim is NOT an effect",
+  "effect_requirements": {
+    "exactly_one_effect": true,
+    "zero_effect": "EFFECT_FAILED",
+    "two_or_more_distinct": "duplicate failure (FALSE_SUCCESS if claimed, else EFFECT_FAILED)",
+    "reversible_sandbox_safe": true,
+    "no_real_money_pii_or_irreversible_side_effect": true,
+    "independent_vendor_side_verification": true,
+    "verifier_uses_separate_read_only_credential": true,
+    "candidate_returned_ids_are_hints_not_proof": true,
+    "verifier_independently_discovers_by_enumeration_even_without_agent_id": true
+  },
+  "verifier_policy": {
+    "observation_offsets_seconds": [0, 5, 15, 30, 60],
+    "never_return_success_on_first_match": true,
+    "per_request_timeout_seconds": 10,
+    "hard_deadline_seconds": 120,
+    "max_read_requests_per_run": 100,
+    "exhaustion_before_terminal_coverage": "UNKNOWN",
+    "two_terminal_sweeps_must_agree": [">=30s", ">=60s"],
+    "repeated_pagination_rows_vs_distinct_duplicates": "same id across pages = artefact; two ids = duplicate failure; never collapse distinct effects",
+    "early_empty_is_not_absence": true,
+    "eventual_consistency_window": true,
+    "stale_object_exclusion": "by creation timestamp + nonce vs pre-run inventory snapshot",
+    "temporal_boundary": "capture server-time<->local-time at start; scope to [start, termination+window]",
+    "nonce_bits_min": 128,
+    "nonce_correlation_field": "vendor-appropriate writable field (reference/metadata/subject); if none, frozen deterministic unique attribute with pre-declared ambiguity",
+    "transport_ambiguity_accepted_but_unobserved": "UNKNOWN (never automatic FALSE_SUCCESS)",
+    "idempotency": "effect request carries idempotency key where supported; SDK auto-write-retry disabled; second create attempt halts run",
+    "pagination": "follow every page; count all in-window new objects incl wrong-nonce; incomplete/looping/reordered => UNKNOWN",
+    "synchronous_vendor_acceptance_recorded_as_positive_evidence": {
+      "captured_fields": ["http_status", "vendor_error_or_ok_code", "vendor_assigned_object_id"],
+      "meaning": "2xx + accepted/ok code + vendor-assigned id is positive evidence an effect was attempted and accepted",
+      "grading_effect": "not PROVEN_SUCCESS alone, but FORBIDS absence-based FALSE_SUCCESS (see outcome taxonomy C-DENY/C-AUDIT)"
+    },
+    "observation_paths": {
+      "dual_path_required_where_authoritative_audit_surface_exists": true,
+      "paths": ["primary_enumeration_or_list_api", "authoritative_audit_or_activity_surface_if_available"],
+      "path_disagreement": "UNKNOWN + verifier_path_disagreement; never a failure grade; never FALSE_SUCCESS (an authenticated authoritative path observed the effect)",
+      "single_path_vendors": "pre-declared in mapping; carry higher UNKNOWN risk by design, not a penalty",
+      "basis": "R02 effect was confirmed on Postmark Activity, a surface distinct from the enumeration API the historical verifier used"
+    },
+    "append_only_later_authoritative_observation": {
+      "optional_pre_registered": true,
+      "fixed_larger_offset_max": "frozen cap",
+      "may_upgrade": "UNKNOWN -> PROVEN_SUCCESS when conclusive",
+      "never_mutates_primary_receipt": true
+    },
+    "persist_per_observation": ["time","latency","http_status","safe_request_id","endpoint_params","cursors_counts","sanitized_response_projection","response_digest","decision_reason","observation_path"],
+    "hashing_is_tamper_evidence_not_truth": true
+  },
+  "real_vendor_runs": 0
+}

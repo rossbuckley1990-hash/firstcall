@@ -1,0 +1,176 @@
+{
+  "schema": "firstcall.programmeA.a1_decision_protocol.v1",
+  "population": "A1",
+  "adjudicators": {
+    "count": 2,
+    "kind": "distinct registered natural persons; no model- or third-party-generated codes",
+    "independence": "same inputs (E1 snapshot material, E2 starting links, this protocol); separate reading; neither sees the other's evidence or codes until both records for the block are sealed by hash",
+    "disagreement": "UNRESOLVED; no tie-break, no third reviewer, no second pass"
+  },
+  "evidence_hierarchy": {
+    "E1": "the primary entry's definition file at the pinned commit (cite commit + path). Leads and hints only",
+    "E2": "the ONLY starting URLs: a1_evidence.e2_leads(primary entry) — info.x-origin[].url, externalDocs.url, info.termsOfService, info.contact.url, servers[].url (variables filled only from their own defaults), Swagger-2.0 scheme+host+basePath; absolute http(s) with a DNS host only; relative, unresolved-template, IP-literal, non-DNS and malformed values are dropped and recorded",
+    "E3": "first-party documentation that is explicitly licensed for copying: read under E4 rules; the licence may allow a retained copy but never adds pages, time or sources",
+    "E4": "ordinary logged-out human browser reading of public first-party pages reached from E2 leads via visible links",
+    "E5_excluded": "vendor APIs of any kind",
+    "E6_excluded": "search engines, guessed or constructed URLs, reviews, forums, rankings, model memory, third-party mirrors, the quarantined drafts, prior FIRSTCALL outcomes",
+    "no_substitution": "adjudicators may not examine, adopt or switch to any other entry, key, product or service in the RDG because the primary entry is difficult, inaccessible or ineligible; normal EXCLUDED/UNRESOLVED rules apply to the primary entry's surface"
+  },
+  "navigation": {
+    "vocabulary": [
+      "doc",
+      "api",
+      "reference",
+      "sandbox",
+      "test",
+      "free",
+      "pricing",
+      "signup",
+      "sign-up",
+      "account",
+      "auth",
+      "tenant",
+      "terms",
+      "region",
+      "privacy",
+      "deprecat"
+    ],
+    "rule": "follow only visible first-party links whose URL path contains a vocabulary term; external hosts are first-party only if an E2 lead or first-party page links them as official",
+    "target_order": [
+      "documentation home",
+      "sandbox/test documentation",
+      "pricing",
+      "signup",
+      "terms applicable to API/developer use",
+      "region/availability",
+      "deprecation"
+    ],
+    "max_depth_from_lead": 2,
+    "eligibility_stage": {
+      "per": "RDG (primary entry)",
+      "max_pages": 16,
+      "max_minutes": 60,
+      "covers": "I0-I4, E1-E4, C01-C07"
+    },
+    "terms_stage": {
+      "per": "RDG (primary entry)",
+      "max_pages": 6,
+      "max_minutes": 20,
+      "covers": "T1-T3",
+      "pages": "counted separately from the eligibility budget"
+    },
+    "retry": "a page that fails to load may be retried once after >= 30 minutes within the same key's slot; failed pages consume their slot",
+    "prohibited": [
+      "search engines",
+      "guessed URLs",
+      "login or account creation",
+      "vendor API calls",
+      "automated scraping, crawling or bulk download",
+      "browser extensions",
+      "creating archive copies (e.g. save-page-now)"
+    ],
+    "browser": "registered pinned browser version, clean profile, never logged in, strictly-necessary cookies only, UK network egress",
+    "translation": "non-English pages only through the registered translation tool (role R09); uncertain translation => UNRESOLVED",
+    "spec_parser": "the primary entry is parsed only by the registered pinned parser (role R17)"
+  },
+  "predicates": {
+    "I0": "the platform/journey surface documented by the primary entry is identifiable from E1/E2/E4 evidence (which service and control plane the entry's API belongs to)",
+    "I1": "has public documentation — for the platform/journey surface of the primary entry",
+    "I2": "advertises a test/sandbox mode OR a free self-serve tier supporting a reversible effect — for the platform/journey surface of the primary entry",
+    "I3": "self-serve signup without an enterprise sales contract (UK-resident individual developer) — for the platform/journey surface of the primary entry",
+    "I4": "supports at least one journey object meeting the Freeze-1 effect requirements per public documentation — for the platform/journey surface of the primary entry",
+    "E1": "enterprise-contract-only — for the platform/journey surface of the primary entry",
+    "E2": "no safe test/sandbox capability per public documentation — for the platform/journey surface of the primary entry",
+    "E3": "requires real money/PII/irreversible effect with no sandbox — for the platform/journey surface of the primary entry",
+    "E4": "region-locked or KYC-gated beyond a sandbox for a UK-resident individual developer — for the platform/journey surface of the primary entry",
+    "E6": "FIRSTCALL-authored/operated or prior designated target (approved prior-FIRSTCALL registry) — for the platform/journey surface of the primary entry",
+    "T1": "applicable first-party terms explicitly prohibit automated agents of the kind the journey requires — for the platform/journey surface of the primary entry",
+    "T2": "applicable first-party terms explicitly prohibit benchmarking/testing of the kind the journey requires — for the platform/journey surface of the primary entry",
+    "T3": "applicable first-party terms explicitly prohibit publication of the derived result/evidence FIRSTCALL publishes — for the platform/journey surface of the primary entry",
+    "C01-C07": "Freeze-1.1 functional category membership; descriptive only, but >= 1 agreed TRUE is required for scope"
+  },
+  "coding": {
+    "TRUE_FALSE": "only with a recorded factual proposition and evidence record; silence never supports FALSE for an inclusion or TRUE for an exclusion",
+    "terms_FALSE_meaning": "for T1-T3, FALSE means 'applicable first-party terms were located and read within budget and no explicit prohibition was observed'. Reported neutrally as NO_EXPLICIT_RESTRICTION_OBSERVED, never as permission",
+    "UNRESOLVED_whenever": [
+      "evidence insufficient within budget",
+      "required evidence login-gated",
+      "conflicting authoritative documentation",
+      "evidence inaccessible after the frozen retry",
+      "uncertain translation",
+      "terms requiring login or acceptance not available for prospective review",
+      "materially ambiguous restriction",
+      "protocol deviation"
+    ],
+    "monotonicity": "once affirmative authoritative evidence for a fatal predicate has been recorded, later contrary evidence makes that predicate UNRESOLVED (contradiction), never the opposite affirmative code",
+    "login_wall_rule": "if every E2 documentation lead of the primary entry is login-walled, I1 = FALSE (affirmative observation); if only evidence for a particular predicate is login-walled, that predicate = UNRESOLVED"
+  },
+  "fatal_exclusion_stop": {
+    "fatal_predicates": [
+      "INCLUSION_FALSE:I0",
+      "INCLUSION_FALSE:I1",
+      "INCLUSION_FALSE:I2",
+      "INCLUSION_FALSE:I3",
+      "INCLUSION_FALSE:I4",
+      "E1",
+      "E2",
+      "E3",
+      "E4",
+      "E6",
+      "T1",
+      "T2",
+      "T3"
+    ],
+    "rule": "an adjudicator who affirmatively establishes a fatal predicate seals their record with fatal_stop = that predicate and stops reading that key. When both records are sealed: same fatal predicate affirmed by both => EXCLUDED (terminal, further budget not spent); otherwise the normal combination applies (a unilateral stop cannot yield RESOLVED_ELIGIBLE)",
+    "record": [
+      "fatal predicate",
+      "both sealed record hashes",
+      "evidence records",
+      "pages and minutes consumed at termination"
+    ]
+  },
+  "evidence_record_fields": "evidence-record.schema.json",
+  "adjudication_record_fields": "adjudication-record.schema.json",
+  "retention": {
+    "retained": [
+      "URL",
+      "UTC timestamp",
+      "page title",
+      "evidence tier",
+      "factual proposition",
+      "predicate",
+      "code",
+      "reason",
+      "minimal supporting excerpt where appropriate",
+      "adjudicator id",
+      "record SHA256",
+      "optional existing public-archive pointer"
+    ],
+    "not_retained_by_default": [
+      "full HTML/PDF/page copies",
+      "screenshots",
+      "page-byte hashes"
+    ],
+    "access_controls": "technical access controls and explicit access restrictions are respected; nothing is circumvented",
+    "publication_gate": "any commercial or non-research publication of records requires a separate legal-review gate; this protocol is not legal advice"
+  },
+  "timing": {
+    "block_size": 6,
+    "block_window_hours": 48,
+    "rule": "the entropy custodian releases block b only after block b-1 is sealed; both adjudicators read every key of block b within 48 h of release and seal their records; statuses are combined mechanically only after both seals",
+    "release_cadence": "at most 3 blocks per calendar week",
+    "planning_bound_weeks": 26,
+    "planning_basis": "expected RDGs screened for n=24 over |G| (unknown before retrieval; at most ~701): n(|G|+1)/(M_G+1) — e.g. with |G|=701: 237 at 10% S-prevalence, 159 at 15%, 120 at 20%, 80 at 30%",
+    "bound_exceeded": "recorded deviation; screening continues to the stop rule or exhaustion. Time never truncates the sample (a time cut-off could depend on unit difficulty)",
+    "no_readjudication": "sealed records and statuses are final; later changes go to a post-sample change log"
+  },
+  "diagnostics": {
+    "position_drift": "Cochran-Armitage trend test of the S indicator and of the UNRESOLVED indicator against block index, two-sided alpha 0.05, reported with per-block rates; diagnostic only, never alters the sample",
+    "adjudicator_rates": "per-adjudicator UNRESOLVED, fatal-stop and disagreement rates by block"
+  },
+  "unit": "one RDG, examined ONLY through its primary entry as fixed in the sealed frame",
+  "relationships": {
+    "observed_relationships": "an adjudicator may record a cross-domain relationship (e.g. 'this surface shares a control plane with <other RDG id>') only when independently established by the ordinary frozen evidence process",
+    "effect": "descriptive only; never alters inclusion, weighting, denominator, primary estimate, replacement or eligibility; never used for merging, de-duplication or any vendor-level estimator"
+  }
+}

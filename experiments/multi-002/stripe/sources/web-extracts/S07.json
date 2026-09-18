@@ -1,0 +1,7 @@
+{
+  "id": "S07",
+  "url": "https://docs.stripe.com/payments/accept-a-payment.md?payment-ui=checkout&ui=stripe-hosted",
+  "started": "2026-09-18T15:00:46.352Z",
+  "result": "Internal Error ()\nciteturn4view0 [wordlim: 200] Source: open({\"ref_id\":\"https://docs.stripe.com/payments/accept-a-payment.md?payment-ui=checkout&ui=stripe-hosted\",\"lineno\":null}); Total lines: 1\nL0: URL https://docs.stripe.com/payments/accept-a-payment.md?payment-ui=checkout&ui=stripe-hosted is not accessible via this tool.\n",
+  "ended": "2026-09-18T15:00:47.958Z"
+}

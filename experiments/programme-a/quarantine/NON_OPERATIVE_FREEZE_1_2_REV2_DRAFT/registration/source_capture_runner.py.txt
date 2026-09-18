@@ -1,0 +1,625 @@
+#!/usr/bin/env python3
+"""FIRSTCALL Programme A registered source-discovery capture runner (Freeze 1.2, rev 2).
+
+Discovery index: the GitHub REST API repository search (unauthenticated), whose terms
+expressly allow collection "through our API" and research use of public, non-personal
+information (GitHub Acceptable Use Policies §7). No web search-engine HTML is used.
+
+Modes:
+  --offline-describe   print the frozen request plan; no network at all.
+  --preflight-check    verify registration, clock, egress, terms sentences and robots
+                       policy. NEVER contacts the discovery endpoint; writes nothing.
+  --authoritative      the one registered attempt: exclusive capture directory, self-timed
+                       requests at the frozen instants, raw bytes to custody before any
+                       parsing, published projection + manifest. No retry, no repeat.
+
+The discovery endpoint is reachable only through LiveEnv.http_get while run_capture has
+armed the source guard for a scheduled request.
+"""
+import argparse
+import hashlib
+import html
+import http.client
+import ipaddress
+import json
+import os
+import platform
+import re
+import socket
+import ssl
+import struct
+import subprocess
+import sys
+import time
+import urllib.parse
+from datetime import datetime, timezone
+from pathlib import Path
+
+RUNNER_ID = "firstcall-programme-a-source-capture-runner"
+RUNNER_VERSION = "1.2.1"
+REGISTRATION_TAG = "programme-a-freeze-1.2-registration"
+T0_UTC = "2026-09-17T00:00:00Z"
+SCHEDULED_START_UTC = "2026-09-23T09:00:00Z"
+PREFLIGHT_AT_UTC = "2026-09-23T08:50:00Z"
+PREFLIGHT_DEADLINE_UTC = "2026-09-23T08:58:00Z"
+QUERIES = (
+    "public API directory downloadable dataset",
+    "open software API catalog CSV JSON",
+    "public developer platform registry bulk export",
+    "open API index data repository",
+)
+QUALIFIER = "in:name,description,topics,readme"
+OFFSETS_SECONDS = (0, 60, 120, 180)
+MAX_START_LATENESS_SECONDS = 5.0
+POSITIONS = 20
+SOURCE_HOST = "api.github.com"
+SEARCH_PATH = "/search/repositories"
+SEARCH_PARAMS = (("per_page", str(POSITIONS)), ("page", "1"))
+USER_AGENT = "FIRSTCALL-ProgrammeA-SourceCaptureRunner/1.2.1 (one-time four-query research capture)"
+REQUEST_HEADERS = (
+    ("User-Agent", USER_AGENT),
+    ("Accept", "application/vnd.github+json"),
+    ("X-GitHub-Api-Version", "2026-03-10"),
+    ("Accept-Encoding", "identity"),
+    ("Connection", "close"),
+)
+REQUEST_DEADLINE_SECONDS = 30.0
+MAX_RESPONSE_BYTES = 5 * 1024 * 1024
+PROJECTED_ITEM_FIELDS = ("id", "full_name", "html_url", "fork", "archived", "created_at",
+                         "pushed_at", "default_branch")
+TERMS_CHECKS = (
+    {"url": "https://docs.github.com/en/site-policy/acceptable-use-policies/github-acceptable-use-policies",
+     "required_sentences": (
+         "regardless of whether the information was scraped, collected through our API, or obtained otherwise",
+         "Researchers may use public, non-personal information from the Service for research purposes, "
+         "only if any publications resulting from that research are open access.",
+         "Scraping does not refer to the collection of information through our API.",
+     )},
+)
+ROBOTS_URL = "https://api.github.com/robots.txt"
+SNTP_SERVER = "time.apple.com"
+SNTP_ATTEMPTS = 5
+SNTP_TIMEOUT_SECONDS = 5.0
+MAX_CLOCK_OFFSET_SECONDS = 2.0
+EGRESS_ECHO_URL = "https://api.ipify.org"
+AUX_ATTEMPTS = 5
+AUX_RETRY_WAIT_SECONDS = 10.0
+CAPTURE_DIR = "experiments/programme-a/capture/authoritative-2026-09-23T0900Z"
+ATTEMPT_LOG = "experiments/programme-a/capture/attempts.jsonl"
+CUSTODY_DIR = "~/.firstcall-custody/programme-a/authoritative-2026-09-23T0900Z"
+REGISTRATION_DIR = "experiments/programme-a/registration"
+RUNNER_PATH = REGISTRATION_DIR + "/source_capture_runner.py"
+MANIFEST_PATH = REGISTRATION_DIR + "/source-capture-runner-manifest.json"
+CAFFEINATE = "/usr/bin/caffeinate"
+
+
+class CaptureHalt(Exception):
+    def __init__(self, code, detail=""):
+        super().__init__(f"{code}: {detail}")
+        self.code = code
+        self.detail = detail
+
+
+class SourceGuardError(RuntimeError):
+    pass
+
+
+def canonical(obj):
+    return json.dumps(obj, sort_keys=True, separators=(",", ":"),
+                      ensure_ascii=False, allow_nan=False).encode("utf-8")
+
+
+def sha256(data):
+    return hashlib.sha256(data).hexdigest()
+
+
+def parse_utc(text):
+    return datetime.strptime(text, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc).timestamp()
+
+
+def iso(epoch):
+    return datetime.fromtimestamp(epoch, timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+
+
+def query_url(query):
+    params = (("q", f"{query} {QUALIFIER}"),) + SEARCH_PARAMS
+    return f"https://{SOURCE_HOST}{SEARCH_PATH}?" + urllib.parse.urlencode(params)
+
+
+def is_source_url(url):
+    p = urllib.parse.urlsplit(url)
+    return (p.hostname or "").lower().rstrip(".") == SOURCE_HOST and p.path.startswith("/search")
+
+
+def request_plan():
+    start = parse_utc(SCHEDULED_START_UTC)
+    return [{"index": i + 1, "query": q, "url": query_url(q), "scheduled_utc": iso(start + off),
+             "offset_seconds": off} for i, (q, off) in enumerate(zip(QUERIES, OFFSETS_SECONDS))]
+
+
+# ------------------------------------------------------------------ pure checks
+
+def normalize_text(page_bytes):
+    t = page_bytes.decode("utf-8", errors="replace")
+    t = re.sub(r"(?is)<(script|style)\b.*?</\1>", " ", t)
+    t = re.sub(r"<[^>]+>", " ", t)
+    t = html.unescape(t)
+    t = re.sub(r"\s+", " ", t)
+    return re.sub(r"\s+([.,;:])", r"\1", t)
+
+
+def terms_sentences_present(page_bytes, sentences):
+    text = normalize_text(page_bytes)
+    return {s: (s in text) for s in sentences}
+
+
+def robots_decision(status, body):
+    """RFC 9309: 4xx = no restriction; 5xx/unreachable = assume full disallow."""
+    if status is None or status >= 500:
+        return "UNVERIFIED"
+    if 400 <= status < 500:
+        return "ALLOWED_NO_ROBOTS"
+    if status != 200:
+        return "UNVERIFIED"
+    groups, current, agents = [], None, []
+    for raw in body.decode("utf-8", errors="replace").splitlines():
+        line = raw.split("#", 1)[0].strip()
+        if ":" not in line:
+            continue
+        key, value = (x.strip() for x in line.split(":", 1))
+        key = key.lower()
+        if key == "user-agent":
+            if current is not None and current["rules"]:
+                current = None
+            if current is None:
+                current = {"agents": [], "rules": []}
+                groups.append(current)
+            current["agents"].append(value.lower())
+        elif key in ("allow", "disallow") and current is not None:
+            current["rules"].append((key, value))
+    agents = [g for g in groups if any(a == "*" or a in USER_AGENT.lower() for a in g["agents"])]
+    best = None
+    for g in agents:
+        for kind, path in g["rules"]:
+            if path and SEARCH_PATH.startswith(path.rstrip("*").rstrip("$")):
+                if best is None or len(path) > len(best[1]) or (len(path) == len(best[1]) and kind == "allow"):
+                    best = (kind, path)
+    return "DISALLOWED" if best and best[0] == "disallow" else "ALLOWED"
+
+
+def project_response(body, index):
+    """Deterministic published projection. Raises CaptureHalt on malformed/partial data."""
+    try:
+        doc = json.loads(body.decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+        raise CaptureHalt("MALFORMED_RESPONSE", f"query {index}: {type(exc).__name__}")
+    if not isinstance(doc, dict) or not isinstance(doc.get("total_count"), int) or \
+            not isinstance(doc.get("incomplete_results"), bool) or not isinstance(doc.get("items"), list):
+        raise CaptureHalt("MALFORMED_RESPONSE", f"query {index}: missing total_count/incomplete_results/items")
+    if doc["incomplete_results"]:
+        raise CaptureHalt("INCOMPLETE_RESULTS", f"query {index}")
+    expected = min(POSITIONS, doc["total_count"])
+    if len(doc["items"]) != expected:
+        raise CaptureHalt("MALFORMED_RESPONSE", f"query {index}: {len(doc['items'])} items, expected {expected}")
+    items = []
+    for pos, it in enumerate(doc["items"], start=1):
+        if not isinstance(it, dict) or not isinstance(it.get("id"), int) or not isinstance(it.get("full_name"), str) \
+                or not isinstance(it.get("html_url"), str) or not isinstance(it.get("owner"), dict):
+            raise CaptureHalt("MALFORMED_RESPONSE", f"query {index}: item {pos}")
+        proj = {"position": pos, "owner_type": it["owner"].get("type")}
+        for f in PROJECTED_ITEM_FIELDS:
+            proj[f] = it.get(f)
+        lic = it.get("license")
+        proj["license_spdx_id"] = lic.get("spdx_id") if isinstance(lic, dict) else None
+        items.append(proj)
+    return {"total_count": doc["total_count"], "incomplete_results": False, "items": items}
+
+
+# ------------------------------------------------------------------ environments
+
+class Response:
+    def __init__(self, status, headers, body, remote_ip=None, truncated=False):
+        self.status = status
+        self.headers = headers
+        self.body = body
+        self.remote_ip = remote_ip
+        self.truncated = truncated
+
+    def header(self, name):
+        return [v for k, v in self.headers if k.lower() == name.lower()]
+
+
+class _IPv4HTTPSConnection(http.client.HTTPSConnection):
+    def connect(self):
+        infos = socket.getaddrinfo(self.host, self.port, socket.AF_INET, socket.SOCK_STREAM)
+        if not infos:
+            raise OSError("no IPv4 address")
+        sock = socket.create_connection(infos[0][4], self.timeout)
+        self.sock = self._context.wrap_socket(sock, server_hostname=self.host)
+
+
+class LiveEnv:
+    def __init__(self, root):
+        self.root = Path(root)
+        self.source_armed_until = None
+
+    def now(self):
+        return time.time_ns() / 1e9
+
+    def sleep(self, seconds):
+        time.sleep(max(0.0, seconds))
+
+    def arm_source(self, until_epoch):
+        self.source_armed_until = until_epoch
+
+    def disarm_source(self):
+        self.source_armed_until = None
+
+    def http_get(self, url, headers, timeout):
+        parts = urllib.parse.urlsplit(url)
+        if parts.scheme != "https":
+            raise SourceGuardError("https only")
+        if is_source_url(url) and (self.source_armed_until is None or self.now() > self.source_armed_until):
+            raise SourceGuardError("discovery endpoint contacted outside an armed request")
+        conn = _IPv4HTTPSConnection(parts.hostname, parts.port or 443, timeout=timeout,
+                                    context=ssl.create_default_context())
+        try:
+            path = urllib.parse.urlunsplit(("", "", parts.path or "/", parts.query, ""))
+            conn.putrequest("GET", path, skip_accept_encoding=True)
+            for k, v in headers:
+                conn.putheader(k, v)
+            conn.endheaders()
+            resp = conn.getresponse()
+            remote_ip = conn.sock.getpeername()[0] if conn.sock else None
+            body = resp.read(MAX_RESPONSE_BYTES + 1)
+            return Response(resp.status, list(resp.getheaders()), body[:MAX_RESPONSE_BYTES], remote_ip,
+                            truncated=len(body) > MAX_RESPONSE_BYTES)
+        finally:
+            conn.close()
+
+    def aux_get(self, url):
+        return self.http_get(url, (("User-Agent", USER_AGENT), ("Accept-Encoding", "identity"),
+                                   ("Connection", "close")), 30)
+
+    def sntp_offset(self):
+        addr = socket.getaddrinfo(SNTP_SERVER, 123, socket.AF_INET, socket.SOCK_DGRAM)[0][4]
+        with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
+            s.settimeout(SNTP_TIMEOUT_SECONDS)
+            t0 = self.now()
+            s.sendto(b"\x1b" + 47 * b"\0", addr)
+            data, _ = s.recvfrom(512)
+            t3 = self.now()
+        if len(data) < 48:
+            raise OSError("short SNTP reply")
+        rs, rf, ts, tf = struct.unpack("!IIII", data[32:48])
+        t1 = rs - 2208988800 + rf / 2**32
+        t2 = ts - 2208988800 + tf / 2**32
+        return {"server": SNTP_SERVER, "server_ip": addr[0], "offset_seconds": ((t1 - t0) + (t2 - t3)) / 2,
+                "round_trip_seconds": (t3 - t0) - (t2 - t1), "measured_at_system_utc": iso(t3)}
+
+    def egress_ip(self):
+        r = self.aux_get(EGRESS_ECHO_URL)
+        if r.status != 200:
+            raise OSError(f"egress echo status {r.status}")
+        return str(ipaddress.IPv4Address(r.body.decode("ascii").strip()))
+
+    def git(self, *args):
+        return subprocess.run(["git", "-C", str(self.root), *args], check=True,
+                              capture_output=True, timeout=60).stdout
+
+    def verify_registration(self):
+        own = Path(__file__).resolve()
+        own_bytes = own.read_bytes()
+        manifest_bytes = (self.root / MANIFEST_PATH).read_bytes()
+        manifest = json.loads(manifest_bytes)
+        rt = manifest["runtime"]
+        exe = os.path.realpath(sys.executable)
+        checks = {
+            "runner_path_is_registered_path": own == (self.root / RUNNER_PATH).resolve(),
+            "runner_sha256_matches_manifest": sha256(own_bytes) == manifest["runner"]["sha256"],
+            "interpreter_realpath_matches": exe == rt["interpreter_realpath"],
+            "interpreter_sha256_matches": sha256(Path(exe).read_bytes()) == rt["interpreter_sha256"],
+            "python_version_matches": sys.version == rt["python_version"],
+            "openssl_version_matches": ssl.OPENSSL_VERSION == rt["openssl_version"],
+        }
+        commit = self.git("rev-parse", REGISTRATION_TAG + "^{commit}").decode().strip()
+        remote = None
+        for attempt in range(AUX_ATTEMPTS):
+            try:
+                out = self.git("ls-remote", "origin", f"refs/tags/{REGISTRATION_TAG}^{{}}").decode().split()
+                remote = out[0] if out else None
+                break
+            except (subprocess.SubprocessError, OSError):
+                if attempt + 1 < AUX_ATTEMPTS:
+                    self.sleep(AUX_RETRY_WAIT_SECONDS)
+        checks["tag_remotely_anchored_same_commit"] = remote == commit
+        checks["runner_bytes_equal_tagged_bytes"] = self.git("show", f"{commit}:{RUNNER_PATH}") == own_bytes
+        checks["manifest_bytes_equal_tagged_bytes"] = self.git("show", f"{commit}:{MANIFEST_PATH}") == manifest_bytes
+        checks["registration_dir_clean"] = self.git("status", "--porcelain", "--", REGISTRATION_DIR) == b""
+        return {"registration_commit": commit, "remote_peeled_commit": remote, "checks": checks,
+                "runner_sha256": sha256(own_bytes), "manifest_sha256": sha256(manifest_bytes),
+                "ok": all(checks.values())}
+
+    def keep_awake(self):
+        p = subprocess.Popen([CAFFEINATE, "-dimsu", "-w", str(os.getpid())])
+        return {"caffeinate": CAFFEINATE, "pid": p.pid}
+
+    def runtime_facts(self):
+        return {"interpreter_realpath": os.path.realpath(sys.executable), "python_version": sys.version,
+                "openssl_version": ssl.OPENSSL_VERSION, "platform": platform.platform(),
+                "mac_ver": platform.mac_ver()[0], "machine": platform.machine()}
+
+
+# ------------------------------------------------------------------ capture procedure
+
+class Store:
+    """O_EXCL, read-only, fsynced writes into one directory."""
+
+    def __init__(self, directory):
+        self.dir = Path(directory)
+
+    def write(self, rel, data):
+        path = self.dir / rel
+        path.parent.mkdir(parents=True, exist_ok=True)
+        fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o444)
+        try:
+            os.write(fd, data)
+            os.fsync(fd)
+        finally:
+            os.close(fd)
+        return sha256(data)
+
+
+class Recorder(Store):
+    def __init__(self, directory, env):
+        super().__init__(directory)
+        self.env = env
+        self.seq = 0
+
+    def event(self, kind, **fields):
+        self.seq += 1
+        line = canonical({"seq": self.seq, "event": kind, "system_utc": iso(self.env.now()), **fields}) + b"\n"
+        fd = os.open(self.dir / "events.jsonl", os.O_WRONLY | os.O_CREAT | os.O_APPEND, 0o644)
+        try:
+            os.write(fd, line)
+            os.fsync(fd)
+        finally:
+            os.close(fd)
+
+
+def _retry(env, attempts, fn):
+    errors = []
+    for i in range(attempts):
+        try:
+            return fn(), errors
+        except Exception as exc:
+            errors.append(f"{type(exc).__name__}: {exc}")
+            if i + 1 < attempts:
+                env.sleep(AUX_RETRY_WAIT_SECONDS)
+    return None, errors
+
+
+def wait_until(env, target, offset):
+    while True:
+        remaining = target - (env.now() + offset)
+        if remaining <= 0:
+            return
+        env.sleep(min(remaining, 1.0))
+
+
+def check_policies(env, custody):
+    """Terms sentences and robots policy, fetched and archived before any source request."""
+    out = {"terms": [], "robots": None}
+    for i, spec in enumerate(TERMS_CHECKS, start=1):
+        resp, errs = _retry(env, AUX_ATTEMPTS, lambda: env.aux_get(spec["url"]))
+        if resp is None or resp.status != 200 or resp.truncated:
+            raise CaptureHalt("TERMS_UNVERIFIED", f"{spec['url']}: {errs or (resp.status if resp else None)}")
+        digest = custody.write(f"policy/terms-{i}.bin", resp.body)
+        present = terms_sentences_present(resp.body, spec["required_sentences"])
+        out["terms"].append({"url": spec["url"], "sha256": digest, "sentences_present": present})
+        if not all(present.values()):
+            raise CaptureHalt("TERMS_CHANGED", spec["url"])
+    resp, errs = _retry(env, AUX_ATTEMPTS, lambda: env.aux_get(ROBOTS_URL))
+    status = resp.status if resp is not None else None
+    body = resp.body if resp is not None else b""
+    decision = robots_decision(status, body)
+    out["robots"] = {"url": ROBOTS_URL, "status": status, "sha256": custody.write("policy/robots.bin", body),
+                     "decision": decision, "errors": errs}
+    if decision == "DISALLOWED":
+        raise CaptureHalt("ROBOTS_DISALLOW", ROBOTS_URL)
+    if decision == "UNVERIFIED":
+        raise CaptureHalt("ROBOTS_UNVERIFIED", f"status {status}")
+    return out
+
+
+def fetch_query(env, rec, index, url, scheduled, offset):
+    corrected = env.now() + offset
+    lateness = corrected - scheduled
+    rec.event("request_due", index=index, lateness_seconds=round(lateness, 6))
+    if lateness > MAX_START_LATENESS_SECONDS:
+        raise CaptureHalt("LATE_START", f"query {index} lateness {lateness:.3f}s")
+    start = env.now()
+    env.arm_source(start + REQUEST_DEADLINE_SECONDS)
+    try:
+        resp = env.http_get(url, REQUEST_HEADERS, REQUEST_DEADLINE_SECONDS)
+    except SourceGuardError:
+        raise
+    except Exception as exc:
+        raise CaptureHalt("NETWORK_FAILURE", f"query {index}: {type(exc).__name__}: {exc}")
+    finally:
+        env.disarm_source()
+    return start, lateness, resp
+
+
+def run_capture(env, out_dir, custody_dir, root_for_log=None):
+    out = Path(out_dir)
+    custody_root = Path(custody_dir)
+    log_path = Path(root_for_log) / ATTEMPT_LOG if root_for_log else out.parent / "attempts.jsonl"
+    log_path.parent.mkdir(parents=True, exist_ok=True)
+    attempt = {"runner_id": RUNNER_ID, "runner_version": RUNNER_VERSION, "invoked_system_utc": iso(env.now()),
+               "pid": os.getpid(), "capture_dir": str(out)}
+    try:
+        out.mkdir(parents=False, exist_ok=False)
+        custody_root.mkdir(parents=True, exist_ok=False)
+    except FileExistsError:
+        with open(log_path, "ab") as fh:
+            fh.write(canonical({**attempt, "result": "REFUSED_RERUN_DIRECTORY_EXISTS"}) + b"\n")
+        raise CaptureHalt("REFUSED_RERUN", "capture or custody directory exists; the first attempt is authoritative")
+    with open(log_path, "ab") as fh:
+        fh.write(canonical({**attempt, "result": "ATTEMPT_STARTED"}) + b"\n")
+        fh.flush()
+        os.fsync(fh.fileno())
+    rec = Recorder(out, env)
+    custody = Store(custody_root)
+    rec.write("attempt.json", canonical(attempt))
+    rec.event("attempt_started")
+    start = parse_utc(SCHEDULED_START_UTC)
+    manifest = {"schema": "firstcall.programmeA.source_capture_session.v2", "runner_id": RUNNER_ID,
+                "runner_version": RUNNER_VERSION, "t0_utc": T0_UTC, "scheduled_start_utc": SCHEDULED_START_UTC,
+                "discovery_index": "GitHub REST API repository search (unauthenticated)",
+                "request_plan": request_plan(), "responses": [], "status": None, "halt": None,
+                "raw_retention": "custody only (not published); sha256 published"}
+    try:
+        if env.now() > parse_utc(PREFLIGHT_DEADLINE_UTC):
+            raise CaptureHalt("INVOKED_TOO_LATE", "authoritative invocation after preflight deadline")
+        manifest["keep_awake"] = env.keep_awake()
+        wait_until(env, parse_utc(PREFLIGHT_AT_UTC), 0.0)
+        rec.event("preflight_started")
+        try:
+            reg = env.verify_registration()
+        except Exception as exc:
+            reg = {"ok": False, "error": f"{type(exc).__name__}: {exc}"}
+        sntp, sntp_err = _retry(env, SNTP_ATTEMPTS, env.sntp_offset)
+        egress, egress_err = _retry(env, AUX_ATTEMPTS, env.egress_ip)
+        pre = {"registration": reg, "sntp": sntp, "sntp_errors": sntp_err, "egress_ipv4": egress,
+               "egress_errors": egress_err, "runtime": env.runtime_facts()}
+        manifest["preflight_sha256"] = rec.write("preflight.json", canonical(pre))
+        rec.event("preflight_recorded", sha256=manifest["preflight_sha256"])
+        if not reg.get("ok"):
+            raise CaptureHalt("PREFLIGHT_REGISTRATION_MISMATCH", json.dumps(reg.get("checks") or reg.get("error")))
+        if sntp is None or abs(sntp["offset_seconds"]) > MAX_CLOCK_OFFSET_SECONDS:
+            raise CaptureHalt("PREFLIGHT_CLOCK_UNVERIFIED", json.dumps(sntp))
+        if egress is None:
+            raise CaptureHalt("PREFLIGHT_EGRESS_UNVERIFIED", "; ".join(egress_err))
+        policies = check_policies(env, custody)
+        manifest["policy_checks"] = policies
+        rec.event("policies_verified")
+        if env.now() > parse_utc(PREFLIGHT_DEADLINE_UTC):
+            raise CaptureHalt("PREFLIGHT_OVERRAN_DEADLINE", "")
+        offset = sntp["offset_seconds"]
+        for i, (query, off) in enumerate(zip(QUERIES, OFFSETS_SECONDS), start=1):
+            scheduled = start + off
+            wait_until(env, scheduled, offset)
+            system_start, lateness, resp = fetch_query(env, rec, i, query_url(query), scheduled, offset)
+            raw_hash = custody.write(f"raw/q{i}.json", resp.body)
+            meta = {"index": i, "request_url": query_url(query), "status": resp.status,
+                    "system_start_utc": iso(system_start), "system_start_epoch": system_start,
+                    "corrected_lateness_seconds": lateness, "remote_ip": resp.remote_ip,
+                    "headers": [[k, v] for k, v in resp.headers if k.lower() in (
+                        "date", "x-github-request-id", "x-ratelimit-limit", "x-ratelimit-remaining",
+                        "x-ratelimit-reset", "x-ratelimit-resource", "content-type", "content-length",
+                        "x-github-api-version-selected")],
+                    "raw_sha256": raw_hash, "raw_bytes": len(resp.body), "truncated": resp.truncated}
+            manifest["responses"].append(meta)
+            rec.event("response_archived", index=i, raw_sha256=raw_hash, status=resp.status)
+            if resp.status in (403, 429):
+                raise CaptureHalt("RATE_LIMITED", f"query {i} status {resp.status}")
+            if resp.status != 200 or resp.truncated:
+                raise CaptureHalt("UNAVAILABLE_OR_REJECTED", f"query {i} status {resp.status} truncated {resp.truncated}")
+            projection = project_response(resp.body, i)
+            meta["projection_sha256"] = rec.write(f"projection/q{i}.json", canonical(projection))
+            meta["total_count"] = projection["total_count"]
+            meta["positions"] = len(projection["items"])
+            rec.event("response_projected", index=i, positions=meta["positions"])
+        post_sntp, post_sntp_err = _retry(env, SNTP_ATTEMPTS, env.sntp_offset)
+        post_egress, post_egress_err = _retry(env, AUX_ATTEMPTS, env.egress_ip)
+        manifest["postflight"] = {"sntp": post_sntp, "sntp_errors": post_sntp_err,
+                                  "egress_ipv4": post_egress, "egress_errors": post_egress_err}
+        if post_sntp is not None:
+            for meta in manifest["responses"]:
+                scheduled = start + OFFSETS_SECONDS[meta["index"] - 1]
+                late_post = meta["system_start_epoch"] + post_sntp["offset_seconds"] - scheduled
+                meta["post_offset_lateness_seconds"] = late_post
+                if late_post > MAX_START_LATENESS_SECONDS:
+                    raise CaptureHalt("LATE_START_POST_CHECK", f"query {meta['index']} {late_post:.3f}s")
+        if post_egress is not None and post_egress != egress:
+            raise CaptureHalt("EGRESS_CHANGED", f"{egress} -> {post_egress}")
+        manifest["egress_post_verification"] = "MATCH" if post_egress is not None else "UNVERIFIED_POSTFLIGHT"
+        manifest["status"] = "CAPTURED_COMPLETE"
+    except CaptureHalt as halt:
+        manifest["status"] = "HALTED"
+        manifest["halt"] = {"code": halt.code, "detail": halt.detail}
+        rec.event("halt", code=halt.code, detail=halt.detail)
+    except Exception as exc:
+        manifest["status"] = "HALTED"
+        manifest["halt"] = {"code": "RUNNER_EXCEPTION", "detail": f"{type(exc).__name__}: {exc}"}
+        rec.event("halt", code="RUNNER_EXCEPTION", detail=manifest["halt"]["detail"])
+    finally:
+        env.disarm_source()
+    manifest["ordered_raw_sha256"] = [m["raw_sha256"] for m in manifest["responses"]]
+    data = canonical(manifest)
+    manifest_hash = rec.write("session-manifest.json", data)
+    rec.event("session_manifest_written", sha256=manifest_hash, status=manifest["status"])
+    with open(log_path, "ab") as fh:
+        fh.write(canonical({**attempt, "result": manifest["status"], "session_manifest_sha256": manifest_hash}) + b"\n")
+    manifest["_session_manifest_sha256"] = manifest_hash
+    return manifest
+
+
+class _NoWriteStore:
+    def write(self, rel, data):
+        return sha256(data)
+
+
+def preflight_check(env):
+    """Repeatable readiness check. Never contacts the discovery endpoint; writes nothing."""
+    try:
+        reg = env.verify_registration()
+    except Exception as exc:
+        reg = {"ok": False, "error": f"{type(exc).__name__}: {exc}"}
+    sntp, sntp_err = _retry(env, 1, env.sntp_offset)
+    egress, egress_err = _retry(env, 1, env.egress_ip)
+    try:
+        policies = check_policies(env, _NoWriteStore())
+    except CaptureHalt as halt:
+        policies = {"halt": halt.code, "detail": halt.detail}
+    return {"mode": "preflight-check", "discovery_endpoint_contacted": False, "registration": reg,
+            "sntp": sntp, "sntp_errors": sntp_err, "egress_ipv4": egress, "egress_errors": egress_err,
+            "policies": policies, "runtime": env.runtime_facts()}
+
+
+def main(argv=None):
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    mode = ap.add_mutually_exclusive_group(required=True)
+    mode.add_argument("--offline-describe", action="store_true")
+    mode.add_argument("--preflight-check", action="store_true")
+    mode.add_argument("--authoritative", action="store_true")
+    args = ap.parse_args(argv)
+    root = Path(__file__).resolve().parents[3]
+    if args.offline_describe:
+        print(json.dumps({"runner_id": RUNNER_ID, "runner_version": RUNNER_VERSION, "t0_utc": T0_UTC,
+                          "preflight_at_utc": PREFLIGHT_AT_UTC, "request_plan": request_plan(),
+                          "headers": REQUEST_HEADERS, "capture_dir": CAPTURE_DIR, "custody_dir": CUSTODY_DIR},
+                         indent=2))
+        return 0
+    env = LiveEnv(root)
+    if args.preflight_check:
+        print(json.dumps(preflight_check(env), indent=2, default=str))
+        return 0
+    custody = Path(os.path.expanduser(CUSTODY_DIR))
+    if root in custody.resolve().parents:
+        print(json.dumps({"status": "HALTED", "code": "CUSTODY_INSIDE_REPOSITORY"}))
+        return 3
+    try:
+        manifest = run_capture(env, root / CAPTURE_DIR, custody, root_for_log=root)
+    except CaptureHalt as halt:
+        print(json.dumps({"status": "HALTED", "code": halt.code, "detail": halt.detail}))
+        return 3
+    print(json.dumps({"status": manifest["status"], "halt": manifest["halt"],
+                      "session_manifest_sha256": manifest["_session_manifest_sha256"],
+                      "ordered_raw_sha256": manifest["ordered_raw_sha256"]}, indent=2))
+    return 0 if manifest["status"] == "CAPTURED_COMPLETE" else 2
+
+
+if __name__ == "__main__":
+    sys.exit(main())

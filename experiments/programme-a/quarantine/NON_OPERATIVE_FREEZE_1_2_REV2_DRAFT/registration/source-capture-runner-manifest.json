@@ -1,0 +1,211 @@
+{
+  "schema": "firstcall.programmeA.source_capture_runner_manifest.v1",
+  "freeze": "1.2",
+  "revision": 2,
+  "registration_status": "FILLED_PENDING_REMOTE_ANCHOR",
+  "runner": {
+    "id": "firstcall-programme-a-source-capture-runner",
+    "version": "1.2.1",
+    "path": "experiments/programme-a/registration/source_capture_runner.py",
+    "sha256": "0ce46a2d8709df420bf90efe0ad53de88d70f255a7003785f4f99f86ecc0d795",
+    "offline_tests": "experiments/programme-a/registration/test_registration.py",
+    "offline_tests_sha256": "379431ad5d15a0eae77c163b124537cf39ddcae2ce3a3886b3513c170c080d1f"
+  },
+  "withdrawn_predecessor": {
+    "path": "experiments/programme-a/quarantine/NON_OPERATIVE_BING_CAPTURE_DRAFT/capture_runner.py.txt",
+    "sha256": "a2374399022425bb131b42eeb993e1e3af7eff5df1037bd48dc0a69f89be85af"
+  },
+  "authoritative_command": "/opt/homebrew/Cellar/python@3.14/3.14.6/Frameworks/Python.framework/Versions/3.14/bin/python3.14 experiments/programme-a/registration/source_capture_runner.py --authoritative",
+  "preflight_check_command": "/opt/homebrew/Cellar/python@3.14/3.14.6/Frameworks/Python.framework/Versions/3.14/bin/python3.14 experiments/programme-a/registration/source_capture_runner.py --preflight-check",
+  "runtime": {
+    "interpreter_realpath": "/opt/homebrew/Cellar/python@3.14/3.14.6/Frameworks/Python.framework/Versions/3.14/bin/python3.14",
+    "interpreter_sha256": "b502cb4c5b46b8d4192ec6bcb600ce8922f1afc396fcf646e8765c6eba74a0bf",
+    "python_version": "3.14.6 (main, Jun 10 2026, 10:03:53) [Clang 21.0.0 (clang-2100.0.123.102)]",
+    "openssl_version": "OpenSSL 3.6.3 9 Jun 2026",
+    "os": "macOS 26.4.1 (25E253)",
+    "arch": "arm64",
+    "browser": "none",
+    "http_client": "CPython http.client + ssl.create_default_context(), IPv4 forced"
+  },
+  "request": {
+    "endpoint": "https://api.github.com/search/repositories",
+    "method": "GET",
+    "query_suffix": "in:name,description,topics,readme",
+    "fixed_params": [
+      [
+        "per_page",
+        "20"
+      ],
+      [
+        "page",
+        "1"
+      ]
+    ],
+    "sort": "none (API default best match)",
+    "headers": [
+      [
+        "User-Agent",
+        "FIRSTCALL-ProgrammeA-SourceCaptureRunner/1.2.1 (one-time four-query research capture)"
+      ],
+      [
+        "Accept",
+        "application/vnd.github+json"
+      ],
+      [
+        "X-GitHub-Api-Version",
+        "2026-03-10"
+      ],
+      [
+        "Accept-Encoding",
+        "identity"
+      ],
+      [
+        "Connection",
+        "close"
+      ]
+    ],
+    "credentials": "none",
+    "cookies": "none",
+    "redirects": "not followed (halt)",
+    "retries": 0,
+    "pagination": "none",
+    "cache": "none",
+    "plan": [
+      {
+        "index": 1,
+        "query": "public API directory downloadable dataset",
+        "url": "https://api.github.com/search/repositories?q=public+API+directory+downloadable+dataset+in%3Aname%2Cdescription%2Ctopics%2Creadme&per_page=20&page=1",
+        "scheduled_utc": "2026-09-23T09:00:00.000000Z",
+        "offset_seconds": 0
+      },
+      {
+        "index": 2,
+        "query": "open software API catalog CSV JSON",
+        "url": "https://api.github.com/search/repositories?q=open+software+API+catalog+CSV+JSON+in%3Aname%2Cdescription%2Ctopics%2Creadme&per_page=20&page=1",
+        "scheduled_utc": "2026-09-23T09:01:00.000000Z",
+        "offset_seconds": 60
+      },
+      {
+        "index": 3,
+        "query": "public developer platform registry bulk export",
+        "url": "https://api.github.com/search/repositories?q=public+developer+platform+registry+bulk+export+in%3Aname%2Cdescription%2Ctopics%2Creadme&per_page=20&page=1",
+        "scheduled_utc": "2026-09-23T09:02:00.000000Z",
+        "offset_seconds": 120
+      },
+      {
+        "index": 4,
+        "query": "open API index data repository",
+        "url": "https://api.github.com/search/repositories?q=open+API+index+data+repository+in%3Aname%2Cdescription%2Ctopics%2Creadme&per_page=20&page=1",
+        "scheduled_utc": "2026-09-23T09:03:00.000000Z",
+        "offset_seconds": 180
+      }
+    ]
+  },
+  "timing": {
+    "t0_utc": "2026-09-17T00:00:00Z",
+    "scheduled_start_utc": "2026-09-23T09:00:00Z",
+    "offsets_seconds": [
+      0,
+      60,
+      120,
+      180
+    ],
+    "max_start_lateness_seconds": 5.0,
+    "preflight_at_utc": "2026-09-23T08:50:00Z",
+    "preflight_deadline_utc": "2026-09-23T08:58:00Z",
+    "request_deadline_seconds": 30.0
+  },
+  "clock": {
+    "source": "system UTC corrected by one preflight SNTP offset",
+    "server": "time.apple.com",
+    "max_abs_offset_seconds": 2.0,
+    "post_check": "lateness recomputed; >5 s halts"
+  },
+  "egress": {
+    "path": "direct connection, no VPN/proxy",
+    "family": "IPv4",
+    "echo": "https://api.ipify.org",
+    "binding": "preflight.json before first request",
+    "post_check": "mismatch halts"
+  },
+  "policy_checks": {
+    "terms": [
+      {
+        "url": "https://docs.github.com/en/site-policy/acceptable-use-policies/github-acceptable-use-policies",
+        "required_sentences": [
+          "regardless of whether the information was scraped, collected through our API, or obtained otherwise",
+          "Researchers may use public, non-personal information from the Service for research purposes, only if any publications resulting from that research are open access.",
+          "Scraping does not refer to the collection of information through our API."
+        ]
+      }
+    ],
+    "normalisation": "strip script/style and tags, unescape entities, collapse whitespace, remove space before . , ; :",
+    "robots": "https://api.github.com/robots.txt",
+    "robots_rule": "RFC 9309: 4xx no restriction; 5xx/unreachable unverified -> halt; disallow of /search/repositories -> halt"
+  },
+  "projection": {
+    "fields": [
+      "total_count",
+      "incomplete_results",
+      "items[].position",
+      "items[].owner_type",
+      "items[].id",
+      "items[].full_name",
+      "items[].html_url",
+      "items[].fork",
+      "items[].archived",
+      "items[].created_at",
+      "items[].pushed_at",
+      "items[].default_branch",
+      "items[].license_spdx_id"
+    ],
+    "excluded": "owner login objects, avatars, user urls, star/watcher counts, descriptions",
+    "rule": "items == min(20,total_count) and incomplete_results false, else halt"
+  },
+  "custody": {
+    "dir": "~/.firstcall-custody/programme-a/authoritative-2026-09-23T0900Z",
+    "contents": [
+      "raw/qN.json",
+      "policy/terms-1.bin",
+      "policy/robots.bin"
+    ],
+    "published": false,
+    "must_be_outside_repository": true
+  },
+  "outputs": {
+    "dir": "experiments/programme-a/capture/authoritative-2026-09-23T0900Z",
+    "attempt_log": "experiments/programme-a/capture/attempts.jsonl",
+    "files": [
+      "attempt.json",
+      "events.jsonl",
+      "preflight.json",
+      "projection/qN.json",
+      "session-manifest.json"
+    ],
+    "canonicalisation": "UTF-8 JSON, sorted keys, compact separators, ensure_ascii=false, no NaN",
+    "hashing": "SHA256 of exact bytes; O_EXCL, mode 0444, fsync"
+  },
+  "failure_codes": [
+    "INVOKED_TOO_LATE",
+    "PREFLIGHT_REGISTRATION_MISMATCH",
+    "PREFLIGHT_CLOCK_UNVERIFIED",
+    "PREFLIGHT_EGRESS_UNVERIFIED",
+    "TERMS_UNVERIFIED",
+    "TERMS_CHANGED",
+    "ROBOTS_DISALLOW",
+    "ROBOTS_UNVERIFIED",
+    "PREFLIGHT_OVERRAN_DEADLINE",
+    "LATE_START",
+    "NETWORK_FAILURE",
+    "RATE_LIMITED",
+    "UNAVAILABLE_OR_REJECTED",
+    "MALFORMED_RESPONSE",
+    "INCOMPLETE_RESULTS",
+    "LATE_START_POST_CHECK",
+    "EGRESS_CHANGED",
+    "REFUSED_RERUN",
+    "RUNNER_EXCEPTION",
+    "CUSTODY_INSIDE_REPOSITORY"
+  ],
+  "failure_rule": "any halt is final for this cohort; no alternate session"
+}

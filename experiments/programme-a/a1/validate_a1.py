@@ -1,0 +1,287 @@
+#!/usr/bin/env python3
+"""Offline, fail-closed validator for the Freeze-1.2 Population A1 amendment.
+
+Checks gates/roles, supersession coverage, registered digests, Freeze-1 and Freeze-1.1
+integrity (Freeze-1.1 via its unmodified applicator in a clean local clone, because that
+applicator is closed-world), MULTI-001/002 and cf001 helper integrity, quarantine
+integrity and the A1 zero-activity counters. No network. --write stores a1-validation.json.
+"""
+import argparse
+import hashlib
+import json
+import os
+import re
+import shutil
+import subprocess
+import sys
+import tempfile
+import unicodedata
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[3]
+A1 = "experiments/programme-a/a1/"
+AMEND = "experiments/programme-a/amendments/"
+AMENDMENT_JSON = AMEND + "freeze-1.2-a1.json"
+F1_TAG, F1_COMMIT = "programme-a-freeze-1-protocol", "13ff44c37a96882553ffb9103a5596787555e0f3"
+F11_TAG, F11_COMMIT = "programme-a-freeze-1.1-protocol", "4eaa6493924256dbeb888ff992a769a6b9c6d56d"
+F11_EFFECTIVE_SHA256 = "13f9e400661f6d2cf1af45cf15e56940ec532a0f8a3ff78b146c9a76edd4c29f"
+HELPERS = ("firstcall/cf001_baseline_b08.py", "firstcall/cf001_baseline_recovery.py",
+           "firstcall/cf001_baseline_valid.py", "firstcall/cf001_p01_replay.py",
+           "firstcall/cf001_p01_replay_finish.py")
+QUARANTINES = ("experiments/programme-a/quarantine/NON_OPERATIVE_BING_CAPTURE_DRAFT/",
+               "experiments/programme-a/quarantine/NON_OPERATIVE_FREEZE_1_2_REV2_DRAFT/",
+               "experiments/programme-a/quarantine/NON_OPERATIVE_A1_KEY_DESIGNATED_DRAFT/")
+SATISFIED_ON_ANCHOR = ("DESIGNATED_PENDING_ANCHOR", "SOFTWARE_REGISTERED_PENDING_ANCHOR",
+                       "FROZEN_DOCUMENT_PENDING_ANCHOR")
+HUMAN_KINDS = ("human", "independent_person")
+REQUIRED_CLAUSES = (
+    ("Freeze 1", "§4.1(1)"), ("Freeze 1", "§4.1(2)"), ("Freeze 1", "§4.1(5)"), ("Freeze 1", "§4.2"),
+    ("Freeze 1", "§4.4"), ("Freeze 1", "§4.5"), ("Freeze 1", "§6"), ("Freeze 1", "§7.3"), ("Freeze 1", "§7.5"),
+    ("Freeze 1", "§7.7"), ("Freeze 1", "§9.2"),
+    ("Freeze 1.1", "§2"), ("Freeze 1.1", "§3"), ("Freeze 1.1", "§4"), ("Freeze 1.1", "§5"), ("Freeze 1.1", "§6"),
+    ("Freeze 1.1", "§8.1"), ("Freeze 1.1", "§8.2"), ("Freeze 1.1", "§8.3"), ("Freeze 1.1", "§8.4"),
+    ("Freeze 1.1", "§8.5"), ("Freeze 1.1", "§8.6"), ("Freeze 1.1", "§8.7"),
+    ("Freeze-1.2", "rev1"), ("Freeze-1.2", "rev2"),
+)
+
+
+def sha(data):
+    return hashlib.sha256(data).hexdigest()
+
+
+def git(*args, cwd=ROOT):
+    return subprocess.run(["git", "-C", str(cwd), *args], check=True, capture_output=True).stdout
+
+
+def norm(name):
+    return " ".join(unicodedata.normalize("NFC", name or "").casefold().split())
+
+
+# ------------------------------------------------------------------ pure checks
+
+def clause_refs(text):
+    """Expand 'Freeze 1 §4.2; §6 table; Freeze 1.1 §6 para 5' into {(doc, section)}."""
+    refs, doc = set(), None
+    for m in re.finditer(r"(uncommitted Freeze-1\.2 rev\d|Freeze 1\.1|Freeze 1(?![.\d])|§[0-9][0-9.()a-z-]*)", text):
+        tok = m.group(1)
+        if tok.startswith("uncommitted"):
+            refs.add(("Freeze-1.2", tok.rsplit(" ", 1)[1]))
+            doc = None
+        elif tok.startswith("Freeze"):
+            doc = tok
+        elif doc:
+            refs.add((doc, tok))
+            if "-" in tok:                                       # e.g. §9.2-9.3
+                refs.add((doc, tok.split("-")[0]))
+    return refs
+
+
+def supersession_coverage_errors(doc):
+    refs = set()
+    for row in doc["rows"]:
+        refs |= clause_refs(row["source_clause"])
+    errors = []
+    for d, sec in REQUIRED_CLAUSES:
+        if not any(rd == d and (rs == sec or rs.startswith(sec + " ") or rs.startswith(sec + "(") or
+                                (sec[-1].isdigit() and rs.startswith(sec + "."))) for rd, rs in refs):
+            errors.append(f"supersession table does not cover {d} {sec}")
+    ids = [r["id"] for r in doc["rows"]]
+    if len(ids) != len(set(ids)):
+        errors.append("duplicate supersession ids")
+    return errors
+
+
+def role_conflicts(roles_doc):
+    roles = {r["id"]: r for r in roles_doc["roles"]}
+    errors = []
+    for rid, r in roles.items():
+        filled = r["status"] not in ("UNFILLED", "FUTURE_STAGE")
+        if filled and r["kind"] in HUMAN_KINDS + ("model", "agent", "process") and r["kind"] not in HUMAN_KINDS:
+            errors.append(f"{rid}: human role held by non-person kind {r['kind']}")
+        if filled and rid in ("R05", "R06", "R03", "R04") and r.get("kind") not in HUMAN_KINDS:
+            errors.append(f"{rid}: must be a natural person")
+        if filled and r["kind"] in HUMAN_KINDS and not r.get("holder"):
+            errors.append(f"{rid}: filled without holder")
+    holder = {rid: norm(r.get("holder")) for rid, r in roles.items()
+              if r["status"] not in ("UNFILLED", "FUTURE_STAGE") and r.get("holder") and r["kind"] in HUMAN_KINDS}
+    holder = {rid: h.split(" (")[0] for rid, h in holder.items()}
+    forbidden = [("R03", x) for x in ("R01", "R02", "R05", "R06", "R10")] + \
+                [("R04", x) for x in ("R01", "R02", "R03", "R05", "R06")] + [("R05", "R06")]
+    for a, b in forbidden:
+        if a in holder and b in holder and holder[a] == holder[b]:
+            errors.append(f"role conflict {a}/{b}")
+    return errors
+
+
+def gate_status(roles_doc, anchored):
+    roles = {r["id"]: r for r in roles_doc["roles"]}
+
+    def role_ok(rid):
+        s = roles[rid]["status"]
+        return s == "FILLED" or (anchored and s in SATISFIED_ON_ANCHOR)
+
+    gates, out = roles_doc["gates"], {}
+
+    def gate_ok(g):
+        if g not in out:
+            out[g] = "OPEN" if all(gate_ok(x) if x.startswith("G") else role_ok(x)
+                                   for x in gates[g]["requires"]) else "CLOSED"
+        return out[g] == "OPEN"
+    for g in gates:
+        gate_ok(g)
+    return out
+
+
+# ------------------------------------------------------------------ repository checks
+
+def check_freeze_1(root):
+    names = git("ls-tree", "-r", "--name-only", F1_COMMIT, "--", "docs/programme-a-measurement-protocol.md",
+                "experiments/programme-a", cwd=root).decode().split()
+    bad = [n for n in names if (root / n).read_bytes() != git("show", f"{F1_COMMIT}:{n}", cwd=root)]
+    ok = git("rev-parse", F1_TAG + "^{commit}", cwd=root).decode().strip() == F1_COMMIT
+    return {"files": len(names), "mismatched": bad, "tag_peels": ok, "pass": ok and not bad and len(names) == 10}
+
+
+def check_freeze_1_1(root):
+    # only paths that existed at the Freeze-1.1 commit; files added later (e.g. this amendment) are not changes to it
+    frozen = git("ls-tree", "-r", "-z", "--name-only", F11_COMMIT, cwd=root).decode().rstrip("\0").split("\0")
+    changed = git("diff", "--name-only", F11_COMMIT, "--", *frozen, cwd=root).decode().split()
+    ok = git("rev-parse", F11_TAG + "^{commit}", cwd=root).decode().strip() == F11_COMMIT
+    tmp = Path(tempfile.mkdtemp(prefix="f11-clean-"))
+    try:
+        clone = tmp / "repo"
+        subprocess.run(["git", "clone", "-q", "--shared", "--no-checkout", str(root), str(clone)], check=True,
+                       capture_output=True)
+        subprocess.run(["git", "-C", str(clone), "checkout", "-q", F11_COMMIT], check=True, capture_output=True)
+        for h in HELPERS:
+            shutil.copy2(root / h, clone / h)
+        env = dict(os.environ, PYTHONDONTWRITEBYTECODE="1")
+        out = subprocess.run([sys.executable, str(clone / AMEND / "apply_protocol.py")], cwd=clone, env=env,
+                             capture_output=True, check=True).stdout
+        effective = json.loads(out)["effective_protocol_sha256"]
+        tests = subprocess.run([sys.executable, str(clone / AMEND / "test_protocol.py")], cwd=clone, env=env,
+                               capture_output=True)
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+    return {"tracked_changes_since_tag": changed, "tag_peels": ok, "clean_clone_effective_sha256": effective,
+            "clean_clone_tests_rc": tests.returncode,
+            "pass": ok and not changed and effective == F11_EFFECTIVE_SHA256 and tests.returncode == 0}
+
+
+def check_protected(root):
+    base = json.loads((root / AMEND / "entry-integrity.json").read_bytes())["sha256"]
+    multi = [p for p in base if any(t in p.lower() for t in ("multi001", "multi002", "multi-001", "multi-002"))]
+    mb = [p for p in multi if sha((root / p).read_bytes()) != base[p]]
+    hb = [h for h in HELPERS if sha((root / h).read_bytes()) != base[h]]
+    return {"multi_files": len(multi), "multi_mismatched": mb, "helpers_mismatched": hb,
+            "pass": not mb and not hb and len(multi) == 145}
+
+
+def check_quarantines(root):
+    errors = []
+    for q in QUARANTINES:
+        prov = json.loads((root / q / "provenance.json").read_bytes())
+        for name, meta in prov["files"].items():
+            p = root / q / name
+            if not p.is_file() or sha(p.read_bytes()) != meta["sha256"] or p.stat().st_mode & 0o222:
+                errors.append(f"{q}{name} altered or writable")
+            if name.endswith(".py"):
+                errors.append(f"{q}{name} executable-looking file in quarantine")
+    for stale in ("experiments/programme-a/registration", "docs/programme-a-freeze-1.2-registration-amendment.md",
+                  AMEND + "freeze-1.2.json"):
+        if (root / stale).exists():
+            errors.append(f"superseded draft still in an operative location: {stale}")
+    return errors
+
+
+def check_pinned_psl(root):
+    sys.path.insert(0, str(root / A1))
+    import a1_frame
+    try:
+        a1_frame.load_pinned_psl()
+        return []
+    except a1_frame.FrameHalt as exc:
+        return [f"pinned PSL: {exc}"]
+
+
+def check_registered(root):
+    doc = json.loads((root / AMENDMENT_JSON).read_bytes())
+    return [f"digest mismatch: {p}" for p, h in doc["registered_file_sha256"].items()
+            if not (root / p).is_file() or sha((root / p).read_bytes()) != h]
+
+
+def a1_counters(root):
+    a1 = root / A1
+    c = {
+        "A1_MEMBERSHIP_RETRIEVED": "YES" if (a1 / "snapshot").exists() else "NO",
+        "A1_CANDIDATE_IDENTITIES_OBSERVED": 0,
+        "A1_ENTROPY_GENERATED": "YES" if any(a1.rglob("*tape*")) or (a1 / "entropy").exists() else "NO",
+        "A1_PERMUTATION_GENERATED": "YES" if (a1 / "permutation").exists() else "NO",
+        "A1_SELECTED_RDGS": 0 if not (a1 / "sample").exists() else "SAMPLE_PRESENT",
+        "A1_ELIGIBILITY_DECISIONS": 0 if not (a1 / "screening").exists() else "SCREENING_PRESENT",
+        "A1_VENDOR_API_CALLS": 0,
+        "A1_AUTONOMOUS_RUNS": 0 if not (root / "artifacts/programme-a").exists() else "ARTIFACTS_PRESENT",
+        "A1_OUTCOMES": 0 if not (root / "artifacts/programme-a").exists() else "ARTIFACTS_PRESENT",
+    }
+    ok = c["A1_MEMBERSHIP_RETRIEVED"] == "NO" and c["A1_ENTROPY_GENERATED"] == "NO" and \
+        c["A1_PERMUTATION_GENERATED"] == "NO" and all(v == 0 for k, v in c.items() if isinstance(v, int) or
+                                                      k in ("A1_SELECTED_RDGS", "A1_ELIGIBILITY_DECISIONS",
+                                                            "A1_AUTONOMOUS_RUNS", "A1_OUTCOMES"))
+    return c, ok
+
+
+def anchored(root):
+    try:
+        git("rev-parse", "--verify", "--quiet", "programme-a-freeze-1.2-a1^{commit}", cwd=root)
+        return True
+    except subprocess.CalledProcessError:
+        return False
+
+
+def validate(root=ROOT):
+    errors = []
+    roles = json.loads((root / A1 / "roles.json").read_bytes())
+    sup = json.loads((root / A1 / "supersession.json").read_bytes())
+    errors += role_conflicts(roles)
+    errors += supersession_coverage_errors(sup)
+    errors += check_registered(root)
+    errors += check_quarantines(root)
+    errors += check_pinned_psl(root)
+    f1, f11, prot = check_freeze_1(root), check_freeze_1_1(root), check_protected(root)
+    for name, res in (("freeze_1", f1), ("freeze_1_1", f11), ("protected", prot)):
+        if not res["pass"]:
+            errors.append(f"{name} integrity failed")
+    counters, ok = a1_counters(root)
+    if not ok:
+        errors.append("A1 activity counters nonzero")
+    if git("diff", "--check", cwd=root) != b"":
+        errors.append("git diff --check")
+    is_anchored = anchored(root)
+    gates = gate_status(roles, is_anchored)
+    unfilled = [r["id"] + " " + r["role"] for r in roles["roles"] if r["status"] in ("UNFILLED", "FUTURE_STAGE")]
+    if errors:
+        decision = "NOT_SEALABLE"
+    elif any(r["status"] == "UNFILLED" for r in roles["roles"]):
+        decision = "SEALABLE_BUT_REGISTRATIONS_INCOMPLETE"
+    else:
+        decision = "SEALABLE_AND_READY"
+    return {"schema": "firstcall.programmeA.a1_validation.v1", "decision": decision, "errors": errors,
+            "freeze_1": f1, "freeze_1_1": f11, "protected": prot, "a1_counters": counters,
+            "anchored": is_anchored, "gates": gates, "unfilled_or_future_roles": unfilled,
+            "supersession_rows": len(sup["rows"])}
+
+
+def main(argv=None):
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument("--write", action="store_true")
+    args = ap.parse_args(argv)
+    report = validate()
+    data = json.dumps(report, indent=2, sort_keys=True) + "\n"
+    if args.write:
+        (ROOT / A1 / "a1-validation.json").write_text(data)
+    sys.stdout.write(data)
+    return 0 if report["decision"] != "NOT_SEALABLE" else 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())

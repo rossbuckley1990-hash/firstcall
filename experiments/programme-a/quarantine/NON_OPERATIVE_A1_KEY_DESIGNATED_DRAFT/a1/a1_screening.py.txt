@@ -1,0 +1,212 @@
+#!/usr/bin/env python3
+"""FIRSTCALL Programme A, Population A1: sequential screening, selection and estimators.
+
+Pure functions implementing amendment §6-§10:
+  * combine two independently sealed adjudicator records into one terminal status;
+  * resolve identity once per registrable-domain component (designated-key rule);
+  * walk the sealed permutation block by block; select the first N_TARGET members of S;
+  * exhaustion (M < N_TARGET: select all M) and informative floor (M < FLOOR);
+  * estimators: prevalence (n-1)/(T-1), equal-platform mean, Freeze-1.1 bounded band.
+No I/O, no network, no randomness.
+"""
+import math
+
+N_TARGET = 24
+FLOOR = 16
+RUNS_PER_PLATFORM = 5
+INCLUSIONS = ("I1", "I2", "I3", "I4")
+EXCLUSIONS = ("E1", "E2", "E3", "E4", "E6")
+TERMS = ("T1", "T2", "T3")
+CATEGORIES = ("C01", "C02", "C03", "C04", "C05", "C06", "C07")
+PREDICATE_STATES = ("TRUE", "FALSE", "UNRESOLVED")
+FATAL = tuple(f"INCLUSION_FALSE:{i}" for i in INCLUSIONS) + EXCLUSIONS + TERMS
+
+IN_S = "RESOLVED_ELIGIBLE"
+EXCLUDED = "EXCLUDED"
+UNRESOLVED_ELIGIBILITY = "UNRESOLVED_ELIGIBILITY"
+UNRESOLVED_IDENTITY = "UNRESOLVED_IDENTITY"
+STRUCTURAL_DUPLICATE = "STRUCTURAL_DUPLICATE"
+TERMINAL = (IN_S, EXCLUDED, UNRESOLVED_ELIGIBILITY, UNRESOLVED_IDENTITY, STRUCTURAL_DUPLICATE)
+
+
+class ScreeningHalt(Exception):
+    def __init__(self, code, detail=""):
+        super().__init__(f"{code}: {detail}")
+        self.code = code
+
+
+# ------------------------------------------------------------------ identity (per component)
+
+def resolve_component(members, partition_a, partition_b):
+    """Each adjudicator seals a partition of the component's keys into platforms, with an
+    optional 'UNRESOLVED' group. Agreement => designated key = byte-smallest key of each
+    platform; any disagreement or unresolved key => UNRESOLVED_IDENTITY for the component
+    (all keys), never a guess. Input is the whole component, so the result cannot depend
+    on which member key was reached first."""
+    members = sorted(members, key=str.encode)
+
+    def norm(p):
+        groups = p.get("platforms", [])
+        flat = [k for g in groups for k in g] + list(p.get("UNRESOLVED", []))
+        if sorted(flat, key=str.encode) != members:
+            return None
+        return frozenset(frozenset(g) for g in groups), frozenset(p.get("UNRESOLVED", []))
+
+    a, b = norm(partition_a), norm(partition_b)
+    if a is None or b is None or a != b or a[1]:
+        return {k: UNRESOLVED_IDENTITY for k in members}
+    out = {}
+    for g in a[0]:
+        designated = min(g, key=str.encode)
+        for k in g:
+            out[k] = "DESIGNATED" if k == designated else STRUCTURAL_DUPLICATE
+    return out
+
+
+# ------------------------------------------------------------------ eligibility (per designated key)
+
+def _codes(rec, keys):
+    return {k: (rec.get("predicates") or {}).get(k) for k in keys}
+
+
+def combine(rec_a, rec_b):
+    """Terminal documentary status of a designated key from two sealed independent records.
+
+    Record: {"predicates": {I1..I4, E1..E4, E6, T1..T3, C01..C07: TRUE|FALSE|UNRESOLVED|None},
+             "fatal_stop": None | one of FATAL, "deviation": bool}
+    None = not coded (e.g. after that adjudicator's own fatal stop) and counts as UNRESOLVED.
+    Freeze-1.1 precedence: an agreed affirmative exclusion/inclusion-violation => EXCLUDED;
+    all inclusions agreed TRUE, all exclusions and terms predicates agreed FALSE, >=1 category
+    agreed TRUE, no fatal stop, no deviation => RESOLVED_ELIGIBLE; otherwise UNRESOLVED.
+    """
+    for rec in (rec_a, rec_b):
+        fs = rec.get("fatal_stop")
+        if fs is not None and fs not in FATAL:
+            raise ScreeningHalt("INVALID_FATAL_PREDICATE", fs)
+        for k, v in (rec.get("predicates") or {}).items():
+            if v is not None and v not in PREDICATE_STATES:
+                raise ScreeningHalt("INVALID_PREDICATE_STATE", f"{k}={v}")
+        if rec.get("fatal_stop") and _fatal_code(rec, rec["fatal_stop"]) is not True:
+            raise ScreeningHalt("FATAL_STOP_WITHOUT_AFFIRMATIVE_CODE", rec["fatal_stop"])
+    if rec_a.get("deviation") or rec_b.get("deviation"):
+        return UNRESOLVED_ELIGIBILITY, ["PROTOCOL_DEVIATION"]
+    agreed_fatal = [f for f in FATAL if _fatal_code(rec_a, f) is True and _fatal_code(rec_b, f) is True]
+    if agreed_fatal:
+        return EXCLUDED, agreed_fatal
+    a = _codes(rec_a, INCLUSIONS + EXCLUSIONS + TERMS + CATEGORIES)
+    b = _codes(rec_b, INCLUSIONS + EXCLUSIONS + TERMS + CATEGORIES)
+    if all(a[c] == "FALSE" and b[c] == "FALSE" for c in CATEGORIES):
+        return EXCLUDED, ["SCOPE_OUTSIDE"]
+    reasons = []
+    for p in INCLUSIONS:
+        if not (a[p] == "TRUE" and b[p] == "TRUE"):
+            reasons.append(f"{p}:NOT_AGREED_TRUE")
+    for p in EXCLUSIONS + TERMS:
+        if not (a[p] == "FALSE" and b[p] == "FALSE"):
+            reasons.append(f"{p}:NOT_AGREED_FALSE")
+    if not any(a[c] == "TRUE" and b[c] == "TRUE" for c in CATEGORIES):
+        reasons.append("NO_AGREED_CATEGORY")
+    if rec_a.get("fatal_stop") or rec_b.get("fatal_stop"):
+        reasons.append("UNILATERAL_FATAL_STOP")
+    return (UNRESOLVED_ELIGIBILITY, reasons) if reasons else (IN_S, [])
+
+
+def _fatal_code(rec, fatal):
+    """True iff this record affirmatively asserts the fatal predicate."""
+    p = rec.get("predicates") or {}
+    if fatal.startswith("INCLUSION_FALSE:"):
+        return p.get(fatal.split(":", 1)[1]) == "FALSE"
+    return p.get(fatal) == "TRUE"
+
+
+def descriptive_categories(rec_a, rec_b):
+    """Categories are descriptive: agreed TRUE set, or INCOMPLETE flag if any not agreed."""
+    agreed = [c for c in CATEGORIES if (rec_a.get("predicates") or {}).get(c) == "TRUE"
+              and (rec_b.get("predicates") or {}).get(c) == "TRUE"]
+    complete = all((rec_a.get("predicates") or {}).get(c) in ("TRUE", "FALSE")
+                   and (rec_a.get("predicates") or {}).get(c) == (rec_b.get("predicates") or {}).get(c)
+                   for c in CATEGORIES)
+    return {"agreed_true": agreed, "vector": "COMPLETE" if complete else "INCOMPLETE"}
+
+
+# ------------------------------------------------------------------ sequential walk
+
+def screen(order, status_of, n_target=N_TARGET, block_size=6):
+    """Walk sealed blocks in permutation order. `status_of(block_index, block)` returns the
+    sealed terminal status for every key of the block (all keys, no partial blocks).
+    Stop at the end of the block holding the n-th member of S, or at exhaustion."""
+    ledger, selected, s_seen = [], [], 0
+    stop_block = None
+    for bi in range(0, math.ceil(len(order) / block_size)):
+        block = order[bi * block_size:(bi + 1) * block_size]
+        statuses = status_of(bi, list(block))
+        if set(statuses) != set(block):
+            raise ScreeningHalt("BLOCK_NOT_FULLY_SEALED", str(bi))
+        for pos_in_block, key in enumerate(block):
+            st = statuses[key]
+            if st not in TERMINAL:
+                raise ScreeningHalt("NON_TERMINAL_STATUS", f"{key}={st}")
+            position = bi * block_size + pos_in_block + 1
+            role = None
+            if st == IN_S:
+                s_seen += 1
+                role = "SELECTED" if s_seen <= n_target else "S_OVERSHOOT_NOT_SELECTED"
+                if role == "SELECTED":
+                    selected.append(key)
+            ledger.append({"position": position, "key": key, "status": st, "role": role})
+        if s_seen >= n_target:
+            stop_block = bi
+            break
+    screened = len(ledger)
+    T = next((e["position"] for e in ledger if e["key"] == selected[-1]), None) if selected else None
+    exhausted = s_seen < n_target
+    for key in order[screened:]:
+        ledger.append({"position": order.index(key) + 1, "key": key, "status": "UNSCREENED", "role": None})
+    return {"selected": selected, "n_selected": len(selected), "T": T if not exhausted else None,
+            "screened": screened, "stop_block": stop_block, "exhausted": exhausted,
+            "M_if_exhausted": s_seen if exhausted else None,
+            "underpowered": exhausted and s_seen < FLOOR,
+            "ledger": ledger, "conservation": conservation(ledger, len(order))}
+
+
+def conservation(ledger, k_size):
+    counts = {}
+    for e in ledger:
+        counts[e["status"]] = counts.get(e["status"], 0) + 1
+    if sum(counts.values()) != k_size or len({e["key"] for e in ledger}) != k_size:
+        raise ScreeningHalt("CONSERVATION", str(counts))
+    return dict(sorted(counts.items()))
+
+
+# ------------------------------------------------------------------ estimators
+
+def prevalence_unbiased(n, T):
+    """Unbiased estimator of M/|K| when screening stops at the n-th S-member at position T (n>=2)."""
+    if n < 2 or T is None or T < 2:
+        raise ValueError("requires n>=2 and a stopping position")
+    return (n - 1) / (T - 1)
+
+
+def platform_rate(successes, determinate_runs):
+    return None if determinate_runs == 0 else successes / determinate_runs
+
+
+def primary(results):
+    """results: list of (successes, determinate_runs) per selected platform, in any order.
+    Returns the equal-platform complete-case mean and the Freeze-1.1 §8.6 bounded band with
+    one stratum (W=1, C=1/n): L_i=U_i=r_i if n_i>0 else L_i=0, U_i=1."""
+    n = len(results)
+    if n == 0:
+        return {"estimate": None, "band": [0.0, 1.0], "indeterminate": 0, "n": 0}
+    rates = [platform_rate(s, d) for s, d in results]
+    defined = [r for r in rates if r is not None]
+    lo = sum(r if r is not None else 0.0 for r in rates) / n
+    hi = sum(r if r is not None else 1.0 for r in rates) / n
+    e = half_width(n)
+    return {"estimate": (sum(defined) / len(defined)) if defined else None,
+            "band": [max(0.0, lo - e), min(1.0, hi + e)], "half_width": e,
+            "indeterminate": n - len(defined), "n": n}
+
+
+def half_width(n):
+    return math.sqrt(math.log(40) / n)

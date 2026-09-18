@@ -1,0 +1,185 @@
+{
+  "schema": "firstcall.programmeA.capture_runner_manifest.v1",
+  "freeze": "1.2",
+  "registration_status": "FILLED_PENDING_REMOTE_ANCHOR",
+  "runner": {
+    "id": "firstcall-programme-a-capture-runner",
+    "version": "1.2.0",
+    "path": "experiments/programme-a/registration/capture_runner.py",
+    "sha256": "a2374399022425bb131b42eeb993e1e3af7eff5df1037bd48dc0a69f89be85af",
+    "offline_tests": "experiments/programme-a/registration/test_registration.py",
+    "offline_tests_sha256": "662f087f0df1809bfc4d92d198248daec8da144435dcbf13b70416b6fb1efd9d"
+  },
+  "authoritative_command": "/opt/homebrew/Cellar/python@3.14/3.14.6/Frameworks/Python.framework/Versions/3.14/bin/python3.14 experiments/programme-a/registration/capture_runner.py --authoritative",
+  "preflight_check_command": "/opt/homebrew/Cellar/python@3.14/3.14.6/Frameworks/Python.framework/Versions/3.14/bin/python3.14 experiments/programme-a/registration/capture_runner.py --preflight-check",
+  "runtime": {
+    "interpreter_realpath": "/opt/homebrew/Cellar/python@3.14/3.14.6/Frameworks/Python.framework/Versions/3.14/bin/python3.14",
+    "interpreter_sha256": "b502cb4c5b46b8d4192ec6bcb600ce8922f1afc396fcf646e8765c6eba74a0bf",
+    "python_version": "3.14.6 (main, Jun 10 2026, 10:03:53) [Clang 21.0.0 (clang-2100.0.123.102)]",
+    "openssl_version": "OpenSSL 3.6.3 9 Jun 2026",
+    "os": "macOS 26.4.1 (25E253)",
+    "arch": "arm64",
+    "browser": "none (no JavaScript, no rendering)",
+    "http_client": "CPython http.client + ssl.create_default_context(), IPv4 forced"
+  },
+  "request": {
+    "endpoint": "https://www.bing.com/search",
+    "fixed_params_after_q": [
+      [
+        "setlang",
+        "en"
+      ],
+      [
+        "cc",
+        "GB"
+      ],
+      [
+        "count",
+        "20"
+      ]
+    ],
+    "method": "GET",
+    "headers": [
+      [
+        "User-Agent",
+        "Mozilla/5.0 (compatible; FIRSTCALL-ProgrammeA-CaptureRunner/1.2.0; one-time four-query research capture)"
+      ],
+      [
+        "Accept",
+        "text/html,application/xhtml+xml;q=0.9,*/*;q=0.1"
+      ],
+      [
+        "Accept-Language",
+        "en-GB,en;q=0.9"
+      ],
+      [
+        "Accept-Encoding",
+        "identity"
+      ],
+      [
+        "Connection",
+        "close"
+      ]
+    ],
+    "user_agent": "Mozilla/5.0 (compatible; FIRSTCALL-ProgrammeA-CaptureRunner/1.2.0; one-time four-query research capture)",
+    "cookies": "none sent initially; Set-Cookie honoured only within the same query's redirect chain; never persisted or shared",
+    "personalization": "logged out; no account; no stored cookies",
+    "plan": [
+      {
+        "index": 1,
+        "query": "public API directory downloadable dataset",
+        "url": "https://www.bing.com/search?q=public+API+directory+downloadable+dataset&setlang=en&cc=GB&count=20",
+        "scheduled_utc": "2026-09-19T09:00:00.000000Z",
+        "offset_seconds": 0
+      },
+      {
+        "index": 2,
+        "query": "open software API catalog CSV JSON",
+        "url": "https://www.bing.com/search?q=open+software+API+catalog+CSV+JSON&setlang=en&cc=GB&count=20",
+        "scheduled_utc": "2026-09-19T09:01:00.000000Z",
+        "offset_seconds": 60
+      },
+      {
+        "index": 3,
+        "query": "public developer platform registry bulk export",
+        "url": "https://www.bing.com/search?q=public+developer+platform+registry+bulk+export&setlang=en&cc=GB&count=20",
+        "scheduled_utc": "2026-09-19T09:02:00.000000Z",
+        "offset_seconds": 120
+      },
+      {
+        "index": 4,
+        "query": "open API index data repository",
+        "url": "https://www.bing.com/search?q=open+API+index+data+repository&setlang=en&cc=GB&count=20",
+        "scheduled_utc": "2026-09-19T09:03:00.000000Z",
+        "offset_seconds": 180
+      }
+    ]
+  },
+  "timing": {
+    "t0_utc": "2026-09-17T00:00:00Z",
+    "scheduled_start_utc": "2026-09-19T09:00:00Z",
+    "offsets_seconds": [
+      0,
+      60,
+      120,
+      180
+    ],
+    "max_start_lateness_seconds": 5.0,
+    "preflight_at_utc": "2026-09-19T08:50:00Z",
+    "preflight_deadline_utc": "2026-09-19T08:58:00Z",
+    "start_definition": "SNTP-corrected UTC immediately before the first connection attempt of the query",
+    "wait": "sleep chunks <=1 s against wall clock; caffeinate -dimsu held"
+  },
+  "clock": {
+    "source": "system UTC (time.time_ns)",
+    "correction": "single preflight SNTP offset",
+    "sntp_server": "time.apple.com",
+    "sntp_attempts": 5,
+    "max_abs_offset_seconds": 2.0,
+    "post_check": "second SNTP after capture; lateness recomputed; >5 s halts"
+  },
+  "egress": {
+    "path": "custodian's direct residential connection; no VPN/proxy/relay",
+    "family": "IPv4 forced for echo and source",
+    "echo": "https://api.ipify.org",
+    "binding": "egress_ipv4 in preflight.json (fsynced, sha256 in session manifest) before first source request",
+    "post_check": "re-echo after query 4; mismatch halts; unavailable recorded UNVERIFIED_POSTFLIGHT"
+  },
+  "limits": {
+    "request_deadline_seconds": 30.0,
+    "max_response_bytes": 5242880,
+    "max_redirects": 3,
+    "redirect_scope": "https within *.bing.com only",
+    "search_request_retries": 0,
+    "pagination": "none",
+    "cache": "none",
+    "prefetch": "none"
+  },
+  "parser": {
+    "organic_item": "li element whose class tokens include b_algo, document order",
+    "url": "href of first a inside first h2 of the item; bing.com/ck/a u=a1<base64url> decoded",
+    "required_positions": 20,
+    "rule": "positions 1-20 must all exist and parse, else INSUFFICIENT_ORGANIC_POSITIONS halt",
+    "order": "archive raw bytes and fsync before parsing"
+  },
+  "failure_behaviour": {
+    "codes": [
+      "INVOKED_TOO_LATE",
+      "PREFLIGHT_REGISTRATION_MISMATCH",
+      "PREFLIGHT_CLOCK_UNVERIFIED",
+      "PREFLIGHT_EGRESS_UNVERIFIED",
+      "PREFLIGHT_OVERRAN_DEADLINE",
+      "LATE_START",
+      "NETWORK_FAILURE",
+      "UNAVAILABLE_RESULT_PAGE",
+      "INSUFFICIENT_ORGANIC_POSITIONS",
+      "LATE_START_POST_CHECK",
+      "EGRESS_CHANGED",
+      "REFUSED_RERUN",
+      "RUNNER_EXCEPTION"
+    ],
+    "rule": "any halt is final for this cohort; remaining queries are not issued; session manifest still written; no alternate session"
+  },
+  "outputs": {
+    "dir": "experiments/programme-a/capture/authoritative-2026-09-19T0900Z",
+    "attempt_log": "experiments/programme-a/capture/attempts.jsonl",
+    "files": [
+      "attempt.json",
+      "events.jsonl",
+      "preflight.json",
+      "raw/qN.html",
+      "raw/qN.meta.json",
+      "session-manifest.json"
+    ],
+    "canonicalisation": "UTF-8 JSON, sorted keys, compact separators, ensure_ascii=false, no NaN",
+    "hashing": "SHA256 of exact bytes; files created O_EXCL mode 0444",
+    "publication": "custodian commits and pushes the capture dir and attempts.jsonl before any source screening"
+  },
+  "verification_at_preflight": [
+    "runner bytes == bytes at tag",
+    "manifest bytes == bytes at tag",
+    "tag peeled commit on origin == local",
+    "registration dir clean",
+    "interpreter realpath/sha256/version/OpenSSL match"
+  ]
+}

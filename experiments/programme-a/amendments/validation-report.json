@@ -1,0 +1,52 @@
+{
+  "schema": "firstcall.programmeA.amendment_validation.v1",
+  "status": "PASS_PROPOSAL_ONLY_NOT_FREEZE_2",
+  "final_adversarial_review": "SEALABLE_PROSPECTIVE_RULES_WITH_EXPLICIT_ASSUMPTIONS_AND_STOP_GATES",
+  "effective_protocol_sha256": "13f9e400661f6d2cf1af45cf15e56940ec532a0f8a3ff78b146c9a76edd4c29f",
+  "applicator_sha256": "69fa73101b1c1bdc92831179e6023275168db89215bc93250d70ad41cd297481",
+  "amendment_json_sha256": "25ae20df83d214c0dac2dbff35fa0909961d4a4f1ca3f4881f96a55379e6c6c3",
+  "amendment_document_sha256": "7526e8180335ab67e9f64d6fe12e3e69496721da2d72eb6a0a7ef0e638c069ed",
+  "entry_integrity_manifest_sha256": "0347dd44256be9f95f63a81f1105e4b4ea47a4d7d3d7ce3ff00d09418d45d6c1",
+  "parent_files_byte_identical": 10,
+  "multi_001_002_files_byte_identical": 145,
+  "historical_helpers_byte_identical": 5,
+  "quarantined_builder_byte_identical": true,
+  "programme_a_file_inventory_count_at_validation": 18,
+  "selected_vendors": 0,
+  "random_draw_performed": false,
+  "random_seed_generated": false,
+  "outcome_observations": 0,
+  "real_vendor_runs": 0,
+  "unrelated_parent_json_documents_unchanged": 4,
+  "git_diff_check": "PASS",
+  "limits": "Protocol and repository checks, not source feasibility, a constructed frame, or executed sampling. No claim of no prior exposure to rejected vendor names.",
+  "offline_tests": {
+    "command": "PYTHONDONTWRITEBYTECODE=1 python3 experiments/programme-a/amendments/test_protocol.py",
+    "tests": 21,
+    "result": "PASS",
+    "scope": "protocol mutation checks and abstract combinatorial/bound identities; no frame, vendor draw, entropy, or outcome data"
+  },
+  "deterministic_composition_repeated": "PASS",
+  "decision": "SEALABLE",
+  "decision_scope": "prospective rules only; not sealed; explicit custody, capture, feasibility and statistical assumptions apply",
+  "source_reproducibility": "conditional on one authoritative archived capture, not independent live searches",
+  "mathematical_review": {
+    "category": "deterministic 0/1 assignment; no equal-probability claim",
+    "initial_pi": "m_h/M_h conditional on fixed frame and successful draw gates",
+    "final_pi": "m_h/G_h conditional on complete order-independent census and successful draw gates",
+    "joint_within": "m_h*(m_h-1)/(G_h*(G_h-1)) for distinct pairs, G_h>1",
+    "joint_between": "product of marginal inclusion probabilities",
+    "primary_interval": "bounded-cluster two-stage band with explicit positivity, independent-cluster and conditional-mean assumptions; bootstrap is descriptive only"
+  },
+  "artifact_sha256_excluding_this_report": {
+    "docs/programme-a-freeze-1.1-amendment.md": "7526e8180335ab67e9f64d6fe12e3e69496721da2d72eb6a0a7ef0e638c069ed",
+    "experiments/programme-a/amendments/apply_protocol.py": "69fa73101b1c1bdc92831179e6023275168db89215bc93250d70ad41cd297481",
+    "experiments/programme-a/amendments/entry-integrity.json": "0347dd44256be9f95f63a81f1105e4b4ea47a4d7d3d7ce3ff00d09418d45d6c1",
+    "experiments/programme-a/amendments/freeze-1.1.json": "25ae20df83d214c0dac2dbff35fa0909961d4a4f1ca3f4881f96a55379e6c6c3",
+    "experiments/programme-a/amendments/hostile-review.md": "8f72883ee72ee2780cb19e784deb561a79fd0ab7eed6f0aeb7d01501ca371d32",
+    "experiments/programme-a/amendments/test_protocol.py": "1a76fdf6891e0b36674a2f4be7945f8904503b39a608b80a9237d9c4a114fd8e",
+    "experiments/programme-a/quarantine/INVALID_PRE_FREEZE_2_DRAFT/README.md": "54f3c166dee084238665955291d058505ebd658b98b5f7596cf5636255b5f90f",
+    "experiments/programme-a/quarantine/INVALID_PRE_FREEZE_2_DRAFT/build_frame.py.txt": "a3e3af7045424c59b559ba34c4e7143ebfa00821bca9efc3284a85627846302b",
+    "experiments/programme-a/quarantine/INVALID_PRE_FREEZE_2_DRAFT/provenance.json": "47381393911c771399c6c952227781dfd7f45c0fd5eb838e4ea6dee9ed727c38"
+  }
+}

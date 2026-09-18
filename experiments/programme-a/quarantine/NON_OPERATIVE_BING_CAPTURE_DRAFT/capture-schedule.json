@@ -1,0 +1,28 @@
+{
+  "schema": "firstcall.programmeA.capture_schedule.v1",
+  "freeze": "1.2",
+  "freeze_1_1_seal_utc": "2026-09-18T18:00:20Z",
+  "freeze_1_1_seal_evidence": "annotated tag programme-a-freeze-1.1-protocol tagger timestamp 1789754420 +0100",
+  "t0_utc": "2026-09-17T00:00:00Z",
+  "t0_derivation": "00:00:00 UTC on the calendar day immediately before the Freeze-1.1 sealing timestamp (Freeze 1.1 §3); unchanged by Freeze 1.2",
+  "discovery_day_utc": "2026-09-19",
+  "discovery_day_derivation": "first UTC day after the Freeze-1.1 seal; unchanged by Freeze 1.2",
+  "registration_anchor_deadline_utc": "2026-09-19T08:45:00Z",
+  "runner_invocation_window": "any time after remote anchoring and no later than 2026-09-19T08:58:00Z; recommended launch 2026-09-19T08:00:00Z-08:40:00Z",
+  "preflight_at_utc": "2026-09-19T08:50:00Z",
+  "preflight_deadline_utc": "2026-09-19T08:58:00Z",
+  "scheduled_start_utc": "2026-09-19T09:00:00Z",
+  "requests": [
+    {"index": 1, "scheduled_utc": "2026-09-19T09:00:00Z", "query": "public API directory downloadable dataset"},
+    {"index": 2, "scheduled_utc": "2026-09-19T09:01:00Z", "query": "open software API catalog CSV JSON"},
+    {"index": 3, "scheduled_utc": "2026-09-19T09:02:00Z", "query": "public developer platform registry bulk export"},
+    {"index": 4, "scheduled_utc": "2026-09-19T09:03:00Z", "query": "open API index data repository"}
+  ],
+  "max_start_lateness_seconds": 5,
+  "attempts": 1,
+  "start_mechanism": "the registered runner self-times on the SNTP-corrected clock; no human action at 09:00:00Z",
+  "interactive_start_assessment": "An interactive human- or model-started session cannot guarantee four request starts within +5 s of fixed instants: human reaction, model latency and tool-approval prompts are unbounded, and each later query would need a new action exactly 60 s later. The protocol does not require manual initiation; it requires the registered runner to issue the requests. A pre-launched, self-timed registered runner is therefore the only compliant mechanism, and the tolerance is not widened.",
+  "missed_schedule": "If the Freeze-1.2 tag is not remotely anchored by the deadline, or the runner fails, the discovery session has failed under Freeze 1.1 §8.2. Freeze 1.2 provides no alternate date; a later prospective amendment would be required.",
+  "publication": "custodian commits and pushes the whole capture directory and attempts.jsonl after the runner exits and before any source screening",
+  "host_requirements": ["on mains power", "lid open or clamshell with external display", "no sleep (runner holds caffeinate -dimsu)", "no VPN/proxy", "no package upgrades of the registered interpreter"]
+}

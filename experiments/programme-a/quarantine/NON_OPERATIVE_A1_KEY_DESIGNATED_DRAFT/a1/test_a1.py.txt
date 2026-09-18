@@ -1,0 +1,618 @@
+#!/usr/bin/env python3
+"""Offline tests for the Freeze-1.2 Population A1 amendment.
+
+All tests run under a socket ban. Nothing here retrieves A1 membership, generates entropy
+(os.urandom is never called; the generator is exercised with an injected deterministic
+source), orders real units, adjudicates vendors or calls any API. Synthetic keys use the
+reserved .invalid/.example namespaces.
+"""
+import copy
+import itertools
+import json
+import os
+import random
+import socket
+import subprocess
+import sys
+import tempfile
+import unittest
+from fractions import Fraction
+from math import comb
+from pathlib import Path
+
+HERE = Path(__file__).resolve().parent
+sys.path.insert(0, str(HERE))
+sys.dont_write_bytecode = True
+
+import a1_frame as fr  # noqa: E402
+import a1_permutation as pm  # noqa: E402
+import a1_screening as sc  # noqa: E402
+import prior_firstcall_projector as pj  # noqa: E402
+import validate_a1 as va  # noqa: E402
+
+
+class NetworkBan(unittest.TestCase):
+    def setUp(self):
+        self._orig = (socket.socket.connect, socket.create_connection)
+
+        def banned(*a, **k):
+            raise AssertionError("network access attempted during offline test")
+        socket.socket.connect = banned
+        socket.create_connection = banned
+        self._urandom = os.urandom
+
+        def no_entropy(*a, **k):
+            raise AssertionError("os.urandom called during offline test")
+        os.urandom = no_entropy
+
+    def tearDown(self):
+        socket.socket.connect, socket.create_connection = self._orig
+        os.urandom = self._urandom
+
+
+def walk(order, status, n, block):
+    return sc.screen(list(order), lambda bi, b: {k: status[k] for k in b}, n_target=n, block_size=block)
+
+
+# ------------------------------------------------------------------ SRS proof (exhaustive)
+
+class SamplingProofTests(NetworkBan):
+    K = ["k1", "k2", "k3", "k4", "k5", "k6"]
+    STATUS = {"k1": sc.IN_S, "k2": sc.EXCLUDED, "k3": sc.IN_S, "k4": sc.STRUCTURAL_DUPLICATE,
+              "k5": sc.IN_S, "k6": sc.UNRESOLVED_ELIGIBILITY}
+
+    def test_first_n_of_S_is_uniform_over_n_subsets(self):
+        counts = {}
+        for order in itertools.permutations(self.K):
+            sel = frozenset(walk(order, self.STATUS, 2, 1)["selected"])
+            counts[sel] = counts.get(sel, 0) + 1
+        S = [k for k, v in self.STATUS.items() if v == sc.IN_S]
+        self.assertEqual(set(counts), {frozenset(c) for c in itertools.combinations(S, 2)})
+        self.assertEqual(set(counts.values()), {720 // comb(3, 2)})
+
+    def test_first_n_ordered_tuple_is_uniform(self):
+        counts = {}
+        for order in itertools.permutations(self.K):
+            counts[tuple(walk(order, self.STATUS, 2, 1)["selected"])] = counts.get(
+                tuple(walk(order, self.STATUS, 2, 1)["selected"]), 0) + 1
+        self.assertEqual(len(counts), 6)
+        self.assertEqual(set(counts.values()), {120})
+
+    def test_pairwise_inclusion_probability(self):
+        hits = 0
+        for order in itertools.permutations(self.K):
+            sel = walk(order, self.STATUS, 2, 1)["selected"]
+            hits += ("k1" in sel and "k3" in sel)
+        self.assertEqual(Fraction(hits, 720), Fraction(2 * 1, 3 * 2))
+
+    def test_block_mechanics_do_not_change_the_selected_set(self):
+        for order in itertools.permutations(self.K):
+            base = walk(order, self.STATUS, 2, 1)["selected"]
+            for b in (2, 4, 6):
+                self.assertEqual(walk(order, self.STATUS, 2, b)["selected"], base)
+
+    def test_position_dependent_status_breaks_uniformity(self):
+        # counterexample: k5 counts as eligible only if screened first (drift/leniency)
+        counts = {}
+        for order in itertools.permutations(self.K):
+            st = dict(self.STATUS)
+            st["k5"] = sc.IN_S if order[0] == "k5" else sc.EXCLUDED
+            sel = frozenset(walk(order, st, 1, 1)["selected"])
+            counts[sel] = counts.get(sel, 0) + 1
+        self.assertNotEqual(len(set(counts.values())), 1)
+
+    def test_prevalence_estimator_unbiased_naive_biased(self):
+        K = ["a", "b", "c", "d", "e", "f", "g"]
+        st = {k: (sc.IN_S if k in ("a", "c", "f") else sc.EXCLUDED) for k in K}
+        unbiased, naive, total = Fraction(0), Fraction(0), 0
+        for order in itertools.permutations(K):
+            T = walk(order, st, 2, 1)["T"]
+            unbiased += Fraction(1, T - 1)
+            naive += Fraction(2, T)
+            total += 1
+        self.assertEqual(unbiased / total, Fraction(3, 7))
+        self.assertNotEqual(naive / total, Fraction(3, 7))
+
+    def test_exhaustion_selects_all_and_floor(self):
+        K = [f"k{i:02d}" for i in range(30)]
+        st = {k: (sc.IN_S if i < 20 else sc.EXCLUDED) for i, k in enumerate(K)}
+        r = walk(K[::-1], st, 24, 6)
+        self.assertTrue(r["exhausted"])
+        self.assertEqual(r["n_selected"], 20)
+        self.assertFalse(r["underpowered"])
+        st = {k: (sc.IN_S if i < 10 else sc.EXCLUDED) for i, k in enumerate(K)}
+        r = walk(K, st, 24, 6)
+        self.assertTrue(r["underpowered"])
+        self.assertEqual(r["n_selected"], 10)
+
+    def test_stop_overshoot_and_conservation(self):
+        K = [f"k{i:02d}" for i in range(40)]
+        st = {k: sc.IN_S for k in K}
+        r = walk(K, st, 24, 6)
+        self.assertEqual(r["n_selected"], 24)
+        self.assertEqual(r["screened"], 24)
+        st = {k: (sc.IN_S if i % 2 == 0 else sc.EXCLUDED) for i, k in enumerate(K)}
+        r = walk(K, st, 5, 6)
+        self.assertEqual(r["screened"], 12)
+        roles = [e["role"] for e in r["ledger"] if e["status"] == sc.IN_S]
+        self.assertEqual(roles.count("SELECTED"), 5)
+        self.assertEqual(roles.count("S_OVERSHOOT_NOT_SELECTED"), 1)
+        self.assertEqual(sum(r["conservation"].values()), 40)
+        self.assertEqual(r["conservation"]["UNSCREENED"], 28)
+
+    def test_unsealed_or_partial_block_halts(self):
+        with self.assertRaises(sc.ScreeningHalt):
+            sc.screen(["a", "b"], lambda bi, b: {"a": sc.IN_S}, n_target=1, block_size=2)
+        with self.assertRaises(sc.ScreeningHalt):
+            sc.screen(["a"], lambda bi, b: {"a": "MAYBE"}, n_target=1, block_size=1)
+
+
+# ------------------------------------------------------------------ adjudication combination
+
+def full(**over):
+    p = {k: "TRUE" for k in sc.INCLUSIONS}
+    p.update({k: "FALSE" for k in sc.EXCLUSIONS + sc.TERMS})
+    p.update({c: "FALSE" for c in sc.CATEGORIES})
+    p["C02"] = "TRUE"
+    p.update(over)
+    return {"predicates": p, "fatal_stop": None, "deviation": False}
+
+
+def early(fatal):
+    code = "FALSE" if fatal.startswith("INCLUSION_FALSE:") else "TRUE"
+    pred = fatal.split(":", 1)[1] if fatal.startswith("INCLUSION_FALSE:") else fatal
+    return {"predicates": {pred: code}, "fatal_stop": fatal, "deviation": False}
+
+
+class CombinationTests(NetworkBan):
+    def test_agreed_eligible(self):
+        self.assertEqual(sc.combine(full(), full())[0], sc.IN_S)
+
+    def test_disagreement_is_unresolved(self):
+        st, why = sc.combine(full(), full(I2="UNRESOLVED"))
+        self.assertEqual(st, sc.UNRESOLVED_ELIGIBILITY)
+        self.assertIn("I2:NOT_AGREED_TRUE", why)
+
+    def test_agreed_fatal_exclusion_both_early(self):
+        st, why = sc.combine(early("E1"), early("E1"))
+        self.assertEqual((st, why), (sc.EXCLUDED, ["E1"]))
+
+    def test_different_fatal_predicates_are_unresolved(self):
+        self.assertEqual(sc.combine(early("E1"), early("E3"))[0], sc.UNRESOLVED_ELIGIBILITY)
+
+    def test_unilateral_stop_never_eligible(self):
+        st, why = sc.combine(early("T2"), full())
+        self.assertEqual(st, sc.UNRESOLVED_ELIGIBILITY)
+        self.assertIn("UNILATERAL_FATAL_STOP", why)     # required reporting, not only the S outcome
+
+    def test_fatal_stop_requires_affirmative_code(self):
+        bad = {"predicates": {"E1": "UNRESOLVED"}, "fatal_stop": "E1", "deviation": False}
+        with self.assertRaises(sc.ScreeningHalt):
+            sc.combine(bad, full())
+
+    def test_terms_gate_inside_S(self):
+        self.assertEqual(sc.combine(full(T1="TRUE"), full(T1="TRUE"))[0], sc.EXCLUDED)
+        self.assertEqual(sc.combine(full(T3="UNRESOLVED"), full(T3="UNRESOLVED"))[0], sc.UNRESOLVED_ELIGIBILITY)
+        self.assertEqual(sc.combine(full(T2="FALSE"), full())[0], sc.IN_S)
+
+    def test_scope_and_descriptive_categories(self):
+        none = {c: "FALSE" for c in sc.CATEGORIES}
+        self.assertEqual(sc.combine(full(**none), full(**none)), (sc.EXCLUDED, ["SCOPE_OUTSIDE"]))
+        a, b = full(C05="UNRESOLVED"), full()
+        self.assertEqual(sc.combine(a, b)[0], sc.IN_S)
+        self.assertEqual(sc.descriptive_categories(a, b)["vector"], "INCOMPLETE")
+
+    def test_deviation_is_unresolved(self):
+        d = full()
+        d["deviation"] = True
+        self.assertEqual(sc.combine(d, full()), (sc.UNRESOLVED_ELIGIBILITY, ["PROTOCOL_DEVIATION"]))
+
+    def test_fatal_stop_cannot_change_S_membership(self):
+        """Proof check (amendment §8): for every fatal predicate f and random records, if an
+        adjudicator affirms f, then under ANY completion of their record in which f stays
+        affirmed or becomes UNRESOLVED (monotonicity), the unit is not in S; and the early
+        stop gives the same S-membership (not in S)."""
+        rng = random.Random(20260919)
+        states = ("TRUE", "FALSE", "UNRESOLVED")
+        keys = sc.INCLUSIONS + sc.EXCLUSIONS + sc.TERMS + sc.CATEGORIES
+        for _ in range(20000):
+            f = rng.choice(sc.FATAL)
+            pred = f.split(":", 1)[1] if f.startswith("INCLUSION_FALSE:") else f
+            affirmed = "FALSE" if f.startswith("INCLUSION_FALSE:") else "TRUE"
+            other = {"predicates": {k: rng.choice(states) for k in keys}, "fatal_stop": None, "deviation": False}
+            completion = {k: rng.choice(states) for k in keys}
+            completion[pred] = rng.choice((affirmed, "UNRESOLVED"))
+            full_rec = {"predicates": completion, "fatal_stop": None, "deviation": False}
+            self.assertNotEqual(sc.combine(full_rec, other)[0], sc.IN_S)
+            self.assertNotEqual(sc.combine(early(f), other)[0], sc.IN_S)
+            self.assertNotEqual(sc.combine(other, early(f))[0], sc.IN_S)
+
+
+class IdentityTests(NetworkBan):
+    M = ["a.example", "api.a.example", "b.a.example"]
+
+    def test_agreed_partition_designates_smallest(self):
+        p = {"platforms": [["a.example", "api.a.example"], ["b.a.example"]], "UNRESOLVED": []}
+        out = sc.resolve_component(self.M, p, copy.deepcopy(p))
+        self.assertEqual(out, {"a.example": "DESIGNATED", "api.a.example": sc.STRUCTURAL_DUPLICATE,
+                               "b.a.example": "DESIGNATED"})
+
+    def test_disagreement_or_unresolved_blocks_whole_component(self):
+        p1 = {"platforms": [["a.example", "api.a.example", "b.a.example"]]}
+        p2 = {"platforms": [["a.example", "api.a.example"], ["b.a.example"]]}
+        self.assertEqual(set(sc.resolve_component(self.M, p1, p2).values()), {sc.UNRESOLVED_IDENTITY})
+        p3 = {"platforms": [["a.example"]], "UNRESOLVED": ["api.a.example", "b.a.example"]}
+        self.assertEqual(set(sc.resolve_component(self.M, p3, p3).values()), {sc.UNRESOLVED_IDENTITY})
+
+    def test_incomplete_partition_rejected(self):
+        p = {"platforms": [["a.example"]]}
+        self.assertEqual(set(sc.resolve_component(self.M, p, p).values()), {sc.UNRESOLVED_IDENTITY})
+
+    def test_designation_independent_of_entry_key_and_order(self):
+        p = {"platforms": [["b.a.example", "a.example"], ["api.a.example"]]}
+        q = {"platforms": [["api.a.example"], ["a.example", "b.a.example"]]}
+        self.assertEqual(sc.resolve_component(self.M, p, q), sc.resolve_component(list(reversed(self.M)), q, p))
+
+
+# ------------------------------------------------------------------ estimators
+
+class EstimatorTests(NetworkBan):
+    def test_half_widths(self):
+        self.assertAlmostEqual(sc.half_width(24), 0.39205, places=4)
+        self.assertAlmostEqual(sc.half_width(60), 0.24795, places=4)
+
+    def test_primary_band_and_indeterminate(self):
+        r = sc.primary([(5, 5), (0, 5), (0, 0)])
+        self.assertEqual(r["indeterminate"], 1)
+        self.assertAlmostEqual(r["estimate"], 0.5)
+        e = sc.half_width(3)
+        self.assertAlmostEqual(r["band"][0], max(0.0, (1 + 0 + 0) / 3 - e))
+        self.assertAlmostEqual(r["band"][1], min(1.0, (1 + 0 + 1) / 3 + e))
+
+    def test_prevalence_requires_n2(self):
+        with self.assertRaises(ValueError):
+            sc.prevalence_unbiased(1, 5)
+        self.assertEqual(sc.prevalence_unbiased(24, 159), 23 / 158)
+
+
+# ------------------------------------------------------------------ permutation mechanics
+
+class PermutationTests(NetworkBan):
+    def test_generator_single_call_exact_length(self):
+        calls = []
+
+        def fake(n):
+            calls.append(n)
+            return bytes(range(256)) * (n // 256) + bytes(n % 256)
+        tape = pm.generate_tape(10, entropy=fake)
+        self.assertEqual(calls, [320])
+        self.assertEqual(len(tape), 320)
+        with self.assertRaises(pm.PermutationHalt):
+            pm.generate_tape(10, entropy=lambda n: b"\0" * (n - 1))
+
+    def test_permutation_from_tape(self):
+        K = ["a", "b", "c"]
+        tape = (3).to_bytes(32, "big") + (1).to_bytes(32, "big") + (2).to_bytes(32, "big")
+        self.assertEqual(pm.permutation(K, tape, pm.tape_commitment(tape)), ["b", "c", "a"])
+
+    def test_tie_commitment_length_and_sorting_halt(self):
+        K = ["a", "b"]
+        tie = (7).to_bytes(32, "big") * 2
+        with self.assertRaises(pm.PermutationHalt):
+            pm.permutation(K, tie, pm.tape_commitment(tie))
+        ok = (1).to_bytes(32, "big") + (2).to_bytes(32, "big")
+        for args in ((K, ok, "0" * 64), (K, ok[:-1], pm.tape_commitment(ok[:-1])), (["b", "a"], ok, pm.tape_commitment(ok))):
+            with self.assertRaises(pm.PermutationHalt):
+                pm.permutation(*args)
+
+    def test_priority_mapping_is_uniform_over_orders(self):
+        # every assignment of distinct priority ranks to K yields each order exactly once
+        K = ["a", "b", "c", "d"]
+        seen = set()
+        for ranks in itertools.permutations(range(4)):
+            tape = b"".join(r.to_bytes(32, "big") for r in ranks)
+            seen.add(tuple(pm.permutation(K, tape, pm.tape_commitment(tape))))
+        self.assertEqual(len(seen), 24)
+
+    def test_presentation_order_hides_position(self):
+        c = "ab" * 32
+        self.assertEqual(pm.presentation_order(["x", "y", "z"], 4, c), pm.presentation_order(["z", "x", "y"], 4, c))
+        self.assertEqual(pm.blocks(list("abcdefgh"), 6), [list("abcdef"), list("gh")])
+
+
+# ------------------------------------------------------------------ frame extraction
+
+def synthetic_source(files, date="2026-01-01T00:00:00Z"):
+    d = Path(tempfile.mkdtemp())
+    subprocess.run(["git", "init", "-q", str(d)], check=True)
+    for path, text in files.items():
+        p = d / path
+        p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_text(text)
+    subprocess.run(["git", "-C", str(d), "add", "-A"], check=True)
+    env = dict(os.environ, GIT_COMMITTER_DATE=date, GIT_AUTHOR_DATE=date)
+    subprocess.run(["git", "-C", str(d), "-c", "user.name=t", "-c", "user.email=t@example.invalid", "commit", "-q",
+                    "-m", "fixture"], check=True, env=env)
+    return d, subprocess.run(["git", "-C", str(d), "rev-parse", "HEAD"], check=True, capture_output=True).stdout.decode().strip()
+
+
+PSL = "// synthetic\ninvalid\nexample\nco.example\n*.ck.example\n!www.ck.example\n"
+
+
+class FrameTests(NetworkBan):
+    def repo(self, date="2026-01-01T00:00:00Z"):
+        return synthetic_source({
+            "APIs/alpha.invalid/1.0/openapi.yaml": "x",
+            "APIs/alpha.invalid/2.0/openapi.yaml": "x",
+            "APIs/api.alpha.invalid/v1/swagger.json": "x",
+            "APIs/Beta.co.example/svc/1/openapi.json": "x",
+            "APIs/gamma.invalid:svc/1/openapi.yaml": "x",
+            "APIs/nodot/1/openapi.yaml": "x",
+            "APIs/empty.invalid/README.md": "no spec",
+            "APIs/stray.txt": "file",
+            "README.md": "outside APIs",
+        }, date)
+
+    def test_extraction_keys_exclusions_components_conservation(self):
+        d, c = self.repo()
+        frame, raw = fr.build_frame(d, PSL, commit=c)
+        self.assertEqual(frame["raw_entry_count"], 6)
+        self.assertEqual(frame["K"], sorted(["alpha.invalid", "api.alpha.invalid", "beta.co.example",
+                                             "gamma.invalid:svc", "nodot"], key=str.encode))
+        rules = {e["entry"]: e["rule"] for e in frame["structural_exclusions"]}
+        self.assertEqual(rules, {"APIs/stray.txt": "XS1_NOT_A_PROVIDER_DIRECTORY",
+                                 "APIs/empty.invalid": "XS2_NO_SPEC_FILE"})
+        comps = frame["components"]
+        self.assertEqual(comps["alpha.invalid"], ["alpha.invalid", "api.alpha.invalid"])
+        self.assertEqual(comps["beta.co.example"], ["beta.co.example"])
+        self.assertIn("singleton:nodot", comps)
+        self.assertEqual(frame["K_sha256"], fr.sha256(fr.canonical(frame["K"])))
+        ids = [r["source_record_id"] for r in raw]
+        self.assertEqual(len(ids), len(set(ids)))
+
+    def test_case_variants_merge_structurally(self):
+        # built with git plumbing: a case-insensitive filesystem would collapse the two directories
+        d, _ = synthetic_source({"README.md": "x"})
+        blob = subprocess.run(["git", "-C", str(d), "hash-object", "-w", "--stdin"], input=b"x",
+                              capture_output=True, check=True).stdout.decode().strip()
+        for path in ("APIs/Case.invalid/1/openapi.yaml", "APIs/case.invalid/2/openapi.yaml"):
+            subprocess.run(["git", "-C", str(d), "update-index", "--add", "--cacheinfo", f"100644,{blob},{path}"],
+                           check=True)
+        subprocess.run(["git", "-C", str(d), "-c", "user.name=t", "-c", "user.email=t@example.invalid", "commit",
+                        "-q", "-m", "case"], check=True, env=dict(os.environ, GIT_COMMITTER_DATE="2026-01-02T00:00:00Z"))
+        c = subprocess.run(["git", "-C", str(d), "rev-parse", "HEAD"], capture_output=True, check=True).stdout.decode().strip()
+        frame, _ = fr.build_frame(d, PSL, commit=c)
+        self.assertEqual(frame["K"], ["case.invalid"])
+        self.assertEqual(frame["units"][0]["provider_dirs"], ["Case.invalid", "case.invalid"])
+
+    def test_psl_rules(self):
+        psl = fr.PublicSuffixList(PSL)
+        self.assertEqual(psl.registrable_domain("a.b.co.example"), "b.co.example")
+        self.assertEqual(psl.registrable_domain("x.y.ck.example"), "x.y.ck.example")
+        self.assertEqual(psl.registrable_domain("a.www.ck.example"), "www.ck.example")
+        self.assertIsNone(psl.registrable_domain("co.example"))
+
+    def test_snapshot_date_rule(self):
+        d, c = self.repo()
+        self.assertEqual(fr.verify_snapshot(d, commit=c)["commit"], c)
+        d2, c2 = self.repo("2026-09-17T00:00:01Z")
+        with self.assertRaises(fr.FrameHalt) as ctx:
+            fr.verify_snapshot(d2, commit=c2)
+        self.assertEqual(ctx.exception.code, "SNAPSHOT_AFTER_T0")
+        with self.assertRaises(fr.FrameHalt):
+            fr.verify_snapshot(d, commit="0" * 40)
+
+    def test_conservation_violations_halt(self):
+        d, c = self.repo()
+        frame, raw = fr.build_frame(d, PSL, commit=c)
+        bad = copy.deepcopy(frame)
+        bad["units"][0]["raw_entries"] += 1
+        with self.assertRaises(fr.FrameHalt):
+            fr.validate_frame(bad, raw)
+        bad = copy.deepcopy(frame)
+        bad["K"] = list(reversed(bad["K"]))
+        with self.assertRaises(fr.FrameHalt):
+            fr.validate_frame(bad, raw)
+
+    def test_retrieval_is_exactly_once(self):
+        out = Path(tempfile.mkdtemp()) / "snap"
+        out.mkdir()
+        with self.assertRaises(FileExistsError):
+            fr.retrieve(tempfile.mkdtemp(), out, source_repo="/nonexistent", psl_repo="/nonexistent")
+
+    def test_pinned_constants(self):
+        self.assertEqual(fr.SNAPSHOT_COMMIT, "f04b8d0bcd39c52e1cf3ad7a5fe744709832ae49")
+        self.assertEqual(fr.T0_UTC, "2026-09-17T00:00:00Z")
+        self.assertEqual(sc.N_TARGET, 24)
+        self.assertEqual(sc.FLOOR, 16)
+        self.assertEqual(sc.RUNS_PER_PLATFORM, 5)
+        self.assertEqual(pm.BLOCK_SIZE, 6)
+
+
+# ------------------------------------------------------------------ hostile static checks
+
+class HostileStaticTests(NetworkBan):
+    OPERATIVE = ("a1_frame.py", "a1_permutation.py", "a1_screening.py", "prior_firstcall_projector.py")
+
+    def test_no_search_engine_or_discovery_code(self):
+        for name in self.OPERATIVE:
+            src = (HERE / name).read_text().lower()
+            for token in ("bing", "search/repositories", "api.github.com/search", "duckduckgo", "google.com", "b_algo"):
+                self.assertNotIn(token, src, f"{token} in {name}")
+
+    def test_no_http_client_in_screening_or_permutation(self):
+        for name in ("a1_permutation.py", "a1_screening.py"):
+            src = (HERE / name).read_text()
+            for token in ("urllib", "http.client", "requests", "socket"):
+                self.assertNotIn(token, src)
+
+    def test_entropy_only_in_registered_generator(self):
+        for name in self.OPERATIVE:
+            src = (HERE / name).read_text()
+            code = src.split('"""', 2)[2]          # drop the module docstring
+            if name == "a1_permutation.py":
+                self.assertEqual(code.count("urandom"), 1)
+                self.assertIn("entropy=os.urandom", code)  # the registered generator's default only
+            else:
+                self.assertNotIn("urandom", src)
+
+    def test_no_replacement_or_time_truncation_hooks(self):
+        src = (HERE / "a1_screening.py").read_text().lower()
+        for token in ("replace", "reserve", "deadline", "time.", "datetime"):
+            self.assertNotIn(token, src)
+
+    def test_snapshot_artifacts_absent(self):
+        for p in ("snapshot", "entropy", "permutation", "screening", "sample"):
+            self.assertFalse((HERE / p).exists(), p)
+        self.assertEqual([p.name for p in HERE.glob("*tape*")], [])
+
+
+# ------------------------------------------------------------------ package documents
+
+class PackageTests(NetworkBan):
+    def test_supersession_rows_complete(self):
+        doc = json.loads((HERE / "supersession.json").read_text())
+        fields = {"id", "old_rule", "source_clause", "new_rule", "why_changed", "when_discovered",
+                  "evidence_observed_before_change", "bias_risk", "status"}
+        for row in doc["rows"]:
+            self.assertEqual(set(row), fields, row["id"])
+            self.assertTrue(all(row[f] for f in fields), row["id"])
+            self.assertIn(row["status"], ("SUPERSEDED", "SUPERSEDED_NON_OPERATIVE", "RETAINED_MODIFIED", "NEW_RULE"))
+        self.assertEqual(va.supersession_coverage_errors(doc), [])
+
+    def test_roles_gates_fail_closed(self):
+        roles = json.loads((HERE / "roles.json").read_text())
+        gates = va.gate_status(roles, anchored=False)
+        self.assertTrue(all(v == "CLOSED" for v in gates.values()))
+        gates = va.gate_status(roles, anchored=True)
+        self.assertEqual(gates["G0_ANCHOR"], "OPEN")
+        self.assertEqual(gates["G1_SNAPSHOT"], "OPEN")
+        for g in ("G2_REGISTRY", "G3_ENTROPY", "G4_SCREENING", "G5_EXECUTION"):
+            self.assertEqual(gates[g], "CLOSED")
+
+    def test_role_conflicts_detected(self):
+        roles = json.loads((HERE / "roles.json").read_text())
+        r = {x["id"]: x for x in roles["roles"]}
+        r["R03"]["status"], r["R03"]["holder"] = "FILLED", "Ross Buckley"
+        self.assertTrue(va.role_conflicts(roles))
+        roles = json.loads((HERE / "roles.json").read_text())
+        r = {x["id"]: x for x in roles["roles"]}
+        r["R05"].update(status="FILLED", holder="A Person")
+        r["R06"].update(status="FILLED", holder="a  person")
+        self.assertTrue(va.role_conflicts(roles))
+        r["R06"].update(holder="Model instance", kind="model")
+        self.assertTrue(va.role_conflicts(roles))
+
+    def test_decision_protocol_forbids_prohibited_methods(self):
+        p = json.loads((HERE / "decision-protocol.json").read_text())
+        for token in ("search engines", "guessed URLs", "login or account creation", "vendor API calls"):
+            self.assertIn(token, p["navigation"]["prohibited"])
+        self.assertEqual(p["timing"]["block_size"], pm.BLOCK_SIZE)
+        self.assertEqual(sorted(p["fatal_exclusion_stop"]["fatal_predicates"]), sorted(sc.FATAL))
+
+
+def make_repo(files):
+    d = Path(tempfile.mkdtemp())
+    subprocess.run(["git", "init", "-q", str(d)], check=True)
+    for path, text in files.items():
+        p = d / path
+        p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_text(text)
+    subprocess.run(["git", "-C", str(d), "add", "-A"], check=True)
+    subprocess.run(["git", "-C", str(d), "-c", "user.name=t", "-c", "user.email=t@example.invalid",
+                    "commit", "-q", "-m", "fixture"], check=True)
+    return d, subprocess.run(["git", "-C", str(d), "rev-parse", "HEAD"], check=True,
+                             capture_output=True).stdout.decode().strip()
+
+
+class ProjectorTests(unittest.TestCase):
+    def test_grammar_and_exclusions(self):
+        repo, commit = make_repo({
+            "experiments/x/config.json": json.dumps({"experiment": "EXP-9", "vendor": "Alpha Mail",
+                                                     "firstcall_operated": True,
+                                                     "runner": "firstcall/run_alpha.py"}),
+            "experiments/x/receipt.json": json.dumps({"experiment": "EXP-9", "vendor": "Leaky", "grade": "FAIL"}),
+            "experiments/y/plain.json": json.dumps({"vendor_id": "Beta"}),
+            "docs/design.md": "Experiment: EXP-10\n\n## 2. Targets\n\n| Vendor | Result |\n|---|---|\n| Gamma | SECRET |\n\n## Results\nVendor: NotThis\n",
+            "docs/other.md": "# Target selection\ntext\n",
+            "firstcall/run_alpha.py": "print('never executed')\n",
+            "artifacts/z.json": json.dumps({"experiment": "E", "vendor": "Out"}),
+        })
+        r = pj.project(repo, commit)
+        self.assertEqual([e["path"] for e in r["ledger"]], sorted((e["path"] for e in r["ledger"]), key=str.encode))
+        pos = {(d["path"], d["identity"]) for d in r["positive_json_designations"]}
+        self.assertEqual(pos, {("experiments/x/config.json", "Alpha Mail")})
+        self.assertTrue(r["positive_json_designations"][0]["firstcall_operated"])
+        md = r["positive_markdown_designations"]
+        self.assertEqual([(d["path"], d["vendor_column_values"]) for d in md], [("docs/design.md", ["Gamma"])])
+        dumped = json.dumps(r)
+        for secret in ("SECRET", "Leaky", "NotThis", "FAIL", "Out"):
+            self.assertNotIn(secret, dumped)
+        reasons = {(u["path"], u["reason"]) for u in r["unrecognized_designations"]}
+        self.assertIn(("experiments/y/plain.json", "IDENTITY_KEY_WITHOUT_SAME_LEVEL_EXPERIMENT"), reasons)
+        self.assertIn(("docs/other.md", "NON_GRAMMAR_TARGET_HEADING"), reasons)
+        self.assertEqual(r["status"], "BLOCKED_UNRECOGNIZED_DESIGNATION")
+        cls = {e["path"]: e["class"] for e in r["ledger"]}
+        self.assertEqual(cls["experiments/x/receipt.json"], "EXCLUDED_RESULT_OR_EVIDENCE_CONTEXT")
+        self.assertEqual(cls["artifacts/z.json"], "OUT_OF_PROJECTION_SCOPE_S8_4")
+        self.assertEqual(cls["firstcall/run_alpha.py"], "CODE_PATH_ONLY")
+        cfg = next(e for e in r["ledger"] if e["path"] == "experiments/x/config.json")
+        self.assertEqual(cfg["literal_code_path_references"], ["firstcall/run_alpha.py"])
+        self.assertEqual(r["adjudicator_approvals"], {"ADJ-1": None, "ADJ-2": None})
+
+    def test_hostile_designation_cases(self):
+        repo, commit = make_repo({
+            # incidental vendor mention in a config (not a target key)
+            "experiments/a/config.json": json.dumps({"experiment": "A-1", "notes": "compared against VendorNotes"}),
+            # policy field: boolean/null vendor-named keys cannot carry an identity
+            "experiments/b/policy.json": json.dumps({"experiment": "B-1", "independent_vendor_verification_required": True,
+                                                     "target_timeout_override": None}),
+            # actual experiment target
+            "experiments/c/manifest.json": json.dumps({"experiment_id": "C-1", "target_vendor": "RealTarget"}),
+            # renamed experiment (id string records history) is still positive
+            "experiments/d/manifest.json": json.dumps({"experiment": "D-2 (formerly D-1)", "vendor_id": "RenamedTarget"}),
+            # nested experiment: identity below the experiment object is not grammar -> blocks
+            "experiments/e/manifest.json": json.dumps({"experiment": "E-1", "runs": [{"vendor": "NestedTarget"}]}),
+            # policy-like key holding an identity-capable value -> blocks
+            "experiments/f/policy.json": json.dumps({"experiment": "F-1", "provider_under_test": "HiddenTarget"}),
+            # documentation example in a fenced block and in an example path
+            "docs/guide.md": "Intro.\n\n```\nExperiment: X-1\n## Targets\nVendor: FencedExample\n```\n",
+            "experiments/examples/sample.json": json.dumps({"experiment": "X-2", "vendor": "ExampleVendor"}),
+            # vendor appearing in prose only
+            "docs/prose.md": "# Notes\nWe read about Vendor: ProseOnly in passing and ProseTwo elsewhere.\n",
+            # historical artifact and receipt contexts
+            "artifacts/old/manifest.json": json.dumps({"experiment": "H-1", "vendor": "ArtifactVendor"}),
+            "experiments/h/receipt.json": json.dumps({"experiment": "H-2", "vendor": "ReceiptVendor"}),
+        })
+        r = pj.project(repo, commit)
+        pos = {(d["path"], d["identity"]) for d in r["positive_json_designations"]}
+        self.assertEqual(pos, {("experiments/c/manifest.json", "RealTarget"),
+                               ("experiments/d/manifest.json", "RenamedTarget")})
+        self.assertEqual(r["positive_markdown_designations"], [])
+        reasons = {(u["path"], u["reason"]) for u in r["unrecognized_designations"]}
+        self.assertEqual(reasons, {
+            ("experiments/e/manifest.json", "IDENTITY_KEY_WITHOUT_SAME_LEVEL_EXPERIMENT"),
+            ("experiments/f/policy.json", "EXPERIMENT_OBJECT_WITH_NON_GRAMMAR_TARGET_KEY"),
+            ("experiments/examples/sample.json", "DESIGNATION_SHAPE_IN_EXAMPLE_PATH"),
+        })
+        b = next(e for e in r["ledger"] if e["path"] == "experiments/b/policy.json")
+        self.assertEqual([f["key"] for f in b["projection"]["incidental_non_identity_fields"]],
+                         ["independent_vendor_verification_required", "target_timeout_override"])
+        dumped = json.dumps(r)
+        for leaked in ("VendorNotes", "FencedExample", "ExampleVendor", "ProseOnly", "ProseTwo",
+                       "ArtifactVendor", "ReceiptVendor", "NestedTarget", "HiddenTarget"):
+            self.assertNotIn(leaked, dumped)
+
+    def test_clean_repo_is_draft_not_approved(self):
+        repo, commit = make_repo({"experiments/x/config.json": json.dumps({"experiment": "E", "vendor": "A"})})
+        r = pj.project(repo, commit)
+        self.assertEqual(r["status"], "DRAFT_REQUIRES_TWO_ADJUDICATOR_APPROVAL")
+
+    def test_deterministic(self):
+        repo, commit = make_repo({"docs/a.md": "x", "experiments/b.json": "{}"})
+        self.assertEqual(pj.canonical(pj.project(repo, commit)), pj.canonical(pj.project(repo, commit)))
+
+
+
+if __name__ == "__main__":
+    unittest.main(verbosity=1)

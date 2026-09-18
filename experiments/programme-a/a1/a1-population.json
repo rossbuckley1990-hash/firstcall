@@ -1,0 +1,99 @@
+{
+  "schema": "firstcall.programmeA.population.v1",
+  "population_id": "A1",
+  "name": "FIRSTCALL Programme A - Population A1",
+  "definition": "The prospectively frozen set G of registrable-domain groups (RDGs) represented in the immutable APIs.guru OpenAPI Directory snapshot below, each measured through the platform/journey surface of its mechanically chosen primary entry. An RDG is a structural sampling unit, not a vendor.",
+  "not_a_claim_about": [
+    "all API vendors",
+    "SaaS in general",
+    "software in general",
+    "vendors without a listed OpenAPI definition"
+  ],
+  "source": {
+    "repository": "https://github.com/APIs-guru/openapi-directory.git",
+    "maintainer": "APIs.guru community project (independent of FIRSTCALL)",
+    "licence": "repository CC0-1.0; README: contributed definitions CC0 1.0, definitions acquired from public sources held by APIs.guru under fair use",
+    "stated_criteria": "public (accessible after clearly defined steps), long-lived, useful beyond its owner; private and event-only APIs excluded",
+    "search_engine_or_ranking": "none"
+  },
+  "snapshot": {
+    "commit": "f04b8d0bcd39c52e1cf3ad7a5fe744709832ae49",
+    "how_pinned": "sole value of refs/heads/main and HEAD returned by `git ls-remote` on 2026-09-18 (ref names and SHAs only; no repository content)",
+    "rule": "A1 uses exactly this commit. At retrieval it must exist and have committer date <= T0 = 2026-09-17T00:00:00Z; otherwise HALT. No other commit, branch, mirror or date may be substituted.",
+    "t0_utc": "2026-09-17T00:00:00Z",
+    "expected_vintage": "the automated refresh stopped 2024-03-01; later commits 2025-07-17, 2025-08-23 (x2), 2025-08-28, 2026-04-20 (commit dates only)"
+  },
+  "retrieval": {
+    "who": "registered snapshot custodian (R02), once, after remote anchoring of this amendment",
+    "method": "git fetch of the pinned commit into an empty repository; a1_frame.py --retrieve",
+    "exactly_once": "output directory created exclusively; a second retrieval is refused",
+    "psl": "the vendored pinned file above; retrieval refuses to run if its SHA256 differs"
+  },
+  "retained_representation": {
+    "custody": "git bundle of the pinned commit (SHA256 recorded); not republished",
+    "published": "commit SHA, tree SHA, PSL commit and SHA256, frame.json (G, groups, primary entries, structural exclusions), raw-entries.json, retrieval.json",
+    "not_published": "definition bodies; auditors retrieve them from the public commit"
+  },
+  "extraction": {
+    "raw_entry": "each file under APIs/<provider>/... whose basename is openapi.json, openapi.yaml, swagger.json or swagger.yaml",
+    "source_record_id": "canonical JSON [\"FIRSTCALL-A1\", commit, null, path]",
+    "structural_key": "NFC + lower-case + trailing-dot removal of the <provider> directory name; no other merge",
+    "structural_exclusions": {
+      "XS1_NOT_A_PROVIDER_DIRECTORY": "a file directly under APIs/",
+      "XS2_NO_SPEC_FILE": "a provider directory with no spec file"
+    },
+    "identity_components": "REMOVED: identity is not a sampling operation (see unit)",
+    "K": "REMOVED: the frame is G",
+    "G": "byte-sorted unique RDG ids with, per RDG, member keys, hosts, basis, primary key, primary-key rule, primary entry and raw-entry count; sealed as frame.json with G_sha256 before entropy"
+  },
+  "conservation": [
+    "every raw entry maps to exactly one structural key and every key to exactly one RDG",
+    "every RDG has >= 1 key and exactly one primary entry, which is the byte-smallest spec path of its primary key",
+    "every top-level entry under APIs/ is a provider directory with >= 1 spec file or a recorded structural exclusion",
+    "G is unique and byte-sorted",
+    "source_record_id values are unique",
+    "the published frame names the pinned snapshot and PSL and is reproduced byte-identically from them; any other snapshot or PSL fails validation"
+  ],
+  "pre_membership_observations": {
+    "aggregate_metrics_json": "numSpecs 3992, numAPIs 2529, numProviders 677, unreachable 166, invalid 688, unofficial 25 (APIs.guru metrics endpoint; aggregates only)",
+    "top_level_listing": "ONE GitHub contents-API response for APIs/ was retrieved on 2026-09-18. It contained entry names; the script reduced it to a count (701) before printing. No name was displayed, recorded or used.",
+    "commit_list": "ONE GitHub commits-API response was retrieved; only committer dates were printed. Messages and file lists were not displayed.",
+    "repository_metadata": "licence CC0-1.0, created 2015-02-22, last push 2026-04-20, top-level layout (.gitignore, APIs, CONTRIBUTING.md, LICENSE, README.md, branding)",
+    "readme": "inclusion criteria and licence text via a summariser instructed to omit names"
+  },
+  "unit": {
+    "name": "registrable-domain group (RDG)",
+    "is_not": [
+      "a vendor",
+      "a control plane",
+      "a product",
+      "a platform identified by documentation"
+    ],
+    "caveats": [
+      "one vendor/control plane may contribute several RDGs",
+      "one RDG may contain several products or platform surfaces",
+      "only the mechanically chosen primary entry of an RDG is measured",
+      "A1 does not estimate a universal vendor/API/SaaS success rate"
+    ],
+    "host_extraction": "structural key = NFC + lower-case + trailing-dot removal of the provider directory name; host = text before the first ':' (a ':service' suffix or ':port' is ignored); trailing dots removed; each label converted to a lower-case A-label with the stdlib IDNA codec of the registered runtime; server URLs inside definitions are NEVER used for grouping",
+    "non_dns_hosts": "a key whose host is an IPv4/IPv6 literal, has fewer than two labels (e.g. localhost), has an empty label, fails IDNA conversion, has a non-LDH label or exceeds 253 characters, or is itself a public suffix, forms a singleton RDG with id 'singleton:<key>'",
+    "registrable_domain": "eTLD+1 of the A-label host under the full pinned PSL (ICANN and PRIVATE sections), standard algorithm with exceptions, wildcards and the implicit '*' rule",
+    "rdg_id": "the registrable domain (A-labels), or 'singleton:<key>'",
+    "primary_key_rule": "(1) singleton: the key itself; (2) else the key with no ':' suffix whose host equals the RDG id (bare registrable domain); if several (e.g. U-label and A-label spellings), the byte-smallest; (3) else the byte-smallest key of the RDG (UTF-8 bytes)",
+    "primary_entry_rule": "the byte-smallest raw-entry path (UTF-8 bytes) among the primary key's spec files",
+    "multiplicity": "number of keys, hosts, services, versions or spec files in an RDG never affects its inclusion probability: the permutation is over RDGs",
+    "adjudicator_choice": "none: the primary entry is fixed in the sealed frame; records about any other entry are protocol deviations"
+  },
+  "psl": {
+    "source": "https://github.com/publicsuffix/list.git",
+    "commit": "3955e3ec29b94c3cca7bd4509c5f14a7c0959e26",
+    "commit_utc": "2026-09-08T12:18:25Z",
+    "selection": "first first-parent commit of main with committer date <= T0 (timezone-aware UTC comparison)",
+    "file": "public_suffix_list.dat",
+    "sha256": "a26f7d7e334778ed69216cedb5451ef82031feba6615c12039783cdd94e1fcae",
+    "bytes": 334040,
+    "vendored": "experiments/programme-a/a1/psl/public_suffix_list.dat with its MPL-2.0 LICENSE (sha256 66a3107d5ad6a058aab753eaac2047ccb2ed0e39465dd0fe5844da3e300d5172)",
+    "acquired": "2026-09-19 from the PSL project repository; contains no A1 membership",
+    "use": "read only from the vendored file after SHA256 verification; never fetched live during frame construction"
+  }
+}

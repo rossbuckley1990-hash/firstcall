@@ -1,0 +1,270 @@
+#!/usr/bin/env python3
+"""FIRSTCALL Programme A, Population A1: snapshot retrieval and structural frame (K).
+
+Frozen by the Freeze-1.2 A1 amendment. Order of operations (amendment §5):
+  retrieve the pinned snapshot exactly once -> extract raw entries -> structural keys ->
+  structural exclusions -> registrable-domain identity components -> seal K.
+
+No step here reads documentation, adjudicates, generates entropy or orders units.
+Offline tests drive every function against synthetic git repositories. The live
+`--retrieve` mode is for the registered snapshot custodian only, after anchoring.
+"""
+import argparse
+import hashlib
+import json
+import os
+import subprocess
+import sys
+import unicodedata
+from datetime import datetime, timezone
+from pathlib import Path
+
+A1_ID = "FIRSTCALL-A1"
+SOURCE_REPO = "https://github.com/APIs-guru/openapi-directory.git"
+SNAPSHOT_COMMIT = "f04b8d0bcd39c52e1cf3ad7a5fe744709832ae49"
+T0_UTC = "2026-09-17T00:00:00Z"
+ROOT_DIR = "APIs"
+SPEC_FILENAMES = ("openapi.json", "openapi.yaml", "swagger.json", "swagger.yaml")
+PSL_REPO = "https://github.com/publicsuffix/list.git"
+PSL_PATH = "public_suffix_list.dat"
+PSL_BRANCH = "main"
+OUTPUT_DIR = "experiments/programme-a/a1/snapshot"
+
+
+class FrameHalt(Exception):
+    def __init__(self, code, detail=""):
+        super().__init__(f"{code}: {detail}")
+        self.code = code
+
+
+def canonical(obj):
+    return json.dumps(obj, sort_keys=True, separators=(",", ":"),
+                      ensure_ascii=False, allow_nan=False).encode("utf-8")
+
+
+def sha256(data):
+    return hashlib.sha256(data).hexdigest()
+
+
+def git(repo, *args):
+    return subprocess.run(["git", "-C", str(repo), *args], check=True, capture_output=True).stdout
+
+
+def parse_utc(text):
+    return datetime.strptime(text, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
+
+
+# ------------------------------------------------------------------ snapshot checks
+
+def verify_snapshot(repo, commit=SNAPSHOT_COMMIT, t0=T0_UTC):
+    """The pinned commit must exist and have committer date <= T0. Otherwise HALT (no substitute)."""
+    try:
+        kind = git(repo, "cat-file", "-t", commit).decode().strip()
+    except subprocess.CalledProcessError:
+        raise FrameHalt("SNAPSHOT_MISSING", commit)
+    if kind != "commit":
+        raise FrameHalt("SNAPSHOT_NOT_COMMIT", kind)
+    when = datetime.fromisoformat(git(repo, "show", "-s", "--format=%cI", commit).decode().strip())
+    if when > parse_utc(t0):
+        raise FrameHalt("SNAPSHOT_AFTER_T0", when.isoformat())
+    tree = git(repo, "rev-parse", f"{commit}^{{tree}}").decode().strip()
+    return {"commit": commit, "tree": tree, "committer_date": when.isoformat()}
+
+
+def psl_commit_at_t0(psl_repo, branch=PSL_BRANCH, t0=T0_UTC):
+    """First commit in first-parent order from the fetched branch head with committer date <= T0."""
+    out = git(psl_repo, "log", "--first-parent", "--format=%H %cI", f"origin/{branch}").decode().split("\n")
+    for line in out:
+        if not line.strip():
+            continue
+        h, when = line.split()
+        if datetime.fromisoformat(when) <= parse_utc(t0):
+            return h
+    raise FrameHalt("PSL_NO_COMMIT_BEFORE_T0")
+
+
+# ------------------------------------------------------------------ public suffix list
+
+class PublicSuffixList:
+    def __init__(self, text):
+        self.rules, self.exceptions, self.wildcards = set(), set(), set()
+        for raw in text.splitlines():
+            line = raw.strip()
+            if not line or line.startswith("//"):
+                continue
+            line = line.split()[0].lower()
+            if line.startswith("!"):
+                self.exceptions.add(line[1:])
+            elif line.startswith("*."):
+                self.wildcards.add(line[2:])
+            else:
+                self.rules.add(line)
+
+    def registrable_domain(self, host):
+        """eTLD+1 by the PSL algorithm (implicit '*' rule). None if host is itself a suffix."""
+        labels = host.split(".")
+        suffix_len = 1
+        for i in range(len(labels)):
+            cand = ".".join(labels[i:])
+            if cand in self.exceptions:
+                suffix_len = len(labels) - i - 1
+                break
+            parent = ".".join(labels[i + 1:])
+            if cand in self.rules or (parent and parent in self.wildcards):
+                suffix_len = len(labels) - i
+                break
+        if len(labels) <= suffix_len:
+            return None
+        return ".".join(labels[-(suffix_len + 1):])
+
+
+# ------------------------------------------------------------------ structural extraction
+
+def normalise_key(name):
+    """Structural key: NFC, lower-case, trailing dot removed. Never merges beyond this."""
+    return unicodedata.normalize("NFC", name).lower().rstrip(".")
+
+
+def key_host(key):
+    """Host part of a provider key ('host' or 'host:service'); None if not a dotted DNS name."""
+    host = key.split(":", 1)[0]
+    if "." not in host or any(not part for part in host.split(".")):
+        return None
+    try:
+        host.encode("idna")
+    except UnicodeError:
+        return None
+    return host
+
+
+def extract(repo, commit=SNAPSHOT_COMMIT):
+    """Raw entries = spec files under APIs/<provider>/...; top-level entries classified."""
+    listing = git(repo, "ls-tree", "-r", "-z", "--full-tree", commit, "--", ROOT_DIR + "/").decode("utf-8")
+    raw, top_files, providers = [], [], {}
+    for entry in filter(None, listing.split("\0")):
+        meta, path = entry.split("\t", 1)
+        parts = path.split("/")
+        if len(parts) == 2:
+            top_files.append(path)                      # a file directly under APIs/
+            continue
+        provider = parts[1]
+        providers.setdefault(provider, {"spec_files": 0, "files": 0})
+        providers[provider]["files"] += 1
+        if parts[-1] in SPEC_FILENAMES:
+            providers[provider]["spec_files"] += 1
+            raw.append({"source_record_id": canonical([A1_ID, commit, None, path]).decode(), "path": path,
+                        "provider_dir": provider, "blob": meta.split()[2]})
+    raw.sort(key=lambda r: r["path"].encode("utf-8"))
+    return raw, sorted(top_files, key=str.encode), providers
+
+
+def build_frame(repo, psl_text, commit=SNAPSHOT_COMMIT):
+    raw, top_files, providers = extract(repo, commit)
+    exclusions = [{"entry": p, "rule": "XS1_NOT_A_PROVIDER_DIRECTORY"} for p in top_files]
+    exclusions += [{"entry": f"{ROOT_DIR}/{d}", "rule": "XS2_NO_SPEC_FILE"}
+                   for d in sorted(providers, key=str.encode) if providers[d]["spec_files"] == 0]
+    keys = {}
+    for r in raw:
+        k = normalise_key(r["provider_dir"])
+        keys.setdefault(k, {"key": k, "provider_dirs": set(), "raw_entries": 0})
+        keys[k]["provider_dirs"].add(r["provider_dir"])
+        keys[k]["raw_entries"] += 1
+    psl = PublicSuffixList(psl_text)
+    for k, v in keys.items():
+        host = key_host(k)
+        v["host"] = host
+        v["registrable_domain"] = psl.registrable_domain(host) if host else None
+        v["component_basis"] = "REGISTRABLE_DOMAIN" if v["registrable_domain"] else "SINGLETON_NON_DOMAIN_KEY"
+        v["provider_dirs"] = sorted(v["provider_dirs"], key=str.encode)
+    comps = {}
+    for k, v in keys.items():
+        cid = v["registrable_domain"] or ("singleton:" + k)
+        comps.setdefault(cid, []).append(k)
+    for v in keys.values():
+        cid = v["registrable_domain"] or ("singleton:" + v["key"])
+        v["component"] = cid
+    K = sorted(keys, key=str.encode)
+    frame = {
+        "schema": "firstcall.programmeA.a1_frame.v1",
+        "population": A1_ID,
+        "snapshot_commit": commit,
+        "raw_entry_count": len(raw),
+        "structural_exclusions": exclusions,
+        "K": K,
+        "K_size": len(K),
+        "units": [keys[k] for k in K],
+        "components": {c: sorted(m, key=str.encode) for c, m in sorted(comps.items(), key=lambda x: x[0].encode())},
+        "raw_entries_sha256": sha256(canonical(raw)),
+    }
+    validate_frame(frame, raw)
+    frame["K_sha256"] = sha256(canonical(K))
+    return frame, raw
+
+
+def validate_frame(frame, raw):
+    """Conservation: every raw entry maps to exactly one key; every key has >=1 entry; K unique, byte-sorted."""
+    K = frame["K"]
+    if len(set(K)) != len(K) or K != sorted(K, key=str.encode):
+        raise FrameHalt("K_NOT_UNIQUE_SORTED")
+    counts = {u["key"]: u["raw_entries"] for u in frame["units"]}
+    mapped = sum(counts.values())
+    if mapped != len(raw) or frame["raw_entry_count"] != len(raw):
+        raise FrameHalt("RAW_CONSERVATION", f"{mapped} != {len(raw)}")
+    if any(c < 1 for c in counts.values()):
+        raise FrameHalt("EMPTY_KEY")
+    member = [k for c in frame["components"].values() for k in c]
+    if sorted(member, key=str.encode) != K:
+        raise FrameHalt("COMPONENT_COVERAGE")
+    ids = [r["source_record_id"] for r in raw]
+    if len(set(ids)) != len(ids):
+        raise FrameHalt("DUPLICATE_SOURCE_RECORD_ID")
+    return True
+
+
+# ------------------------------------------------------------------ one-time retrieval (custodian only)
+
+def retrieve(workdir, out_dir, source_repo=SOURCE_REPO, psl_repo=PSL_REPO):
+    """Exactly-once retrieval: exclusive output directory, pinned commit, PSL at T0, bundles hashed."""
+    out = Path(out_dir)
+    out.mkdir(parents=True, exist_ok=False)            # a second retrieval is refused
+    work = Path(workdir)
+    src, psl = work / "src", work / "psl"
+    subprocess.run(["git", "init", "-q", str(src)], check=True)
+    subprocess.run(["git", "-C", str(src), "fetch", "-q", "--no-tags", source_repo, SNAPSHOT_COMMIT], check=True)
+    snap = verify_snapshot(src)
+    subprocess.run(["git", "clone", "-q", "--no-checkout", psl_repo, str(psl)], check=True)
+    psl_commit = psl_commit_at_t0(psl)
+    psl_bytes = git(psl, "show", f"{psl_commit}:{PSL_PATH}")
+    frame, raw = build_frame(src, psl_bytes.decode("utf-8"))
+    subprocess.run(["git", "-C", str(src), "branch", "-f", "a1-snapshot", SNAPSHOT_COMMIT], check=True)
+    subprocess.run(["git", "-C", str(src), "bundle", "create", "-q", str(work / "a1.bundle"), "a1-snapshot"],
+                   check=True)
+    record = {"snapshot": snap, "psl": {"repo": psl_repo, "commit": psl_commit, "sha256": sha256(psl_bytes)},
+              "custody_bundle_sha256": sha256((work / "a1.bundle").read_bytes()),
+              "frame_sha256": sha256(canonical(frame)), "K_sha256": frame["K_sha256"], "K_size": frame["K_size"],
+              "raw_entry_count": frame["raw_entry_count"], "retrieved_utc": datetime.now(timezone.utc).isoformat()}
+    for name, data in (("frame.json", canonical(frame)), ("raw-entries.json", canonical(raw)),
+                       ("retrieval.json", canonical(record))):
+        fd = os.open(out / name, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o444)
+        os.write(fd, data)
+        os.close(fd)
+    return record
+
+
+def main(argv=None):
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("--describe", action="store_true", help="print frozen constants; no network")
+    ap.add_argument("--retrieve", metavar="WORKDIR", help="snapshot custodian only, after anchoring")
+    args = ap.parse_args(argv)
+    if args.retrieve:
+        root = Path(__file__).resolve().parents[3]
+        print(json.dumps(retrieve(args.retrieve, root / OUTPUT_DIR), indent=2))
+        return 0
+    print(json.dumps({"population": A1_ID, "source": SOURCE_REPO, "snapshot_commit": SNAPSHOT_COMMIT,
+                      "t0_utc": T0_UTC, "spec_filenames": SPEC_FILENAMES, "psl": [PSL_REPO, PSL_PATH, "latest <= T0"]},
+                     indent=2))
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

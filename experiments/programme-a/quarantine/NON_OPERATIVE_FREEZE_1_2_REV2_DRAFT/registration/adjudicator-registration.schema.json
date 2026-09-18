@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "firstcall.programmeA.adjudicator_registration.v1",
+  "title": "Programme A adjudicator registration (Freeze 1.2)",
+  "description": "One record per slot, stored at registration/adjudicators/<slot>.json and committed under a remotely anchored tag before gate G2. Invalid, missing or duplicated records fail closed.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "slot", "kind", "full_name", "public_contact", "registered_utc", "functions", "attestations", "disclosures", "conflicts"],
+  "properties": {
+    "schema": {"const": "firstcall.programmeA.adjudicator_registration.v1"},
+    "slot": {"enum": ["ADJ-1", "ADJ-2"]},
+    "kind": {"const": "natural_person"},
+    "full_name": {"type": "string", "minLength": 2},
+    "public_contact": {"type": "string", "minLength": 3},
+    "registered_utc": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"},
+    "functions": {
+      "type": "array",
+      "items": {"enum": ["SOURCE_SCREENING", "IDENTITY", "ELIGIBILITY_AND_CATEGORY", "PRIOR_FIRSTCALL_DESIGNATION"]},
+      "minItems": 4, "maxItems": 4, "uniqueItems": true,
+      "description": "Freeze 1.1 names two fixed reviewers; one pair serves every adjudication function."
+    },
+    "attestations": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "codes_every_predicate_personally_without_model_or_third_party_generated_codes",
+        "no_communication_with_other_adjudicator_about_any_packet_until_both_decision_hashes_are_committed",
+        "no_access_to_other_adjudicator_codes_before_both_sealed",
+        "no_access_to_programme_a_outcomes_category_totals_draw_order_priorities_or_hash_scores",
+        "will_not_request_or_seek_evidence_outside_the_frozen_packet",
+        "accepts_time_budgets_20_min_per_source_60_min_per_unit_per_stage",
+        "accepts_no_replacement_after_any_packet_opened",
+        "holds_no_entropy_custodian_or_witness_role"
+      ],
+      "patternProperties": {"^.*$": {"const": true}}
+    },
+    "disclosures": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["viewed_capture_archive_before_registration", "is_protocol_author", "is_capture_custodian", "saw_quarantined_rejected_draft", "knows_historical_firstcall_outcomes"],
+      "properties": {
+        "viewed_capture_archive_before_registration": {"type": "boolean"},
+        "is_protocol_author": {"type": "boolean"},
+        "is_capture_custodian": {"type": "boolean"},
+        "saw_quarantined_rejected_draft": {"type": "boolean"},
+        "knows_historical_firstcall_outcomes": {"type": "boolean"}
+      }
+    },
+    "conflicts": {"type": "array", "items": {"type": "string"}, "description": "Free-text further conflicts; may be empty but must be present."}
+  },
+  "x-validator-rules": [
+    "ADJ-1.full_name and ADJ-2.full_name differ after Unicode NFC + casefold + whitespace collapse",
+    "ADJ-1.public_contact and ADJ-2.public_contact differ",
+    "neither equals the ENTROPY_CUSTODIAN or ENTROPY_PROCESS_WITNESS registrant",
+    "kind other than natural_person (e.g. model, agent, process) is rejected",
+    "once any packet-opening log entry exists, any change to either record invalidates the cohort",
+    "decision files are sealed per adjudicator by committing their sha256 before either is revealed; disagreement = UNRESOLVED (Freeze 1.1 §4)"
+  ]
+}

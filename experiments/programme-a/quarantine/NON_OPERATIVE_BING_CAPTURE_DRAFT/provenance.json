@@ -1,0 +1,19 @@
+{
+  "schema": "firstcall.programmeA.non_operative_draft_provenance.v1",
+  "status": "WITHDRAWN_NON_OPERATIVE_EVIDENCE_ONLY",
+  "withdrawn_utc_date": "2026-09-18",
+  "reason": "material uncertainty whether automated retrieval, parsing and archival of Bing search-result HTML is permitted under Microsoft's public terms",
+  "bing_requests_made": 0,
+  "runner_invocations": {"authoritative": 0, "preflight_check": 0},
+  "committed_tagged_or_pushed": false,
+  "files": {
+    "capture_runner.py.txt": {"original_path": "experiments/programme-a/registration/capture_runner.py", "sha256": "a2374399022425bb131b42eeb993e1e3af7eff5df1037bd48dc0a69f89be85af"},
+    "capture-runner-manifest.json": {"original_path": "experiments/programme-a/registration/capture-runner-manifest.json", "sha256": "666cce615d9a7916635d16d671d7992688a6aed88e67890e5fff69095a3afad5"},
+    "capture-schedule.json": {"original_path": "experiments/programme-a/registration/capture-schedule.json", "sha256": "90b182cd93a1d08dd72e3b5001e17691aff7597c347f48d536f757315c6934a7"}
+  },
+  "superseded_by": {
+    "runner": "experiments/programme-a/registration/source_capture_runner.py",
+    "manifest": "experiments/programme-a/registration/source-capture-runner-manifest.json",
+    "schedule": "experiments/programme-a/registration/source-capture-schedule.json"
+  }
+}

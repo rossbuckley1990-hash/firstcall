@@ -1,0 +1,7 @@
+{
+  "id": "S31",
+  "url": "https://docs.stripe.com/api/checkout/sessions/create?query=line_items",
+  "started": "2026-09-18T15:01:48.915Z",
+  "result": "Internal Error ()\nciteturn32view0 [wordlim: 200] Source: open({\"ref_id\":\"https://docs.stripe.com/api/checkout/sessions/create?query=line_items\",\"lineno\":null}); Total lines: 1\nL0: URL https://docs.stripe.com/api/checkout/sessions/create?query=line_items is not accessible via this tool.\n",
+  "ended": "2026-09-18T15:01:50.365Z"
+}

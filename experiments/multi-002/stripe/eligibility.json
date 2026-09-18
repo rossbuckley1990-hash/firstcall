@@ -1,0 +1,472 @@
+{
+  "schema": "firstcall.multi002.stripe.eligibility",
+  "version": "1.0.0",
+  "assessment_timestamp_utc": "2026-09-18T00:00:00Z",
+  "assessor": "Claude Code (Opus 4.8) takeover of interrupted Codex documentary eligibility gate",
+  "repository_commit": "e9be04017b52df81f65689e537f6e49b3a1d119c",
+  "design_document": "docs/multi002-experiment-design.md",
+  "design_sha256": "3c3e867d15ae7c74ee7f70cee5c0e769697012afcc54ce6f80bf64cc23179f99",
+  "decision": "NOT_ELIGIBLE",
+  "decision_reasons": [
+    "R1 (handoff not vendor-supported): Stripe's own onboarding treats environment variables as the store for API KEYS only. The quickstart section 'Set your environment variables' (S06) instructs developers to place the publishable and secret keys (and optionally a webhook secret) into a .env file. No captured official Stripe source defines, recommends, or uses STRIPE_PRICE_ID or any price-identifier environment variable as an operational/deployment handoff.",
+    "R2 (price supplied inline, not via env): In every official Checkout code sample the Price identifier appears as an inline template placeholder {{PRICE_ID}} accompanied by the instruction 'Provide the exact Price ID (for example, price_1234) of the product you want to sell' (S06 six occurrences across JS/Ruby/Python/PHP/.NET/Go; S10 curl). Stripe's convention is a literal value the developer looks up and pastes inline, not a handed-off environment variable.",
+    "R3 (unambiguous machine-discovery route from the named product): The frozen customer task names the catalog product ('the existing FIRSTCALL Test Plan catalog price'). With the valid test secret key (named in the task) and the read-only exploration the task explicitly permits, the intended Price is reachable by documented, permitted routes: Search products by name (S34 POST /v1/products/search) then List/Search prices filtered to that product (S20 GET /v1/prices with documented `product` parameter: 'Only return prices for the given product'; S35 POST /v1/prices/search), or List prices directly (S20). This is an explicit, unambiguous route from task to intended price, which the design gate (Sec 3 'Disqualifying alternative'; Sec 4 item 5) states disqualifies the candidate.",
+    "R4 (Stripe's own deployment-stable price reference is lookup_key, not an env var): Stripe documents lookup_key precisely for the deployment-handoff scenario the experiment invents (S28: prior practice 'is often manual and requires you to deploy new code. To better manage these scenarios, you can use the lookup_key attribute'; retrievable via S20 lookup_keys param, S33 price object, S35). The authentic vendor-supported stable handoff is a Price lookup_key, not STRIPE_PRICE_ID.",
+    "R5 (agent-native live discovery exists): Stripe ships agent-native discovery that resolves account catalog objects without a human-provided ID: Agent skills, Agent plugins, `stripe agent setup`, and a Stripe MCP server that plugins 'automatically configure' to expose live account data, plus terminal-readable docs via `stripe docs` (S43, echoed as the 'Start here' banner on S34/S35). A fresh autonomous agent has documented, first-class routes to enumerate the account's real Prices.",
+    "CONCLUSION: Withholding knowledge of STRIPE_PRICE_ID does not reveal a genuine machine-discoverability defect. It would manufacture the baseline failure by depending on the agent NOT exercising the documented, permitted catalog read/search/MCP routes that lead directly to the task-named Price. The hidden STRIPE_PRICE_ID handoff is researcher-created rather than vendor-supported. Both independent grounds (R1-R2 and R3-R5) require rejection under the pre-registered gate."
+  ],
+  "captured_source_manifest": [
+    {
+      "id": "S01",
+      "file": "sources/web-extracts/S01.json",
+      "url": "https://docs.stripe.com/payments/checkout",
+      "bytes": 6668,
+      "sha256": "a9a15eb3c6ee9ada3662340fd6f29ed2e8f3f6ab27d80dbdb4141ef2b046fa99"
+    },
+    {
+      "id": "S02",
+      "file": "sources/web-extracts/S02.json",
+      "url": "https://docs.stripe.com/api/checkout/sessions/create",
+      "bytes": 25711,
+      "sha256": "390b03241fd14fa4c1fd4fbfeb8743eea04d6bd216dbf0377d89d0af943d7df8"
+    },
+    {
+      "id": "S03",
+      "file": "sources/web-extracts/S03.json",
+      "url": "https://docs.stripe.com/api/checkout/sessions/list",
+      "bytes": 7422,
+      "sha256": "a2b82e21267dfcd0e4666d34ec51dd96e4d5bdc8eb90363db22bf536527bdc51"
+    },
+    {
+      "id": "S04",
+      "file": "sources/web-extracts/S04.json",
+      "url": "https://docs.stripe.com/api/prices",
+      "bytes": 2898,
+      "sha256": "9ab94cd3885923c72d13ec644d0b3f465f3343186fb8beeb61331478fe82e52a"
+    },
+    {
+      "id": "S05",
+      "file": "sources/web-extracts/S05.json",
+      "url": "https://docs.stripe.com/testing",
+      "bytes": 26821,
+      "sha256": "97f0e353b4ae7eb0aa5a389bf03302cb35e686759154b1b74dc6dfc983054c1d"
+    },
+    {
+      "id": "S06",
+      "file": "sources/web-extracts/S06.json",
+      "url": "https://docs.stripe.com/checkout/quickstart.md",
+      "bytes": 32499,
+      "sha256": "b4a7db79bed941419bab8040f85c0c577f1fe4490892a9d43da038f39fb422ba"
+    },
+    {
+      "id": "S07",
+      "file": "sources/web-extracts/S07.json",
+      "url": "https://docs.stripe.com/payments/accept-a-payment.md?payment-ui=checkout&ui=stripe-hosted",
+      "bytes": 560,
+      "sha256": "8145a53dba6f26015386578dd241d60f23251090e29ed4abb777e0546e147b37"
+    },
+    {
+      "id": "S08",
+      "file": "sources/web-extracts/S08.json",
+      "url": "https://docs.stripe.com/payments/checkout/product-catalog.md",
+      "bytes": 473,
+      "sha256": "be5e17c88a76ca55f6dfa98d48cf334f47b364e83e15638b7f173bf7662cd5f6"
+    },
+    {
+      "id": "S09",
+      "file": "sources/web-extracts/S09.json",
+      "url": "https://docs.stripe.com/products-prices/overview.md",
+      "bytes": 446,
+      "sha256": "f524f6cd19f3c27ea8d4176b68a5c21d55173ab5d6fbe24156c376d853ef09f6"
+    },
+    {
+      "id": "S10",
+      "file": "sources/web-extracts/S10.json",
+      "url": "https://docs.stripe.com/payments/accept-a-payment?payment-ui=checkout&ui=stripe-hosted",
+      "bytes": 34714,
+      "sha256": "9c982c29457f0848ef389576ac9e5b9da31e2a431a4b0772daf1a5c6bde85537"
+    },
+    {
+      "id": "S11",
+      "file": "sources/web-extracts/S11.json",
+      "url": "https://docs.stripe.com/payments/checkout/product-catalog",
+      "bytes": 1998,
+      "sha256": "f07e1c41a4aeb4bd6b7d7fbd8502f9ffc06675ce8c7029aad412cbab3c51aa50"
+    },
+    {
+      "id": "S12",
+      "file": "sources/web-extracts/S12.json",
+      "url": "https://docs.stripe.com/products-prices/overview",
+      "bytes": 2024,
+      "sha256": "af2e628509479abe3b80b96ef456546648cf7d5167dbb3f215629da540c9cd7d"
+    },
+    {
+      "id": "S13",
+      "file": "sources/web-extracts/S13.json",
+      "url": "https://docs.stripe.com/api/authentication",
+      "bytes": 6554,
+      "sha256": "4bdb62064b22f3d34abd23dd91872aae1f433bb2fbf95c52078178de107f6506"
+    },
+    {
+      "id": "S14",
+      "file": "sources/web-extracts/S14.json",
+      "url": "https://docs.stripe.com/keys",
+      "bytes": 27839,
+      "sha256": "42138abb68459008f77d79530e10bd98b3c6b740198a1a48293eeed0894a0a95"
+    },
+    {
+      "id": "S15",
+      "file": "sources/web-extracts/S15.json",
+      "url": "https://docs.stripe.com/testing-use-cases",
+      "bytes": 23046,
+      "sha256": "7a9a2980d9ab22cb60566535fde75bc87d32718966b49bac8087b02cccffe2c4"
+    },
+    {
+      "id": "S16",
+      "file": "sources/web-extracts/S16.json",
+      "url": "https://docs.stripe.com/sandboxes",
+      "bytes": 4833,
+      "sha256": "7064bc677e3a74ad865ec0ae806e37f3c85a876b23e1479ed34c9318eb73dd53"
+    },
+    {
+      "id": "S17",
+      "file": "sources/web-extracts/S17.json",
+      "url": "https://docs.stripe.com/api/checkout/sessions/retrieve",
+      "bytes": 4391,
+      "sha256": "8689f5653530f40dbb3343c63880802013ac3526581feab37bfca0a6f72214ac"
+    },
+    {
+      "id": "S18",
+      "file": "sources/web-extracts/S18.json",
+      "url": "https://docs.stripe.com/api/checkout/sessions/line_items",
+      "bytes": 4346,
+      "sha256": "4df8f818b597a667d682b8ed23ee53fccfb2878a6fada92915937783c3e060ef"
+    },
+    {
+      "id": "S19",
+      "file": "sources/web-extracts/S19.json",
+      "url": "https://docs.stripe.com/api/prices/retrieve",
+      "bytes": 2797,
+      "sha256": "82247b7f20e0c77022cb96498822956599a2984dfac988b68c1867dff380fbb3"
+    },
+    {
+      "id": "S20",
+      "file": "sources/web-extracts/S20.json",
+      "url": "https://docs.stripe.com/api/prices/list",
+      "bytes": 4948,
+      "sha256": "b4832094554bc051be90dde4db6552452236b44691bc11b935db12532f875f8d"
+    },
+    {
+      "id": "S21",
+      "file": "sources/web-extracts/S21.json",
+      "url": "https://docs.stripe.com/api/pagination",
+      "bytes": 5717,
+      "sha256": "25a573d44d99e86e302d34328172936a3a99024c00d9af69fc5491c3e7db6a9c"
+    },
+    {
+      "id": "S22",
+      "file": "sources/web-extracts/S22.json",
+      "url": "https://docs.stripe.com/api/idempotent_requests",
+      "bytes": 3622,
+      "sha256": "6213758fe18fc5e999fc189a881a0f8be0f8e0384b9bc38de41e662431493d96"
+    },
+    {
+      "id": "S23",
+      "file": "sources/web-extracts/S23.json",
+      "url": "https://docs.stripe.com/error-handling",
+      "bytes": 1115,
+      "sha256": "f47b8c13d44c4a7f655560726bc8fbf9fd0f51cc49b306278b9bbedecb6df789"
+    },
+    {
+      "id": "S24",
+      "file": "sources/web-extracts/S24.json",
+      "url": "https://docs.stripe.com/api/errors",
+      "bytes": 6624,
+      "sha256": "1fbd67c487695c52d84037cfb1b6dfac848589afae52433096daa8d10f059547"
+    },
+    {
+      "id": "S25",
+      "file": "sources/web-extracts/S25.json",
+      "url": "https://docs.stripe.com/api/products/object",
+      "bytes": 5197,
+      "sha256": "2c744853f4d156a017ff87ce26be5ff5a051f67e492c455dd40091063a4f34f8"
+    },
+    {
+      "id": "S26",
+      "file": "sources/web-extracts/S26.json",
+      "url": "https://docs.stripe.com/api/products/list",
+      "bytes": 4370,
+      "sha256": "9c2f1c8b677e0009745c73b7ab0ba8daec3b5e9b2c5b34498d5ae94f210fba15"
+    },
+    {
+      "id": "S27",
+      "file": "sources/web-extracts/S27.json",
+      "url": "https://docs.stripe.com/api/products/retrieve",
+      "bytes": 2567,
+      "sha256": "5cd33da0701bcdc6bb2d4d35d17d64cd208613df733b9656b1191c79ae72cf82"
+    },
+    {
+      "id": "S28",
+      "file": "sources/web-extracts/S28.json",
+      "url": "https://docs.stripe.com/products-prices/manage-prices",
+      "bytes": 32380,
+      "sha256": "11b432f47f489b2295a2c5d6a848af06035268c3589b79a207dfe7abf89fcf40"
+    },
+    {
+      "id": "S29",
+      "file": "sources/web-extracts/S29.json",
+      "url": "https://docs.stripe.com/api/libraries",
+      "bytes": 405,
+      "sha256": "f9747e605e1a9a69c68fff8d43d8a303a300642e7930f71f1063bf312a5f7853"
+    },
+    {
+      "id": "S30",
+      "file": "sources/web-extracts/S30.json",
+      "url": "https://docs.stripe.com/keys-best-practices",
+      "bytes": 13249,
+      "sha256": "2f29fe8bd53be3e806f4e8cc0778daa81325e873e2e549f9314cc2d50c81756d"
+    },
+    {
+      "id": "S31",
+      "file": "sources/web-extracts/S31.json",
+      "url": "https://docs.stripe.com/api/checkout/sessions/create?query=line_items",
+      "bytes": 501,
+      "sha256": "d5d3c93523c6cb11a2d5a5416cd7c12e3fea19a1e4b0c1ae38449456f13f06b2"
+    },
+    {
+      "id": "S32",
+      "file": "sources/web-extracts/S32.json",
+      "url": "https://docs.stripe.com/api/checkout/sessions/object",
+      "bytes": 24668,
+      "sha256": "c0417c5498b48380eeff639683128d3edd8be12261fde238897864fac8d3097b"
+    },
+    {
+      "id": "S33",
+      "file": "sources/web-extracts/S33.json",
+      "url": "https://docs.stripe.com/api/prices/object",
+      "bytes": 7195,
+      "sha256": "b59b755ef5a39ec642dcf04c47461fdf470d96c1461bbaa50169dc2d6522415a"
+    },
+    {
+      "id": "S34",
+      "file": "sources/web-extracts/S34.json",
+      "url": "https://docs.stripe.com/api/products/search",
+      "bytes": 3747,
+      "sha256": "022699cc03ea0a749ba46e57fa907e9ccafa20e65122dcdb6bd3a7b13ec968a4"
+    },
+    {
+      "id": "S35",
+      "file": "sources/web-extracts/S35.json",
+      "url": "https://docs.stripe.com/api/prices/search",
+      "bytes": 4037,
+      "sha256": "d6fcbc609fd8ef86ddccafc71eb27b8c3c9c5abe028aa85f6ea4ab5494fadbff"
+    },
+    {
+      "id": "S36",
+      "file": "sources/web-extracts/S36.json",
+      "url": "https://docs.stripe.com/search",
+      "bytes": 18204,
+      "sha256": "e56809a79867b6c77dbc353c3d04f555b89ed44e20e744d10b0cb570807e1de9"
+    },
+    {
+      "id": "S37",
+      "file": "sources/web-extracts/S37.json",
+      "url": "https://docs.stripe.com/keys/restricted-api-keys",
+      "bytes": 13635,
+      "sha256": "4992e7d34d0a3095aafedec453a06c70ed9ae16132504b9eea06a00b8d21597c"
+    },
+    {
+      "id": "S38",
+      "file": "sources/web-extracts/S38.json",
+      "url": "https://docs.stripe.com/libraries",
+      "bytes": 3435,
+      "sha256": "fffb17069ef10ae72013ce71c995f0ca3da8daf9b0608478e1b78eea1f669e22"
+    },
+    {
+      "id": "S39",
+      "file": "sources/web-extracts/S39.json",
+      "url": "https://docs.stripe.com/error-handling?lang=python",
+      "bytes": 32395,
+      "sha256": "5072af4d3d6ca61165db97667b1b30de160dc39a5e97ec1899299ae1f855f49d"
+    },
+    {
+      "id": "S40",
+      "file": "sources/web-extracts/S40.json",
+      "url": "https://docs.stripe.com/error-low-level",
+      "bytes": 13173,
+      "sha256": "c8f011d1cd84827f7864350aa23f9d53b2982713e0c005fcd2ae22defedc9da1"
+    },
+    {
+      "id": "S41",
+      "file": "sources/web-extracts/S41.json",
+      "url": "https://docs.stripe.com/api/versioning",
+      "bytes": 9988,
+      "sha256": "cbe6c54555649ae8cdc925aecd41615ea3bfc3199501cab8116e75f48a1c3493"
+    },
+    {
+      "id": "S42",
+      "file": "sources/web-extracts/S42.json",
+      "url": "https://docs.stripe.com/products-prices/how-products-and-prices-work",
+      "bytes": 16312,
+      "sha256": "da706c9672810f136367659331699408adc2914f1d280ee4319769675cd315f6"
+    },
+    {
+      "id": "S43",
+      "file": "sources/web-extracts/S43.json",
+      "url": "https://docs.stripe.com/skills",
+      "bytes": 3095,
+      "sha256": "26de3114ee2fa95272a026d48eb4936662a00b26fa984767de0d0bb2f79cfbc4"
+    }
+  ],
+  "source_count": 43,
+  "source_manifest_hash": "6c13f1f315d32ad4aceb5864d9db83e288a1333508fb4d4f7bbb9ca4d7749791",
+  "source_manifest_hash_algorithm": "sha256 over compact-canonical-json (sort_keys, no whitespace) of the sorted [{id,file,url,bytes,sha256}] manifest",
+  "requirement_source_mapping": {
+    "authentication_test_credential": [
+      "S13 api/authentication",
+      "S14 keys",
+      "S37 keys/restricted-api-keys",
+      "S30 keys-best-practices"
+    ],
+    "environment_variable_convention": [
+      "S06 checkout/quickstart ('Set your environment variables' -> publishable+secret keys only)"
+    ],
+    "checkout_session_create_fields": [
+      "S02 api/checkout/sessions/create",
+      "S10 accept-a-payment (curl line_items[0][price],quantity,mode,success_url)",
+      "S06 quickstart"
+    ],
+    "existing_price_supplied_as_line_item": [
+      "S06 quickstart ('{{PRICE_ID}}' inline, 'Provide the exact Price ID')",
+      "S10 accept-a-payment ('{{PRICE_ID}}' inline)"
+    ],
+    "price_semantics": [
+      "S33 api/prices/object",
+      "S42 how-products-and-prices-work",
+      "S12 products-prices/overview",
+      "S28 products-prices/manage-prices"
+    ],
+    "price_discovery_list": [
+      "S20 api/prices/list (product + lookup_keys params)"
+    ],
+    "price_discovery_search": [
+      "S35 api/prices/search"
+    ],
+    "product_discovery_by_name": [
+      "S34 api/products/search",
+      "S26 api/products/list",
+      "S27 api/products/retrieve",
+      "S25 api/products/object"
+    ],
+    "lookup_key_stable_reference": [
+      "S28 manage-prices",
+      "S20 prices/list lookup_keys",
+      "S33 prices/object",
+      "S35 prices/search"
+    ],
+    "agent_native_discovery": [
+      "S43 skills (agent skills, plugins, stripe agent setup, Stripe MCP live account data, stripe docs)",
+      "S38 libraries",
+      "S29 api/libraries"
+    ],
+    "session_readback_verifier_paths": [
+      "S03 sessions/list",
+      "S17 sessions/retrieve",
+      "S18 sessions/line_items",
+      "S32 sessions/object"
+    ],
+    "testing_and_sandbox": [
+      "S05 testing",
+      "S15 testing-use-cases",
+      "S16 sandboxes"
+    ],
+    "pagination_idempotency_errors_versioning": [
+      "S21 api/pagination",
+      "S22 api/idempotent_requests",
+      "S24 api/errors",
+      "S23 error-handling",
+      "S39 error-handling?lang=python",
+      "S40 error-low-level",
+      "S41 api/versioning"
+    ]
+  },
+  "natural_discovery_routes": [
+    "Route A (product name -> price): POST /v1/products/search q='name:\\'FIRSTCALL Test Plan\\'' (S34) -> product id -> GET /v1/prices?product=prod_... (S20 documented `product` filter) -> Price id.",
+    "Route B (search prices): POST /v1/prices/search (S35) constrained by product/metadata -> Price id.",
+    "Route C (enumerate): GET /v1/prices (S20); a disposable test account holds few prices, so the intended active price is directly enumerable.",
+    "Route D (stable key): GET /v1/prices?lookup_keys[]=... (S20) if the fixture price carries a lookup_key (S28/S33) -- Stripe's documented deployment-stable reference.",
+    "Route E (agent-native/live): Stripe Agent skills + plugins configure the Stripe MCP server exposing live account data, plus `stripe agent setup` and terminal `stripe docs` (S43) -- direct machine enumeration of the account's real Prices.",
+    "Note: the customer task supplies the exact product name and explicitly permits read-only API exploration, so routes A-E are all inside the permitted, unmodified official surface."
+  ],
+  "authentic_stripe_price_id_handoff_assessment": {
+    "vendor_supported": false,
+    "finding": "Not supported. No captured official Stripe source defines STRIPE_PRICE_ID or any price-identifier environment variable as an operational/deployment handoff. Stripe's environment-variable guidance covers API keys only (S06). The Price identifier is supplied inline as {{PRICE_ID}} with 'Provide the exact Price ID (for example, price_1234)' (S06,S10). The vendor's documented deployment-stable price reference is the Price lookup_key (S28,S20,S33), not an env var.",
+    "researcher_created": true,
+    "generic_env_var_pattern_only": true
+  },
+  "unresolved_issues": [
+    "None material to the decision. Both independent grounds are established from primary captured Stripe sources; no additional docs.stripe.com retrieval was required. A single decisive fact was NOT missing, so no supplemental page was fetched."
+  ],
+  "proposed_intervention_bytes": null,
+  "real_runs_executed": 0,
+  "stripe_api_requests": 0,
+  "checkout_sessions_created": 0,
+  "safety_attestations": {
+    "api_stripe_com_called": false,
+    "stripe_credentials_used_or_inspected": false,
+    "stripe_price_id_value_inspected": false,
+    "stripe_secret_key_value_inspected": false,
+    "account_resources_touched": false,
+    "checkout_sessions_created": 0,
+    "b01_b03_executed": false,
+    "i01_i03_executed": false,
+    "postmark_contacted": false,
+    "multi_001_artifacts_modified": false,
+    "committed_tagged_or_pushed": false,
+    "broad_crawl_repeated": false,
+    "cf001_helper_scripts_modified": false
+  },
+  "sanitization": {
+    "reason": "Public Stripe documentation credential example removed for repository push-protection compatibility. GitHub secret scanning matched Stripe Test API Secret Key patterns in these captured public-doc example strings (not user credentials).",
+    "redaction_marker": "<REDACTED_PUBLIC_STRIPE_TEST_KEY>",
+    "method": "Literal replacement of the credential-shaped example token within the raw captured file; all other bytes preserved. One occurrence per file.",
+    "semantic_content_preserved": true,
+    "source_manifest_hash_before_sanitization": "883e17a2a0e3d681c4601bbff4ff7aecd8f8ab80297e40ebbce5f9648d042443",
+    "source_manifest_hash_after_sanitization": "6c13f1f315d32ad4aceb5864d9db83e288a1333508fb4d4f7bbb9ca4d7749791",
+    "sanitized_sources": [
+      {
+        "id": "S13",
+        "url": "https://docs.stripe.com/api/authentication",
+        "original_raw_sha256": "a793415c13e8d598f5431a593989170c67c6d72286392e3b8f710717fc6bec9c",
+        "sanitized_repository_sha256": "4bdb62064b22f3d34abd23dd91872aae1f433bb2fbf95c52078178de107f6506",
+        "redacted_token_shape": "sk_test_<28-char public documentation example key>",
+        "occurrences_redacted": 1,
+        "reason": "public Stripe documentation credential example removed for repository push-protection compatibility",
+        "redaction_marker": "<REDACTED_PUBLIC_STRIPE_TEST_KEY>",
+        "semantic_documentary_content_otherwise_preserved": true
+      },
+      {
+        "id": "S22",
+        "url": "https://docs.stripe.com/api/idempotent_requests",
+        "original_raw_sha256": "d9b6e6c0537d86830ebdd078cf97a2e5f58f09303ad1e3e393160cec3bc5ddea",
+        "sanitized_repository_sha256": "6213758fe18fc5e999fc189a881a0f8be0f8e0384b9bc38de41e662431493d96",
+        "redacted_token_shape": "sk_test_<28-char public documentation example key>",
+        "occurrences_redacted": 1,
+        "reason": "public Stripe documentation credential example removed for repository push-protection compatibility",
+        "redaction_marker": "<REDACTED_PUBLIC_STRIPE_TEST_KEY>",
+        "semantic_documentary_content_otherwise_preserved": true
+      },
+      {
+        "id": "S30",
+        "url": "https://docs.stripe.com/keys-best-practices",
+        "original_raw_sha256": "0f1d6bb6f9f8a81b231a36b4e5ec67a34fe966798ed38e47e99562994289faa2",
+        "sanitized_repository_sha256": "2f29fe8bd53be3e806f4e8cc0778daa81325e873e2e549f9314cc2d50c81756d",
+        "redacted_token_shape": "sk_test_<28-char public documentation example key>",
+        "occurrences_redacted": 1,
+        "reason": "public Stripe documentation credential example removed for repository push-protection compatibility",
+        "redaction_marker": "<REDACTED_PUBLIC_STRIPE_TEST_KEY>",
+        "semantic_documentary_content_otherwise_preserved": true
+      }
+    ]
+  }
+}

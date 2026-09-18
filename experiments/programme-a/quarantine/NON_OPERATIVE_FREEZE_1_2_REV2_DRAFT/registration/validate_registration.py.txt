@@ -1,0 +1,320 @@
+#!/usr/bin/env python3
+"""Offline, fail-closed validator for the Freeze-1.2 registration package.
+
+Checks: role matrix completeness and conflicts, adjudicator records (if any), declared
+digests, Freeze-1 bytes against its tag, Freeze-1.1 bytes against its tag and its
+unmodified applicator in a clean clone, MULTI/helper integrity, and zero-activity
+counters. It never contacts the discovery source; the clean clone is local.
+Default prints the report; --write stores registration-validation.json.
+"""
+import argparse
+import hashlib
+import json
+import os
+import shutil
+import subprocess
+import sys
+import tempfile
+import unicodedata
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[3]
+REG = "experiments/programme-a/registration/"
+AMEND = "experiments/programme-a/amendments/"
+QUARANTINE_BING = "experiments/programme-a/quarantine/NON_OPERATIVE_BING_CAPTURE_DRAFT/"
+F1_TAG, F1_COMMIT = "programme-a-freeze-1-protocol", "13ff44c37a96882553ffb9103a5596787555e0f3"
+F11_TAG, F11_COMMIT = "programme-a-freeze-1.1-protocol", "4eaa6493924256dbeb888ff992a769a6b9c6d56d"
+F12_TAG = "programme-a-freeze-1.2-registration"
+F11_EFFECTIVE_SHA256 = "13f9e400661f6d2cf1af45cf15e56940ec532a0f8a3ff78b146c9a76edd4c29f"
+HELPERS = ("firstcall/cf001_baseline_b08.py", "firstcall/cf001_baseline_recovery.py",
+           "firstcall/cf001_baseline_valid.py", "firstcall/cf001_p01_replay.py",
+           "firstcall/cf001_p01_replay_finish.py")
+REQUIRED_ROLE_IDS = tuple(f"R{i:02d}" for i in range(1, 18))
+CAPTURE_ROLES = ("R01", "R02", "R03", "R04", "R05")
+HUMAN_KINDS = ("human", "independent_party")
+FILLED = ("FILLED", "FILLED_METHOD_VALUE_AT_PREFLIGHT")
+ATTESTATION_KEYS = (
+    "codes_every_predicate_personally_without_model_or_third_party_generated_codes",
+    "no_communication_with_other_adjudicator_about_any_packet_until_both_decision_hashes_are_committed",
+    "no_access_to_other_adjudicator_codes_before_both_sealed",
+    "no_access_to_programme_a_outcomes_category_totals_draw_order_priorities_or_hash_scores",
+    "will_not_request_or_seek_evidence_outside_the_frozen_packet",
+    "accepts_time_budgets_20_min_per_source_60_min_per_unit_per_stage",
+    "accepts_no_replacement_after_any_packet_opened",
+    "holds_no_entropy_custodian_or_witness_role",
+)
+DISCLOSURE_KEYS = ("viewed_capture_archive_before_registration", "is_protocol_author",
+                   "is_capture_custodian", "saw_quarantined_rejected_draft",
+                   "knows_historical_firstcall_outcomes")
+FUNCTIONS = {"SOURCE_SCREENING", "IDENTITY", "ELIGIBILITY_AND_CATEGORY", "PRIOR_FIRSTCALL_DESIGNATION"}
+
+
+def sha(data):
+    return hashlib.sha256(data).hexdigest()
+
+
+def norm_person(text):
+    return " ".join(unicodedata.normalize("NFC", text or "").casefold().split())
+
+
+def git(*args, cwd=ROOT):
+    return subprocess.run(["git", "-C", str(cwd), *args], check=True, capture_output=True).stdout
+
+
+# ------------------------------------------------------------------ pure role logic
+
+def validate_adjudicator_record(rec):
+    errs = []
+    if not isinstance(rec, dict):
+        return ["record is not an object"]
+    if rec.get("schema") != "firstcall.programmeA.adjudicator_registration.v1":
+        errs.append("schema")
+    if rec.get("slot") not in ("ADJ-1", "ADJ-2"):
+        errs.append("slot")
+    if rec.get("kind") != "natural_person":
+        errs.append("kind must be natural_person (model/agent/process adjudicators are not authorized)")
+    for key in ("full_name", "public_contact", "registered_utc"):
+        if not isinstance(rec.get(key), str) or len(rec[key].strip()) < 2:
+            errs.append(key)
+    if set(rec.get("functions") or []) != FUNCTIONS or len(rec.get("functions") or []) != 4:
+        errs.append("functions must be exactly the four adjudication functions")
+    att = rec.get("attestations") or {}
+    if set(att) != set(ATTESTATION_KEYS) or not all(v is True for v in att.values()):
+        errs.append("attestations incomplete or not all true")
+    dis = rec.get("disclosures") or {}
+    if set(dis) != set(DISCLOSURE_KEYS) or not all(isinstance(v, bool) for v in dis.values()):
+        errs.append("disclosures incomplete")
+    if not isinstance(rec.get("conflicts"), list):
+        errs.append("conflicts")
+    extra = set(rec) - {"schema", "slot", "kind", "full_name", "public_contact", "registered_utc",
+                        "functions", "attestations", "disclosures", "conflicts"}
+    if extra:
+        errs.append(f"unexpected fields {sorted(extra)}")
+    return errs
+
+
+def evaluate_roles(roles_doc, adjudicators, packet_opened=False, frozen_adjudicator_hashes=None):
+    """Return (errors, status dict). Pure; used by tests."""
+    errors = []
+    roles = {r["id"]: r for r in roles_doc.get("roles", [])}
+    if tuple(sorted(roles)) != REQUIRED_ROLE_IDS:
+        errors.append(f"role set mismatch: {sorted(roles)}")
+    for rid, r in roles.items():
+        if r.get("status") not in FILLED + ("UNFILLED", "FUTURE_STAGE"):
+            errors.append(f"{rid}: invalid status")
+        if r.get("status") in FILLED and r.get("kind") in HUMAN_KINDS and not r.get("registrant"):
+            errors.append(f"{rid}: FILLED human role without registrant")
+        if r.get("status") == "FILLED" and r.get("kind") == "human" and rid in ("R06", "R07"):
+            errors.append(f"{rid}: adjudicator slots are filled only through adjudicators/<slot>.json")
+    # adjudicator records
+    slot_to_role = {"ADJ-1": "R06", "ADJ-2": "R07"}
+    valid = {}
+    for slot, rec in (adjudicators or {}).items():
+        errs = validate_adjudicator_record(rec)
+        if rec.get("slot") != slot:
+            errs.append("slot/file mismatch")
+        if errs:
+            errors.extend(f"{slot}: {e}" for e in errs)
+        else:
+            valid[slot] = rec
+    if len(valid) == 2:
+        a, b = valid["ADJ-1"], valid["ADJ-2"]
+        if norm_person(a["full_name"]) == norm_person(b["full_name"]) or \
+           norm_person(a["public_contact"]) == norm_person(b["public_contact"]):
+            errors.append("ADJ-1 and ADJ-2 are not distinct persons")
+    people = {}
+    for rid in ("R01", "R15", "R16"):
+        reg = (roles.get(rid) or {}).get("registrant") or {}
+        if reg.get("name"):
+            people[rid] = norm_person(reg["name"])
+    for slot, rec in valid.items():
+        people[slot_to_role[slot]] = norm_person(rec["full_name"])
+    forbidden_pairs = [("R15", "R01"), ("R15", "R06"), ("R15", "R07"), ("R15", "R16"),
+                       ("R16", "R01"), ("R16", "R06"), ("R16", "R07"), ("R06", "R07")]
+    for x, y in forbidden_pairs:
+        if x in people and y in people and people[x] == people[y]:
+            errors.append(f"role conflict: {x} and {y} held by the same person")
+    if packet_opened and frozen_adjudicator_hashes is not None:
+        current = {s: sha(json.dumps(r, sort_keys=True).encode()) for s, r in (adjudicators or {}).items()}
+        if current != frozen_adjudicator_hashes:
+            errors.append("adjudicator registration changed after a packet was opened: cohort invalid")
+    status = {}
+    for rid, r in roles.items():
+        s = r.get("status")
+        if rid in ("R06", "R07"):
+            s = "FILLED" if {"R06": "ADJ-1", "R07": "ADJ-2"}[rid] in valid else "UNFILLED"
+        if rid == "R14":
+            s = "UNFILLED"  # approvals live in the registry, never in this package
+        status[rid] = s
+    unfilled = sorted(rid for rid, s in status.items() if s not in FILLED)
+    capture_ok = all(status.get(rid) in FILLED for rid in CAPTURE_ROLES)
+    # READY needs every registrable pre-Freeze-2 slot filled; FUTURE_STAGE slots and the
+    # R14 approval act cannot be filled by registration and never make a package READY.
+    required_now = [rid for rid in unfilled if roles[rid].get("status") != "FUTURE_STAGE" and rid != "R14"]
+    if errors:
+        decision = "NOT_SEALABLE"
+    elif capture_ok and not required_now:
+        decision = "SEALABLE_AND_CAPTURE_READY"
+    else:
+        decision = "SEALABLE_BUT_REGISTRATIONS_INCOMPLETE"
+    return errors, {"role_status": status, "unfilled": unfilled, "capture_roles_filled": capture_ok,
+                    "decision": decision}
+
+
+# ------------------------------------------------------------------ repository checks
+
+def load_adjudicators(root):
+    out = {}
+    d = root / REG / "adjudicators"
+    if d.is_dir():
+        for p in sorted(d.glob("*.json")):
+            out[p.stem] = json.loads(p.read_bytes())
+    return out
+
+
+def check_declared_digests(root):
+    errs = []
+    manifest = json.loads((root / REG / "source-capture-runner-manifest.json").read_bytes())
+    if sha((root / REG / "source_capture_runner.py").read_bytes()) != manifest["runner"]["sha256"]:
+        errs.append("source_capture_runner.py digest != manifest")
+    for stale in ("capture_runner.py", "capture-runner-manifest.json", "capture-schedule.json"):
+        if (root / REG / stale).exists():
+            errs.append(f"withdrawn Bing artifact present in operative registration dir: {stale}")
+    qdir = root / QUARANTINE_BING
+    prov = json.loads((qdir / "provenance.json").read_bytes())
+    for name, meta in prov["files"].items():
+        p = qdir / name
+        if not p.is_file() or sha(p.read_bytes()) != meta["sha256"] or p.stat().st_mode & 0o222:
+            errs.append(f"quarantined Bing draft altered or writable: {name}")
+    if prov.get("bing_requests_made") != 0:
+        errs.append("quarantine provenance records Bing requests")
+    f12 = json.loads((root / AMEND / "freeze-1.2.json").read_bytes())
+    for path, digest in f12["registered_file_sha256"].items():
+        p = root / path
+        if not p.is_file() or sha(p.read_bytes()) != digest:
+            errs.append(f"digest mismatch: {path}")
+    return errs
+
+
+def check_freeze_1(root):
+    names = git("ls-tree", "-r", "--name-only", F1_COMMIT, "--", "docs/programme-a-measurement-protocol.md",
+                "experiments/programme-a", cwd=root).decode().split()
+    bad = [n for n in names if (root / n).read_bytes() != git("show", f"{F1_COMMIT}:{n}", cwd=root)]
+    tag_ok = git("rev-parse", F1_TAG + "^{commit}", cwd=root).decode().strip() == F1_COMMIT
+    return {"files": len(names), "mismatched": bad, "tag_peels": tag_ok, "pass": tag_ok and not bad and len(names) == 10}
+
+
+def check_freeze_1_1(root):
+    changed = git("diff", "--name-only", F11_COMMIT, "--", cwd=root).decode().split()
+    tag_ok = git("rev-parse", F11_TAG + "^{commit}", cwd=root).decode().strip() == F11_COMMIT
+    tmp = Path(tempfile.mkdtemp(prefix="f11-clean-"))
+    try:
+        clone = tmp / "repo"
+        subprocess.run(["git", "clone", "--quiet", "--shared", "--no-checkout", str(root), str(clone)], check=True,
+                       capture_output=True)
+        subprocess.run(["git", "-C", str(clone), "checkout", "--quiet", F11_COMMIT], check=True, capture_output=True)
+        for h in HELPERS:
+            shutil.copy2(root / h, clone / h)
+        env = dict(os.environ, PYTHONDONTWRITEBYTECODE="1")
+        out = subprocess.run([sys.executable, str(clone / AMEND / "apply_protocol.py")], cwd=clone, env=env,
+                             capture_output=True, check=True).stdout
+        effective = json.loads(out)["effective_protocol_sha256"]
+        emitted = json.loads(subprocess.run([sys.executable, str(clone / AMEND / "apply_protocol.py"), "--emit"],
+                                            cwd=clone, env=env, capture_output=True, check=True).stdout)
+        repairs = json.loads((root / AMEND / "freeze-1.2.json").read_bytes())["repairs"]
+        pointer_tests = {op["pointer"]: resolve_pointer(emitted, op["pointer"]) == op["freeze_1_1_value"]
+                         for r in repairs for op in r["json_pointer_tests"]}
+        tests = subprocess.run([sys.executable, str(clone / AMEND / "test_protocol.py")], cwd=clone, env=env,
+                               capture_output=True)
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+    return {"tracked_changes_since_tag": changed, "tag_peels": tag_ok,
+            "clean_clone_effective_sha256": effective, "clean_clone_tests_rc": tests.returncode,
+            "repair_pointer_tests": pointer_tests,
+            "pass": tag_ok and not changed and effective == F11_EFFECTIVE_SHA256 and tests.returncode == 0
+            and bool(pointer_tests) and all(pointer_tests.values())}
+
+
+def resolve_pointer(doc, pointer):
+    for part in pointer.lstrip("/").split("/"):
+        part = part.replace("~1", "/").replace("~0", "~")
+        doc = doc[int(part)] if isinstance(doc, list) else doc[part]
+    return doc
+
+
+def check_protected(root):
+    base = json.loads((root / AMEND / "entry-integrity.json").read_bytes())["sha256"]
+    multi = [p for p in base if any(t in p.lower() for t in ("multi001", "multi002", "multi-001", "multi-002"))]
+    multi_bad = [p for p in multi if sha((root / p).read_bytes()) != base[p]]
+    helper_bad = [h for h in HELPERS if sha((root / h).read_bytes()) != base[h]]
+    return {"multi_files": len(multi), "multi_mismatched": multi_bad, "helpers": len(HELPERS),
+            "helpers_mismatched": helper_bad, "pass": not multi_bad and not helper_bad and len(multi) == 145}
+
+
+def activity_counters(root):
+    pa = root / "experiments/programme-a"
+    capture = pa / "capture"
+    frame = pa / "frame"
+    selected = [str(p.relative_to(root)) for p in pa.rglob("*") if "selected" in p.name.lower()]
+    counters = {
+        "source_searches": 0 if not capture.exists() else "CAPTURE_DIRECTORY_PRESENT",
+        "source_snapshots": 0 if not capture.exists() else "CAPTURE_DIRECTORY_PRESENT",
+        "candidate_observations": 0 if not (frame.exists() and any(frame.iterdir())) else "FRAME_FILES_PRESENT",
+        "selected_vendors": 0 if not selected else selected,
+        "random_draw": "NONE",
+        "entropy": "NONE" if not any(pa.rglob("*tape*")) else "TAPE_FILE_PRESENT",
+        "outcome_observations": 0,
+        "real_vendor_runs": 0 if not (root / "artifacts/programme-a").exists() else "ARTIFACTS_PRESENT",
+    }
+    ok = all(v in (0, "NONE") for v in counters.values())
+    return counters, ok
+
+
+def anchor_status(root):
+    try:
+        commit = git("rev-parse", "--verify", "--quiet", F12_TAG + "^{commit}", cwd=root).decode().strip()
+    except subprocess.CalledProcessError:
+        commit = None
+    return {"freeze_1_2_tag_local": commit, "remote_anchor": "UNVERIFIED_OFFLINE" if commit else "NOT_TAGGED"}
+
+
+def validate(root=ROOT, with_parents=True):
+    roles_doc = json.loads((root / REG / "roles.json").read_bytes())
+    adjudicators = load_adjudicators(root)
+    errors, status = evaluate_roles(roles_doc, adjudicators)
+    errors += check_declared_digests(root)
+    report = {"schema": "firstcall.programmeA.registration_validation.v1", "freeze": "1.2"}
+    if with_parents:
+        f1, f11, prot = check_freeze_1(root), check_freeze_1_1(root), check_protected(root)
+        report.update(freeze_1=f1, freeze_1_1=f11, protected=prot)
+        for name, res in (("freeze_1", f1), ("freeze_1_1", f11), ("protected", prot)):
+            if not res["pass"]:
+                errors.append(f"{name} integrity failed")
+    counters, ok = activity_counters(root)
+    if not ok:
+        errors.append("activity counters nonzero")
+    if git("diff", "--check", cwd=root) != b"":
+        errors.append("git diff --check")
+    if errors:
+        status["decision"] = "NOT_SEALABLE"
+    report.update(errors=errors, activity=counters, anchor=anchor_status(root), **status)
+    report["capture_gate"] = ("CAPTURE_REGISTRATION_COMPLETE_PENDING_REMOTE_ANCHOR"
+                              if status["capture_roles_filled"] and not errors else "BLOCKED")
+    return report
+
+
+def main(argv=None):
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument("--write", action="store_true")
+    ap.add_argument("--skip-parents", action="store_true")
+    args = ap.parse_args(argv)
+    report = validate(with_parents=not args.skip_parents)
+    data = json.dumps(report, indent=2, sort_keys=True) + "\n"
+    if args.write:
+        (ROOT / REG / "registration-validation.json").write_text(data)
+    sys.stdout.write(data)
+    return 0 if report["decision"] != "NOT_SEALABLE" else 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())

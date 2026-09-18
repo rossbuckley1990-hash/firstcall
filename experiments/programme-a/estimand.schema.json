@@ -1,0 +1,37 @@
+{
+  "schema": "firstcall.programmeA.estimand",
+  "version": "1.0.0",
+  "status": "PROSPECTIVE_DESIGN_FROZEN_BEFORE_OUTCOMES",
+  "unit_of_analysis": "vendor",
+  "runs_are": "unit_of_observation_only",
+  "repeated_runs_never_independent_vendors": true,
+  "primary_estimand": {
+    "symbol": "P_v",
+    "name": "vendor-level pass rate",
+    "definition": "population mean over vendors in the frozen sample frame of the vendor's probability that a single fresh autonomous run PROVEN_SUCCEEDs the canonical journey on its first attempt under the natural customer condition",
+    "estimator": "equal-weight mean of per-vendor PROVEN_SUCCESS rate r_v",
+    "denominator": "eligible vendors"
+  },
+  "quantities": [
+    {"symbol": "P_v",      "name": "vendor-level pass rate (PRIMARY)", "denominator": "eligible vendors", "numerator": "vendor-mean of r_v"},
+    {"symbol": "AFCR_run", "name": "run-level AFCR",                   "denominator": "eligible runs",    "numerator": "PROVEN_SUCCESS runs (pooled)"},
+    {"symbol": "FA",       "name": "first-attempt success",           "denominator": "eligible runs",    "numerator": "PROVEN_SUCCESS with one permitted effect request, no rescue"},
+    {"symbol": "IVER",     "name": "independently verified effect rate","denominator": "eligible runs",  "numerator": "runs with verifier-confirmed exactly-one correct effect"},
+    {"symbol": "UNK",      "name": "ambiguity / UNKNOWN rate",        "denominator": "started runs",     "numerator": "UNKNOWN runs"},
+    {"symbol": "FS",       "name": "false-success rate",              "denominator": "started runs",     "numerator": "FALSE_SUCCESS runs (strict bar)"},
+    {"symbol": "TTE",      "name": "time-to-effect",                  "denominator": "proven runs",      "numerator": "distribution of seconds to first verified effect"},
+    {"symbol": "ACT",      "name": "agent actions / tool calls",      "denominator": "all runs",         "numerator": "distribution of tool/command events"},
+    {"symbol": "RESQ",     "name": "rescue / intervention rate",      "denominator": "all runs",         "numerator": "runs with any out-of-policy intervention", "must_equal": 0}
+  ],
+  "denominator_rules": {
+    "k_is_attempted_runs_per_vendor": true,
+    "eligible_runs": "launched valid run with determinate PROVEN_SUCCESS|EFFECT_FAILED|FALSE_SUCCESS",
+    "excluded_and_counted_separately": ["UNKNOWN", "INELIGIBLE_PRE_EXECUTION"],
+    "zero_eligible_runs_rate": "undefined (never 0)",
+    "indeterminate_vendor": "vendor with zero eligible runs: r_v undefined; excluded from P_v vendor-mean but count+fraction reported as headline; never scored 0; never silently dropped",
+    "denominators_frozen_at_freeze_1": true,
+    "post_hoc_denominator_change": false
+  },
+  "afcr_semantics": "verified first product outcome within one autonomous attempt; read-only exploration unlimited; exactly one effect-creating request permitted",
+  "real_vendor_runs": 0
+}

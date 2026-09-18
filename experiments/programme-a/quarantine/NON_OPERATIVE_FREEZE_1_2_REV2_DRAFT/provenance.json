@@ -1,0 +1,83 @@
+{
+  "schema": "firstcall.programmeA.non_operative_draft_provenance.v1",
+  "status": "WITHDRAWN_NON_OPERATIVE_EVIDENCE_ONLY",
+  "draft": "Freeze 1.2 revision 2 (uncommitted): GitHub REST repository-search discovery, 2026-09-23 capture schedule, registration package",
+  "withdrawn_utc_date": "2026-09-18",
+  "reasons": [
+    "reviewer rejected GitHub-only discovery: materially changes frame coverage and may favour developer/open-source ecosystems",
+    "GitHub search best-match ranking is undocumented and top-20 truncation weakens independent reproducibility",
+    "superseded by the consolidated Freeze 1.2 Population A1 amendment (docs/programme-a-freeze-1.2-a1-amendment.md)"
+  ],
+  "discovery_requests_made": 0,
+  "runner_invocations": {
+    "authoritative": 0,
+    "preflight_check": 0
+  },
+  "committed_tagged_or_pushed": false,
+  "carried_forward": {
+    "registration/prior_firstcall_projector.py.txt": "copied byte-identically to experiments/programme-a/a1/prior_firstcall_projector.py"
+  },
+  "files": {
+    "docs/programme-a-freeze-1.2-registration-amendment.md": {
+      "original_path": "docs/programme-a-freeze-1.2-registration-amendment.md",
+      "sha256": "11c2d5a71400bf4df9091a91e742c709d60ec94ad81bba67f8507b0c6e675db8"
+    },
+    "amendments/freeze-1.2.json": {
+      "original_path": "experiments/programme-a/amendments/freeze-1.2.json",
+      "sha256": "4a4f30dae9331b02ef9dc3a41da65c62db0f6d18f4de3daba37fc406c99b49eb"
+    },
+    "registration/adjudicator-registration.schema.json": {
+      "original_path": "experiments/programme-a/registration/adjudicator-registration.schema.json",
+      "sha256": "287f9bb48978b2e4161089bd92ca4818b7c5004e8fd8084e367f57c6ec7c923a"
+    },
+    "registration/hostile-review.md": {
+      "original_path": "experiments/programme-a/registration/hostile-review.md",
+      "sha256": "d845a60f6918eb4f94dc9ad91ac823975fe9bb9b8a814fb6eecf8c933725cac4"
+    },
+    "registration/prior_firstcall_projector.py.txt": {
+      "original_path": "experiments/programme-a/registration/prior_firstcall_projector.py",
+      "sha256": "c5c68a7a9a584fcecc91af082680baf6cbf3fbc86e2a89b1d981bef89a7875eb"
+    },
+    "registration/registration-validation.json": {
+      "original_path": "experiments/programme-a/registration/registration-validation.json",
+      "sha256": "7171636f94e3d1e63b7d1ab0660abdf94e11c727ccd483490d29738be9cb87f2"
+    },
+    "registration/roles.json": {
+      "original_path": "experiments/programme-a/registration/roles.json",
+      "sha256": "edfa6d2c2661ee40714097291dcce0cc8de4170ad273326b8dc495ee35a6038f"
+    },
+    "registration/scheduler-manifest.json": {
+      "original_path": "experiments/programme-a/registration/scheduler-manifest.json",
+      "sha256": "21e1e34dfdb5596e723fab5241fa0e2ef7da8994317f8a834c71a30581dd36c8"
+    },
+    "registration/source-capture-runner-manifest.json": {
+      "original_path": "experiments/programme-a/registration/source-capture-runner-manifest.json",
+      "sha256": "b559ca3bc7e464bbdec4c3fbf70d0f9a84f06df81b3a97f01c7390283d75cd47"
+    },
+    "registration/source-capture-schedule.json": {
+      "original_path": "experiments/programme-a/registration/source-capture-schedule.json",
+      "sha256": "9bdfd26b4c51074737a21b7d3bb2bfaac52879103df47fa57151b9327eaade12"
+    },
+    "registration/source-mechanism.json": {
+      "original_path": "experiments/programme-a/registration/source-mechanism.json",
+      "sha256": "4663336e3b3ff598c0d78fa4f1c66023366110e6aadc08f98e6d901ccfedd8db"
+    },
+    "registration/source_capture_runner.py.txt": {
+      "original_path": "experiments/programme-a/registration/source_capture_runner.py",
+      "sha256": "0ce46a2d8709df420bf90efe0ad53de88d70f255a7003785f4f99f86ecc0d795"
+    },
+    "registration/test_registration.py.txt": {
+      "original_path": "experiments/programme-a/registration/test_registration.py",
+      "sha256": "379431ad5d15a0eae77c163b124537cf39ddcae2ce3a3886b3513c170c080d1f"
+    },
+    "registration/translation-tool.json": {
+      "original_path": "experiments/programme-a/registration/translation-tool.json",
+      "sha256": "baa6d44b03a13504cf351ab4ed55547c5dd742872b70f33d4619ed919155d7bb"
+    },
+    "registration/validate_registration.py.txt": {
+      "original_path": "experiments/programme-a/registration/validate_registration.py",
+      "sha256": "41afad01b648b803375454bb007e463240a38ec777118b9c1aed9550162d5e6e"
+    }
+  },
+  "earlier_draft": "experiments/programme-a/quarantine/NON_OPERATIVE_BING_CAPTURE_DRAFT/ (revision 1); its provenance 'superseded_by' pointers refer to revision-2 paths now quarantined here"
+}

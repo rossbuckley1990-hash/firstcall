@@ -1,0 +1,481 @@
+{
+  "schema": "firstcall.programmeA.registration_roles.v1",
+  "freeze": "1.2",
+  "status": "REGISTRATIONS_INCOMPLETE",
+  "effective_on": "Freeze-1.2 commit + annotated tag programme-a-freeze-1.2-registration pushed to origin (remote peeled commit equal) before 2026-09-22T09:00:00Z",
+  "status_vocabulary": {
+    "FILLED": "role holder/software fixed in this package; binding when the package is remotely anchored",
+    "FILLED_METHOD_VALUE_AT_PREFLIGHT": "measurement method frozen now; value measured and bound by the runner before its first source request",
+    "UNFILLED": "required and not registered; the gate named in required_before cannot be passed",
+    "FUTURE_STAGE": "required by Freeze 1.1 at a later freeze; recorded so it cannot be forgotten; not a Freeze-2A capture/adjudication role"
+  },
+  "gates": {
+    "G1_CAPTURE": "authoritative GitHub-API source-discovery capture, 2026-09-23T09:00:00Z",
+    "G2_SOURCE_SCREENING": "opening of the first source-screening packet (after capture manifest is published)",
+    "G3_POST_CAPTURE_RETRIEVAL": "first retrieval of any page other than the four search responses",
+    "G4_REGISTRY": "completion of the prior-FIRSTCALL registry, before candidate extraction",
+    "G5_ROW_PARSING": "parsing of rows of a locked source",
+    "G6_PACKET_OPENING": "opening of any identity/eligibility/category packet",
+    "G7_FREEZE_2B": "the single entropy call"
+  },
+  "roles": [
+    {
+      "id": "R01",
+      "role": "CAPTURE_CUSTODIAN",
+      "kind": "human",
+      "controlling_clauses": [
+        "Freeze-1.1 §8.2 para 2",
+        "Freeze-1.2 §3",
+        "registration/source-mechanism.json"
+      ],
+      "required_fields": [
+        "name",
+        "public_identity",
+        "attestations",
+        "anchoring_tag"
+      ],
+      "independence_requirement": "None stated by Freeze 1.1 for the capture custodian (the independence clause in §8.5 governs the ENTROPY custodian). 'Administrative registration, not permission to choose catalogs.'",
+      "who_may_fill": "one natural person who starts the registered runner once and publishes its outputs",
+      "registrable_now": true,
+      "registrable_now_reason": "no discovery response exists; the role involves no evidence judgement",
+      "conflict_restrictions": [
+        "may not be ENTROPY_CUSTODIAN or ENTROPY_WITNESS (§8.5: no source role)",
+        "may not issue any of the four registered queries against GitHub search (API or web UI) or any other search engine, or view such results, before the capture manifest is published",
+        "may not modify, re-run, or substitute the runner, its runtime, or its outputs",
+        "holding an adjudicator slot requires separate registration and disclosure of this role"
+      ],
+      "immutable_identifier": "public_identity + remotely anchored Freeze-1.2 tag",
+      "required_before": "G1_CAPTURE",
+      "status": "FILLED",
+      "registrant": {
+        "name": "Ross Buckley",
+        "public_identity": "rossbuckley1990-hash@users.noreply.github.com (git tagger identity of Freeze 1 and Freeze 1.1)",
+        "designation_source": "custodian's own instruction in the Freeze-1.2 registration task; binding only upon his commit, tag and push of this package",
+        "attestations_required_by_anchoring": [
+          "I have made no request for the four registered queries on GitHub search or any engine since the Freeze-1.1 seal and will not before the capture manifest is published",
+          "I will start the registered source_capture_runner.py exactly once in --authoritative mode with the registered interpreter",
+          "I will not edit, delete, re-run or substitute the capture directory, the custody directory or the attempt log",
+          "I will publish the capture directory and attempt log before any source screening, keep raw bytes in custody unpublished, and ensure resulting Programme A publications are open access (GitHub AUP §7 research condition)",
+          "I have read registration/source-mechanism.json and accept its declared discovery-layer support change"
+        ]
+      }
+    },
+    {
+      "id": "R02",
+      "role": "SOURCE_CAPTURE_RUNNER",
+      "kind": "software",
+      "controlling_clauses": [
+        "Freeze-1.1 §3 para 1 (as repaired by F12-R5)",
+        "§8.2 para 2",
+        "registration/source-mechanism.json"
+      ],
+      "required_fields": [
+        "code_path",
+        "code_sha256",
+        "endpoint",
+        "query_construction",
+        "headers",
+        "user_agent",
+        "timeouts",
+        "retry",
+        "redirects",
+        "projection",
+        "custody",
+        "policy_checks",
+        "clock",
+        "egress",
+        "failure_behaviour",
+        "canonicalisation",
+        "hashing"
+      ],
+      "independence_requirement": "none; must be fixed by digest before any response",
+      "who_may_fill": "registered deterministic software",
+      "registrable_now": true,
+      "registrable_now_reason": "authored and tested offline with synthetic JSON under a socket ban; never contacted the discovery endpoint",
+      "conflict_restrictions": [
+        "the discovery endpoint is reachable only when armed at a scheduled instant",
+        "no cache, pre-fetch, pagination, sort, retry or redirect-following of search requests",
+        "no credentials"
+      ],
+      "immutable_identifier": "sha256 in source-capture-runner-manifest.json, verified at preflight against the remotely anchored tag",
+      "required_before": "G1_CAPTURE",
+      "status": "FILLED",
+      "registrant": {
+        "manifest": "experiments/programme-a/registration/source-capture-runner-manifest.json",
+        "withdrawn_predecessor": "experiments/programme-a/quarantine/NON_OPERATIVE_BING_CAPTURE_DRAFT/"
+      }
+    },
+    {
+      "id": "R03",
+      "role": "CAPTURE_RUNTIME",
+      "kind": "software",
+      "controlling_clauses": [
+        "Freeze-1.1 §8.2 para 2 ('runtime/browser version')"
+      ],
+      "required_fields": [
+        "interpreter_realpath",
+        "interpreter_sha256",
+        "python_version",
+        "openssl_version",
+        "os",
+        "arch",
+        "browser"
+      ],
+      "independence_requirement": "none",
+      "who_may_fill": "the custodian's host interpreter, pinned by digest",
+      "registrable_now": true,
+      "registrable_now_reason": "measured from the host without any source contact",
+      "conflict_restrictions": [
+        "any interpreter/OpenSSL change (e.g. package upgrade) before capture makes preflight fail closed"
+      ],
+      "immutable_identifier": "interpreter_sha256 + exact sys.version + OpenSSL version string",
+      "required_before": "G1_CAPTURE",
+      "status": "FILLED",
+      "registrant": {
+        "manifest": "experiments/programme-a/registration/source-capture-runner-manifest.json#/runtime"
+      }
+    },
+    {
+      "id": "R04",
+      "role": "NETWORK_EGRESS_IDENTITY",
+      "kind": "process",
+      "controlling_clauses": [
+        "Freeze-1.1 §8.2 para 2 ('network-egress identity')",
+        "capture.settings 'fixed ... network-egress'"
+      ],
+      "required_fields": [
+        "path_description",
+        "address_family",
+        "measurement_method",
+        "binding_time",
+        "change_rule"
+      ],
+      "independence_requirement": "none",
+      "who_may_fill": "the custodian's direct residential connection, measured by the runner",
+      "registrable_now": "method only",
+      "registrable_now_reason": "a residential public IPv4 address can change before 09:00Z; freezing a value now would be false precision. The method is frozen now and the value is bound into preflight.json (hashed, fsynced) before the first source request.",
+      "conflict_restrictions": [
+        "no VPN, proxy, Tor or relay; IPv4 forced for echo and source",
+        "pre/post mismatch halts the capture"
+      ],
+      "immutable_identifier": "egress_ipv4 in preflight.json whose sha256 is in the session manifest",
+      "required_before": "G1_CAPTURE",
+      "status": "FILLED_METHOD_VALUE_AT_PREFLIGHT"
+    },
+    {
+      "id": "R05",
+      "role": "CAPTURE_CLOCK",
+      "kind": "process",
+      "controlling_clauses": [
+        "Freeze-1.1 §8.2 para 2 (09:00:00 UTC start, offsets, five-second lateness)"
+      ],
+      "required_fields": [
+        "clock_source",
+        "correction",
+        "max_offset",
+        "post_check"
+      ],
+      "independence_requirement": "none",
+      "who_may_fill": "system UTC clock corrected by a single preflight SNTP measurement",
+      "registrable_now": true,
+      "registrable_now_reason": "method only; no source contact",
+      "conflict_restrictions": [
+        "|offset| > 2 s at preflight halts",
+        "lateness recomputed with the post-capture offset; > 5 s halts"
+      ],
+      "immutable_identifier": "sntp record in preflight.json and session manifest",
+      "required_before": "G1_CAPTURE",
+      "status": "FILLED"
+    },
+    {
+      "id": "R06",
+      "role": "ADJUDICATOR_1",
+      "kind": "human",
+      "controlling_clauses": [
+        "Freeze-1.1 §3 (source screening)",
+        "§4 para 4 ('Two independent documentary adjudicators')",
+        "§5 ('Two adjudicators')",
+        "§8.2 para 3",
+        "§8.3",
+        "§8.4 ('The two fixed reviewers must agree')"
+      ],
+      "required_fields": "adjudicator-registration.schema.json",
+      "independence_requirement": "Two distinct natural persons who each code the identical frozen packet alone, without access to the other's codes, outcomes, category totals, draw/order or hash scores, and who cannot request extra evidence (§4). Freeze 1.1 contemplates human adjudication ('human-adjudication dependence' §8.2; 'human adjudicators obey the protocol', hostile review). It does not authorize model instances, and Freeze 1.2 does not: two model processes, one person in two slots, or duplicated prompts do not satisfy it.",
+      "who_may_fill": "a natural person with no ENTROPY role; Freeze 1.1 does not bar the protocol author or the capture custodian, but such a holder must disclose it",
+      "registrable_now": true,
+      "registrable_now_reason": "no packet exists; registering before the capture removes the risk of choosing adjudicators after seeing results, but Freeze 1.1 only requires registration before packets are opened",
+      "conflict_restrictions": [
+        "not the same person as ADJUDICATOR_2",
+        "not ENTROPY_CUSTODIAN or ENTROPY_WITNESS",
+        "may not delegate predicate coding to any model or other person",
+        "no replacement once any adjudicator has opened any packet"
+      ],
+      "immutable_identifier": "registration record sha256 committed under a remotely anchored tag before G2",
+      "required_before": "G2_SOURCE_SCREENING",
+      "status": "UNFILLED",
+      "registrant": null
+    },
+    {
+      "id": "R07",
+      "role": "ADJUDICATOR_2",
+      "kind": "human",
+      "controlling_clauses": [
+        "as R06"
+      ],
+      "required_fields": "adjudicator-registration.schema.json",
+      "independence_requirement": "as R06; independent of ADJUDICATOR_1",
+      "who_may_fill": "a natural person distinct from ADJUDICATOR_1 with no ENTROPY role",
+      "registrable_now": true,
+      "registrable_now_reason": "as R06",
+      "conflict_restrictions": [
+        "as R06"
+      ],
+      "immutable_identifier": "as R06",
+      "required_before": "G2_SOURCE_SCREENING",
+      "status": "UNFILLED",
+      "registrant": null
+    },
+    {
+      "id": "R08",
+      "role": "ADJUDICATION_CHECKLIST",
+      "kind": "document",
+      "controlling_clauses": [
+        "Freeze-1.1 §4 para 4 ('checklist ... registered before packets are opened')"
+      ],
+      "required_fields": [
+        "source criteria",
+        "identity SAME/DISTINCT/UNRESOLVED",
+        "I1-I5",
+        "exclusions",
+        "C01-C07 membership",
+        "designation grammar",
+        "time budgets",
+        "sha256"
+      ],
+      "independence_requirement": "written without viewing any packet, source response or candidate",
+      "who_may_fill": "a document transcribing Freeze-1.1 predicates without adding criteria",
+      "registrable_now": true,
+      "registrable_now_reason": "derivable from the frozen text alone; not drafted in this task to keep the amendment minimal",
+      "conflict_restrictions": [
+        "no criterion outside Freeze 1.1/1.2"
+      ],
+      "immutable_identifier": "sha256 under remotely anchored tag",
+      "required_before": "G2_SOURCE_SCREENING",
+      "status": "UNFILLED",
+      "registrant": null
+    },
+    {
+      "id": "R09",
+      "role": "TRANSLATION_TOOL",
+      "kind": "software",
+      "controlling_clauses": [
+        "Freeze-1.1 §4 para 3",
+        "§8.3 para 1 ('translation version are registered before any packet is opened')"
+      ],
+      "required_fields": "translation-tool.json",
+      "independence_requirement": "none",
+      "who_may_fill": "one pinned, offline, deterministic tool with language detector",
+      "registrable_now": true,
+      "registrable_now_reason": "choosing a tool needs no candidate evidence; not pinned here because it requires installing and digesting software the custodian has not chosen",
+      "conflict_restrictions": [
+        "no cloud service whose model can change",
+        "no per-page tool choice"
+      ],
+      "immutable_identifier": "package version + model file sha256s",
+      "required_before": "G2_SOURCE_SCREENING",
+      "status": "UNFILLED",
+      "registrant": null
+    },
+    {
+      "id": "R10",
+      "role": "DOCUMENTARY_SCHEDULER_AND_FETCHER",
+      "kind": "software",
+      "controlling_clauses": [
+        "Freeze-1.1 §3 para 2 (four metadata pages, 1 retry, 30 s)",
+        "§4 para 3 (frontier)",
+        "§8.3 para 1 ('one registered scheduler')"
+      ],
+      "required_fields": "scheduler-manifest.json",
+      "independence_requirement": "none",
+      "who_may_fill": "registered deterministic software",
+      "registrable_now": true,
+      "registrable_now_reason": "specification fixed by Freeze 1.1; implementation not written in this task",
+      "conflict_restrictions": [
+        "no search engines, archive search, scripts, or discretionary pages"
+      ],
+      "immutable_identifier": "code sha256 under remotely anchored tag",
+      "required_before": "G3_POST_CAPTURE_RETRIEVAL",
+      "status": "UNFILLED",
+      "registrant": null
+    },
+    {
+      "id": "R11",
+      "role": "FIXED_TECHNICAL_PARSERS",
+      "kind": "software",
+      "controlling_clauses": [
+        "Freeze-1.1 §8.3 para 1 ('Fixed technical parsers ... registered before any packet is opened')"
+      ],
+      "required_fields": [
+        "HTML link extractor",
+        "supported non-HTML formats",
+        "sha256"
+      ],
+      "independence_requirement": "none",
+      "who_may_fill": "part of R10 bundle",
+      "registrable_now": true,
+      "registrable_now_reason": "as R10",
+      "conflict_restrictions": [],
+      "immutable_identifier": "code sha256",
+      "required_before": "G3_POST_CAPTURE_RETRIEVAL",
+      "status": "UNFILLED",
+      "registrant": null
+    },
+    {
+      "id": "R12",
+      "role": "SOURCE_ROW_PARSERS",
+      "kind": "software",
+      "controlling_clauses": [
+        "Freeze-1.1 §3 para 6 ('lock a parser per source from its documented schema')"
+      ],
+      "required_fields": [
+        "per-source record path, IDs, fields",
+        "sha256"
+      ],
+      "independence_requirement": "none",
+      "who_may_fill": "per-source software locked from documented schema",
+      "registrable_now": false,
+      "registrable_now_reason": "sources are unknown until capture and source lock",
+      "conflict_restrictions": [
+        "locked before any row is parsed"
+      ],
+      "immutable_identifier": "code sha256 per source",
+      "required_before": "G5_ROW_PARSING",
+      "status": "FUTURE_STAGE",
+      "registrant": null
+    },
+    {
+      "id": "R13",
+      "role": "PRIOR_FIRSTCALL_PROJECTOR",
+      "kind": "software",
+      "controlling_clauses": [
+        "Freeze-1.1 §5",
+        "§8.4"
+      ],
+      "required_fields": [
+        "code sha256",
+        "cutoff commit",
+        "fixed token/grammar tables"
+      ],
+      "independence_requirement": "none",
+      "who_may_fill": "registered deterministic software",
+      "registrable_now": true,
+      "registrable_now_reason": "mechanical projection of the repository at the provenance cutoff; reads no outcomes",
+      "conflict_restrictions": [
+        "its output is a DRAFT; any UNRECOGNIZED_DESIGNATION blocks the registry until a separate prospective amendment",
+        "rev-2 structural rule: a vendor/target/provider-named key blocks only if its JSON value can carry an identity (string, number, array, object); boolean/null policy flags are recorded as incidental; fenced Markdown code is ignored; designation shapes in example/sample/fixture/template/demo paths block"
+      ],
+      "immutable_identifier": "sha256 in freeze-1.2.json",
+      "required_before": "G4_REGISTRY",
+      "status": "FILLED",
+      "registrant": {
+        "code": "experiments/programme-a/registration/prior_firstcall_projector.py"
+      }
+    },
+    {
+      "id": "R14",
+      "role": "PRIOR_FIRSTCALL_REGISTRY_APPROVAL",
+      "kind": "human",
+      "controlling_clauses": [
+        "Freeze-1.1 §5 para 2",
+        "§8.4 para 3"
+      ],
+      "required_fields": [
+        "ADJ-1 and ADJ-2 independent approvals of the full projection ledger"
+      ],
+      "independence_requirement": "as R06/R07",
+      "who_may_fill": "ADJUDICATOR_1 and ADJUDICATOR_2",
+      "registrable_now": false,
+      "registrable_now_reason": "requires R06/R07. The rev-2 projector dry run is a DRAFT with no UNRECOGNIZED designations and no positive grammar designations; adjudicators must still confirm every in-scope path, including the plausible target-list file experiments/multi-001/candidates.json (flagged by path name only).",
+      "conflict_restrictions": [],
+      "immutable_identifier": "approval sha256s",
+      "required_before": "G4_REGISTRY",
+      "status": "UNFILLED",
+      "registrant": null
+    },
+    {
+      "id": "R15",
+      "role": "ENTROPY_CUSTODIAN",
+      "kind": "independent_party",
+      "controlling_clauses": [
+        "Freeze-1.1 §8.5 para 2"
+      ],
+      "required_fields": [
+        "name",
+        "attestation of no source/identity/eligibility/apparatus role"
+      ],
+      "independence_requirement": "no source, identity, eligibility or apparatus role; therefore not the capture custodian, not an adjudicator",
+      "who_may_fill": "an independent natural person",
+      "registrable_now": true,
+      "registrable_now_reason": "possible but not needed before Freeze 2B",
+      "conflict_restrictions": [
+        "not R01, R06, R07, R16"
+      ],
+      "immutable_identifier": "registration sha256",
+      "required_before": "G7_FREEZE_2B",
+      "status": "UNFILLED",
+      "registrant": null
+    },
+    {
+      "id": "R16",
+      "role": "ENTROPY_PROCESS_WITNESS",
+      "kind": "independent_party",
+      "controlling_clauses": [
+        "Freeze-1.1 §8.5 para 2 ('independently witnessed process log')"
+      ],
+      "required_fields": [
+        "name",
+        "attestation"
+      ],
+      "independence_requirement": "independent of the entropy custodian and of source/identity/eligibility/apparatus roles",
+      "who_may_fill": "an independent natural person",
+      "registrable_now": true,
+      "registrable_now_reason": "not needed before Freeze 2B",
+      "conflict_restrictions": [
+        "not R01, R06, R07, R15"
+      ],
+      "immutable_identifier": "registration sha256",
+      "required_before": "G7_FREEZE_2B",
+      "status": "UNFILLED",
+      "registrant": null
+    },
+    {
+      "id": "R17",
+      "role": "ENTROPY_GENERATOR_AND_RUN_SCHEDULE_ALGORITHM",
+      "kind": "software",
+      "controlling_clauses": [
+        "Freeze-1.1 §6 para 2",
+        "§8.5",
+        "§8.7 ('algorithm is registered at Freeze 2')"
+      ],
+      "required_fields": [
+        "code sha256",
+        "offline tests"
+      ],
+      "independence_requirement": "none",
+      "who_may_fill": "software sealed at Freeze 2A",
+      "registrable_now": false,
+      "registrable_now_reason": "a Freeze-2A deliverable, outside this registration repair",
+      "conflict_restrictions": [],
+      "immutable_identifier": "code sha256",
+      "required_before": "G7_FREEZE_2B",
+      "status": "FUTURE_STAGE",
+      "registrant": null
+    }
+  ],
+  "later_freeze_roles_out_of_scope": [
+    "Freeze 4 all-frame mapping personnel and gate apparatus",
+    "Freeze 5A census personnel (blind to ordering)",
+    "Freeze 5B reveal/reconciliation"
+  ],
+  "revision": 2
+}

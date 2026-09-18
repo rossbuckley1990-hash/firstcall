@@ -1,0 +1,53 @@
+{
+  "schema": "firstcall.programmeA.sample_frame",
+  "version": "1.0.0",
+  "status": "PROSPECTIVE_DESIGN_FROZEN_BEFORE_OUTCOMES",
+  "no_vendors_selected_yet": true,
+  "selection_independent_of_suspected_operability": true,
+  "frozen_snapshot": {
+    "source_type_candidates": ["public API directory", "open ecosystem index", "category-tagged public registry"],
+    "requires": ["source name", "exact snapshot date", "retrieval method", "SHA256 of frozen snapshot file"],
+    "single_frame_chosen": true,
+    "alternates_recorded_but_unused": true
+  },
+  "categories_min": 6,
+  "example_categories": ["messaging/email", "payments", "storage/object", "identity/auth", "scheduling/calendar", "docs/e-sign", "data/CRM"],
+  "stratified": true,
+  "inclusion_rules": [
+    "has public documentation",
+    "advertises test/sandbox mode OR free self-serve tier supporting a reversible effect (from public docs only)",
+    "self-serve signup without enterprise sales contract",
+    "supports a journey object meeting effect requirements per public docs",
+    "not FIRSTCALL-authored and not a prior FIRSTCALL target with known outcome"
+  ],
+  "exclusion_rules": [
+    "enterprise-contract-only",
+    "no safe test/sandbox capability per public docs",
+    "requires real money/PII/irreversible effect with no sandbox",
+    "region-locked or KYC-gated beyond a sandbox",
+    "duplicate platform of an already-included vendor",
+    "prior FIRSTCALL experimental target (Postmark, Resend, CF-001/Acme, MULTI-002 Stripe) to prevent outcome leakage"
+  ],
+  "ordering": "within each category sort by hash(vendor_name + RANDOMISATION_SEED); take top m per category to reach N",
+  "enterprise_only_or_no_sandbox": "excluded at frame stage by rule; if drawn due to ambiguous metadata => INELIGIBLE_PRE_EXECUTION and replaced by next-in-order in same category",
+  "replacements": {
+    "rule_frozen_before_draw": true,
+    "source": "next vendor in the same category's frozen ordering",
+    "logged_with_reason": true,
+    "reserve_budget_fraction": 0.25
+  },
+  "sample_size": {
+    "target_N_vendors": 24,
+    "min_acceptable": 20,
+    "discouraged_below": 16,
+    "rationale": ">=6 categories x ~4 vendors; vendor-level Wilson half-width ~0.10-0.12 mid-range; N is the precision driver at the unit of inference",
+    "reserves_min": 6
+  },
+  "anti_cherry_pick": [
+    "frame+seed+algorithm+full ordered draw+reserves hashed and frozen before any run",
+    "no add/remove/reorder after outcomes visible",
+    "prior-failure vendors excluded, never sought"
+  ],
+  "blind_safeguard": "draw + hash now; plaintext vendor list revealed only inside sealed pre-registration bundle at Freeze 5; no operability inspection before protocol freeze",
+  "real_vendor_runs": 0
+}
