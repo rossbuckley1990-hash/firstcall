@@ -39,8 +39,9 @@ class CodexLiveRunner:
         *,
         cwd: Path,
         prompt: str,
-        resend_key: str,
-        subject: str,
+        resend_key: str | None = None,
+        subject: str | None = None,
+        experiment_env: dict[str, str] | None = None,
     ) -> AgentResult:
         # Deliberately construct the environment instead
         # of passing os.environ wholesale.
@@ -64,8 +65,19 @@ class CodexLiveRunner:
             if key in allowed_names
         }
 
-        env["RESEND_API_KEY"] = resend_key
-        env["FIRSTCALL_SUBJECT"] = subject
+        if resend_key is not None:
+            env["RESEND_API_KEY"] = resend_key
+
+        if subject is not None:
+            env["FIRSTCALL_SUBJECT"] = subject
+
+        if experiment_env:
+            for name, value in experiment_env.items():
+                if not isinstance(name, str):
+                    raise TypeError("experiment env name must be str")
+                if not isinstance(value, str):
+                    raise TypeError("experiment env value must be str")
+                env[name] = value
 
         argv = [
             self.executable,
