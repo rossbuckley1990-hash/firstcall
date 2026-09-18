@@ -1,0 +1,15 @@
+{
+  "README.md": {
+    "bytes": 553,
+    "sha256": "732e2584bf65b8f0bacef07c0f08c8e2216d06a3b19479a8e74655e414f50f29"
+  },
+  "candidates.json": {
+    "bytes": 1162,
+    "sha256": "85f78fb75aedebfccc4cb380c3de5ac87d40bc0380ae36953180cfec49677012"
+  },
+  "experiment_intent_sha256": "0d6e9d6d28f6343e196f938f2d1641d3f39f8480a6f559b91043d571484eb9a9",
+  "protocol.md": {
+    "bytes": 5075,
+    "sha256": "634b10f94d8a82ce23548aedac955ffa09cfa1cca231922ac5006b9eb28afc07"
+  }
+}

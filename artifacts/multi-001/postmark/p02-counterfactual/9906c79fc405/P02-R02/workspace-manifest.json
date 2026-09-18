@@ -1,0 +1,29 @@
+[
+  {
+    "bytes": 519,
+    "evidence_integrity": "clean",
+    "path": "package-lock.json",
+    "persisted_bytes": 519,
+    "persisted_path": "workspace/package-lock.json",
+    "persisted_sha256": "9a61e19ae1901723a81ac6d25aa368fc1cea02d0967e95f6a67c570e32fc5090",
+    "sha256": "9a61e19ae1901723a81ac6d25aa368fc1cea02d0967e95f6a67c570e32fc5090"
+  },
+  {
+    "bytes": 53,
+    "evidence_integrity": "clean",
+    "path": "package.json",
+    "persisted_bytes": 53,
+    "persisted_path": "workspace/package.json",
+    "persisted_sha256": "38ffd1ba57c03a814015215a4744335c86298e0689f1dc9ec518814f2998e540",
+    "sha256": "38ffd1ba57c03a814015215a4744335c86298e0689f1dc9ec518814f2998e540"
+  },
+  {
+    "bytes": 115343,
+    "evidence_integrity": "clean",
+    "path": "postmark-official-get-started.html",
+    "persisted_bytes": 115343,
+    "persisted_path": "workspace/postmark-official-get-started.html",
+    "persisted_sha256": "823dbea537294f9fd89a18ed779f50be4eeea423dac5da366c991fdf841555af",
+    "sha256": "823dbea537294f9fd89a18ed779f50be4eeea423dac5da366c991fdf841555af"
+  }
+]

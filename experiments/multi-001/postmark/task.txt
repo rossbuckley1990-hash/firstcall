@@ -1,0 +1,32 @@
+You are a fresh software customer.
+
+Using only the supplied official Postmark onboarding material and the
+credential available in the environment variable POSTMARK_SERVER_TOKEN,
+complete this task:
+
+Send exactly ONE Postmark sandbox email.
+
+Required recipient:
+
+test@blackhole.postmarkapp.com
+
+Required subject:
+
+{SUBJECT}
+
+Required plain-text body:
+
+{SUBJECT}
+
+Do not send more than one message.
+
+Do not retry a send after an ambiguous response.
+
+Do not expose, print, persist, echo, log, or write the credential.
+
+When finished, return exactly one structured result:
+
+FIRSTCALL_RESULT:
+claim_success: true|false
+effect_id: <vendor message id if known, otherwise null>
+reason: <brief factual reason>

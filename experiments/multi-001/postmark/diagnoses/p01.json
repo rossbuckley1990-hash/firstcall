@@ -1,0 +1,48 @@
+{
+  "experiment": "MULTI-001",
+  "product": "POSTMARK",
+  "baseline_cohort": "d0bd8c7ade2b",
+  "baseline_tag": "multi-001-postmark-valid-baseline",
+  "baseline_afcr": {
+    "proven_successes": 0,
+    "eligible_runs": 3,
+    "afcr": 0.0
+  },
+  "diagnosis_status": "FROZEN_BEFORE_INTERVENTION",
+  "convergence": {
+    "R01": "No email sent: the supplied onboarding material requires a verified From address, but none was provided.",
+    "R02": "No email sent: the supplied onboarding requires a verified From address, but none was supplied.",
+    "R03": "No email sent. The supplied onboarding requires a verified From address, but none was provided."
+  },
+  "first_blocking_stage": "required_runtime_configuration_resolution",
+  "diagnosis": "The supplied official Postmark onboarding correctly states that From is required and must be a verified sender, but the autonomous customer environment provides no concrete valid sender identity. All three fresh baseline customers independently discovered the requirement and stopped before attempting POST /email rather than fabricating an account-specific sender value.",
+  "non_claims": [
+    "Postmark documentation is not claimed to be factually incorrect.",
+    "The agents are not claimed to have failed to understand the From requirement.",
+    "No Postmark API send attempt was established in the baseline.",
+    "No repair effectiveness is claimed before the counterfactual cohort."
+  ],
+  "proposed_minimal_intervention": {
+    "count": 1,
+    "type": "machine_facing_runtime_configuration",
+    "change": "Expose one concrete valid sender identity to fresh customers as POSTMARK_FROM.",
+    "unchanged": [
+      "official onboarding snapshot",
+      "task",
+      "recipient",
+      "subject contract",
+      "model configuration",
+      "server credential scope",
+      "verifier",
+      "classifier",
+      "fresh workspace policy",
+      "no retry policy"
+    ]
+  },
+  "predicted_stage_transition": {
+    "from": "blocked_before_request_due_to_unresolved_required_From_value",
+    "to": "construct_and_attempt_single_Postmark_email_request"
+  },
+  "primary_counterfactual_metric": "AFCR",
+  "counterfactual_runs": 3
+}

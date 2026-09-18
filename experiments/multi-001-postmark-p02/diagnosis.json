@@ -1,0 +1,41 @@
+{
+  "experiment": "MULTI-001",
+  "product": "POSTMARK",
+  "phase": "P02_COUNTERFACTUAL",
+  "diagnosis_status": "FROZEN_BEFORE_EXECUTION",
+  "frozen_baseline": {
+    "commit": "ce95ed52ec9b728d43d8247ef3f2df53fee61ab1",
+    "tag": "multi-001-postmark-valid-baseline",
+    "cohort": "d0bd8c7ade2b",
+    "evidence_tree_sha256": "40289fdcf64dc5c8073ed90b22a698cd6897d9a7fc118fa51c6e5add8d9087f7"
+  },
+  "frozen_p01": {
+    "commit": "9015c333080c4e192d680d6f88ce9360d74353c5",
+    "apparatus_tag": "multi-001-postmark-p01-apparatus",
+    "diagnosis_tag": "multi-001-postmark-p01-diagnosis",
+    "diagnosis_commit": "530351d120bac32b066aa70cbf8646387668cdac",
+    "diagnosis_sha256": "8e3669969f77db0fbb39d51d3e38e05748a7576b8194ef8c2e6d5479b4543df3",
+    "canonical_evidence": "artifacts/multi-001/postmark/p01-counterfactual/ca116baa8519",
+    "canonical_evidence_tree_sha256": "6a975b16d84227d7cd5c23372f02fe43e3d167f6c68ea2a262f696f7b7989e34",
+    "onboarding_sha256": "8410998e0f53c0d56b8804fab215dce9955dbcb6a81d70b2bd88a39cee2ca4cc",
+    "runner_sha256": "55e1c3d05ead64847dea14e71d52d090230e017ae1bfce63078b57d41dd520b3"
+  },
+  "diagnosis": "All three canonical P01 customers were launched with a concrete verified sender value in POSTMARK_FROM, but stopped at MissingFromAddress after concluding that no verified From address had been supplied. P02 tests discoverability of the already-supplied value.",
+  "intervention": {
+    "count": 1,
+    "type": "onboarding_discoverability",
+    "statement": "A concrete verified sender identity is available in the environment variable POSTMARK_FROM.",
+    "construction": "Insert one paragraph immediately after the existing body opening tag; preserve every other P01 onboarding byte.",
+    "onboarding_sha256": "823dbea537294f9fd89a18ed779f50be4eeea423dac5da366c991fdf841555af",
+    "sender_value_source": "Unchanged: POSTMARK_FROM in the parent execution environment only."
+  },
+  "prediction": "Fresh autonomous customers should progress beyond MissingFromAddress. Making the already-supplied sender identity discoverable through POSTMARK_FROM is not predicted to guarantee a successful effect.",
+  "prediction_policy": "Immutable after execution; any subsequent diagnosis or prediction requires a separately identified experiment.",
+  "run_ids": [
+    "P02-R01",
+    "P02-R02",
+    "P02-R03"
+  ],
+  "primary_counterfactual_metric": "AFCR",
+  "real_runs_executed_at_freeze": 0
+}

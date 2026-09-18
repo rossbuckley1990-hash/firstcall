@@ -1,0 +1,16 @@
+[
+  {
+    "command": "/bin/zsh -lc \"pwd; rg --files -g '\"'!node_modules'\"' -g '\"'!package-lock.json'\"' -g '\"'!yarn.lock'\"' -g '\"'!pnpm-lock.yaml'\"' -g '\"'!'\"\\\\.git/**' -g '\"'!'\"\\\\.env*' .\"",
+    "exit_code": 1,
+    "output": "/private/var/folders/tz/y04t4d0900xdbmz96jp608180000gn/T/firstcall-run-n094t1wc\n",
+    "source": "codex_jsonl:item.completed",
+    "status": "failed"
+  },
+  {
+    "command": "/bin/zsh -lc \"ls -la; python3 - <<'PY'\nimport os\nprint('POSTMARK_SERVER_TOKEN present:', bool(os.environ.get('POSTMARK_SERVER_TOKEN')))\nprint('Material-related environment variable names:', ', '.join(k for k in os.environ if any(s in k.upper() for s in ['POSTMARK','ONBOARD','MATERIAL'])))\nPY\"",
+    "exit_code": 0,
+    "output": "total 0\ndrwx------      2 ross  staff      64 Sep 18 09:19 .\ndrwx------@ 18153 ross  staff  580896 Sep 18 09:19 ..\nPOSTMARK_SERVER_TOKEN present: True\nMaterial-related environment variable names: POSTMARK_SERVER_TOKEN\n",
+    "source": "codex_jsonl:item.completed",
+    "status": "completed"
+  }
+]

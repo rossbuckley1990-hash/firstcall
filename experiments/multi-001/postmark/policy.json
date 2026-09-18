@@ -1,0 +1,14 @@
+{
+  "experiment": "MULTI-001",
+  "product": "POSTMARK",
+  "stage": "BASELINE_DISCOVERY",
+  "planned_runs": 3,
+  "fresh_workspace_per_run": true,
+  "firstcall_rescue": false,
+  "retries_allowed": false,
+  "maximum_send_cardinality": 1,
+  "production_delivery_allowed": false,
+  "independent_verification_required": true,
+  "agent_claim_determines_success": false,
+  "unknown_excluded_from_afcr": true
+}

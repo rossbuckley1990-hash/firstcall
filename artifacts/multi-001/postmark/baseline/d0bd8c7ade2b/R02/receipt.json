@@ -1,0 +1,197 @@
+{
+  "agent": {
+    "claim_ok": false,
+    "duration_ms": 29151,
+    "exit_code": 0
+  },
+  "apparatus_commit": "76e951c4a2be3acd4f2f229c2cc892540112229d",
+  "apparatus_dirty": false,
+  "apparatus_files": {
+    "firstcall/agents/codex_events.py": "c61e063a85499e2a46b26df4e4d580590bf43aab8fa2b5edcb9500a297f2eb9c",
+    "firstcall/agents/codex_live.py": "1265f353e531c7940e09203ea6a63e5ed76d63a4a9da79ee3f1a7cc84b2c79e0",
+    "firstcall/grade.py": "4ba7304bc5f1ffa79f4500cfc0145c7cabb5535842bee5cff6ba9e3bc0e72244",
+    "firstcall/journey_evidence.py": "2cab91da7fcdf34c70d02061174560ea6443147ba39eeba8abcc237e55c400bb",
+    "firstcall/postmark_preflight.py": "967f92f90dc49cb87ed52056d14e32203624fffc0cfa81dbbcc63ee547570ddc",
+    "firstcall/verifiers/postmark.py": "7ac6b91fc78190e566e887e7bfaf6e105b049f676919c77e4b81eaa350ef9cf6"
+  },
+  "candidate_commands": [
+    {
+      "command": "/bin/zsh -lc \"pwd && rg --files -g '*postmark*' -g '*Postmark*' -g '*onboard*' -g 'AGENTS.md' -g '*.md' -g '*.txt' -g '*.pdf' -g '*.html' .\"",
+      "exit_code": 0,
+      "output": "/private/var/folders/tz/y04t4d0900xdbmz96jp608180000gn/T/firstcall-run-z4cb5ech\n./postmark-official-get-started.html\n",
+      "source": "codex_jsonl:item.completed",
+      "status": "completed"
+    },
+    {
+      "command": "/bin/zsh -lc \"python3 - <<'PY'\nfrom html.parser import HTMLParser\nfrom pathlib import Path\nclass Text(HTMLParser):\n def handle_data(self, data):\n  if data.strip(): print(data.strip())\nText().feed(Path('postmark-official-get-started.html').read_text())\nPY\"",
+      "exit_code": 0,
+      "output": "Get started | Postmark Developer Documentation\ndataLayer = [{'siteType': 'developer', 'visitorIP': '163.116.137.123'}];\nPostmark\nLog In\nWhy Postmark?\nProduct\nFeatures\nEmail API\nSMTP Service\nMessage Streams\nTransactional Email\nEmail Delivery\nEmail Templates\nInbound Email\nAnalytics & Retention\nIntegrations\nBulk API\nNew\nPostmark For\nAgencies\nEnterprise\nStartups\nBootstrapped Startups\nSide Projects\nPostmark vs.\nSendGrid\nMailgun\nAmazon SES\nSparkPost\nMandrill\nResend\nNew\nPricing\nResources\nBlog\nAPI Documentation\nGetting Started\nEmail Guides\nEmail Comic\nWebinars\nVideos\nPodcast\nLabs\nDMARC Digests\nGlossary\nHelp\nSupport Center\nContact Support\nTalk to Sales\nStatus\nLog in\nStart free trial\nWhy Postmark?\nProduct\nFeatures\nEmail API\nSMTP Service\nMessage Streams\nTransactional Email\nEmail Delivery\nEmail Templates\nInbound Email\nAnalytics & Retention\nIntegrations\nBulk API\nNew\nPostmark For\nAgencies\nEnterprise\nStartups\nBootstrapped Startups\nSide Projects\nPostmark vs.\nSendGrid\nMailgun\nAmazon SES\nSparkPost\nMandrill\nResend\nNew\nPricing\nResources\nBlog\nAPI Documentation\nGetting Started\nEmail Guides\nEmail Comic\nWebinars\nVideos\nPodcast\nLabs\nDMARC Digests\nGlossary\nHelp\nSupport Center\nContact Support\nTalk to Sales\nStatus\nLog in\nStart free trial\nStart free trial\nAlready have an account?\nLog in \u2192\nSearch docs...\nIntroduction\nGet started\nOfficial libraries\n- TypeScript\n- Python SDK\n- Rails gem\n- Ruby gem\n- .NET\n- Java\n- PHP\n- Craft plugin\n- Node.js\n- CLI\n- WordPress plugin\n- Grunt plugin\n- Zapier Actions\nCommunity libraries\n- Classic ASP\n- Clojure\n- ColdFusion\n- Django\n- Drupal module\n- Elixir\n- Erlang\n- Google Go\n- Grails plugin\n- Haskell\n- Java\n- Laravel\n- Magento extension\n- Node.js\n- Objective-C\n- Perl\n- Pharo Smalltalk\n- PHP 5\n- PowerShell Snap-in\n- Python\n- Scala\n- Swift\n- WordPress\n- Zend\nTools and Integrations\nAI Prompts\n- Integrate Postmark with Node.js/Express\n- Add Postmark to a Rails application\n- Implement Postmark in Laravel\n- Build a password reset flow with Postmark\n- Send batch notifications with failure handling\n- Handle delivery and bounce webhooks\n- Set up email notifications for user actions\n- Send a receipt with templates\n- Handle inbound email with webhooks\n- Integrate with Better Auth\nSending email with API\n- Send a single email\n- Send batch emails\nSending email with SMTP\nIP Allowlisting\nProcessing email\n- Configure an inbound server\n- Inbound domain forwarding\n- Parse an email\n- Configure inbound blocking\n- Sample inbound workflow\nTracking opens\n- Tracking opens per Server\n- Tracking opens per email\n- Message opens API\nTracking links\nManaging your account\n- Managing sender signatures\n- Managing servers\nSandbox mode\n- Server sandbox mode\n- Generate fake bounces\nOverview\n- Endpoint URL\n- Authentication\n- HTTP response codes\n- API error codes\nEmail\n- Send a single email\n- Send batch emails\nBulk\n- Send bulk emails\n- Get the status/details of a bulk API request\n- List bulk API requests\n- Error responses\nBounce\n- Get delivery stats\n- Get bounces\n- Get a single bounce\n- Get bounce dump\n- Activate a bounce\n- Bounce types\n- Rebound\nTemplates\n- Send email with template\n- Send batch with templates\n- Send a receipt with templates\n- Push templates to another server\n- Get a template\n- Create a template\n- Edit a template\n- List templates\n- Delete a template\n- Validate a template\nServer\n- Get the server\n- Edit the server\nServers\n- Get a server\n- Create a server\n- Edit a server\n- List servers\n- Delete a server\nMessage Streams\n- List message streams\n- Get a message stream\n- Edit a message stream\n- Create a message stream\n- Archive a message stream\n- Unarchive a message stream\nMessages\n- Outbound message search\n- Outbound message details\n- Outbound message dump\n- Inbound message search\n- Inbound message details\n- Bypass rules for a blocked inbound message\n- Retry a failed inbound message for processing\n- Message opens\n- Opens for a single message\n- Message clicks\n- Clicks for a single message\nDomains\n- List domains\n- Get domain details\n- Create domain\n- Edit domain\n- Delete domain\n- Verify DKIM\n- Verify Return-Path\n- Verify an SPF record\n- Rotate DKIM keys\nSender signatures\n- List sender signatures\n- Get sender signature\n- Create a signature\n- Edit a signature\n- Delete a signature\n- Resend a confirmation\n- Verify an SPF record\n- Request a new DKIM\nStats\n- Get outbound overview\n- Get sent counts\n- Get bounce counts\n- Get spam complaints\n- Get tracked email counts\n- Get email open counts\n- Get email platform usage\n- Get email client usage\n- Get click counts\n- Get browser usage\n- Get browser platform usage\n- Get click location\nTriggers: Inbound rules\n- List inbound rule triggers\n- Create an inbound rule trigger\n- Delete a single trigger\nWebhooks\n- List webhooks\n- Get a webhook\n- Create a webhook\n- Edit a webhook\n- Verify a webhook\n- Delete a webhook\n- Get webhook statistics\nSuppressions\n- Suppression dump\n- Create a Suppression\n- Delete a Suppression\nData Removal\n- Create a Data Removal request\n- Check a Data Removal request status\nWebhooks overview\n- What is a webhook?\n- Verifying your webhook\n- Protecting your webhook\n- Handle delivery and bounce events\n- Testing your webhook\n- Retry attempts\nDelivery webhook\n- What is a delivery webhook?\n- create webhook\n- event data\n- Testing events\n- code examples\nBounce webhook\n- What is a bounce webhook?\n- create webhook\n- Event data\n- Testing with curl\n- Code examples\nSpam complaint webhook\n- What is a spam complaint webhook?\n- create webhook\n- Event data\n- Testing events\nOpen tracking webhook\n- What is an open webhook?\n- create webhook\n- event data\n- testing events\nClick webhook\n- What is a click webhook?\n- create webhook\n- event data\n- testing events\nSubscription change webhook\n- What is a subscription change?\n- create webhook\n- event data\n- testing events\nInbound webhook\n- What is an inbound webhook?\n- create webhook\n- event data\n- testing events\n- Errors and retries\nSMTP API Error\n- What is an SMTP API Error\n- Set SMTP API Errors for a Server\n- SMTP API Error Data\n- Testing the SMTP API Error\n- How can you use SMTP API Error\nSearch docs...\n\u2318K\nOverview\nIntroduction\nGet started\nIntegration\nOfficial libraries\nCommunity libraries\nTools and Integrations\nAI Prompts\nUser guide\nSending email with API\nSending email with SMTP\nIP Allowlisting\nProcessing email\nTracking opens\nTracking links\nManaging your account\nSandbox mode\nAPI reference\nOverview\nEmail\nBulk\nBounce\nTemplates\nServer\nServers\nMessage Streams\nMessages\nDomains\nSender signatures\nStats\nTriggers: Inbound rules\nWebhooks\nSuppressions\nData Removal\nWebhooks\nWebhooks overview\nDelivery webhook\nBounce webhook\nSpam complaint webhook\nOpen tracking webhook\nClick webhook\nSubscription change webhook\nInbound webhook\nSMTP API Error\nGet started\nGet started with Postmark\nSend your first email within minutes and get your app\u2019s important messages into inboxes.\n      Postmark officially supports\nseven languages and frameworks\n, with even more\n      available from the community.\nFind your favorite stack below and follow these steps to deliver email from your app to\n      your users\u2019 inboxes.\n\u2726\nGet started with your AI agent\nIn a hurry? Copy the Markdown build spec below and paste it as a prompt to your coding\n            agent \u2014 Cursor, Claude Code, Copilot \u2014 to wire up Postmark for you.\nCopy build spec\nRecommended:\nAdd the Postmark Skills skill to give your agent Postmark-specific\n          guidance \u2014 run:\nTerminal\nCopy\nnpx skills add ActiveCampaign/postmark-skills\n# Postmark Email Integration \u2014 Build Spec\n\n## Objective\nIntegrate Postmark to send transactional email from an application via an official SDK (or SMTP). Implement for the target language/framework using the API contract and reference implementations below.\n\n## Requirements & constraints\n- The server API token MUST be read from the POSTMARK_SERVER_TOKEN environment variable. Never hardcode it.\n- Obtain the token from the Postmark dashboard: Servers -> select/create server -> API Tokens -> \"Server API tokens\". Account signup: https://account.postmarkapp.com/sign_up\n- The sender (From) address MUST belong to a verified domain or signature.\n- Until the account is approved, sends are only delivered to the account owner's own verified address.\n- The default message stream for transactional mail is \"outbound\".\n\n## Install (target language only)\n| Language        | Install |\n| Node.js         | npm install postmark |\n| TypeScript      | npm install postmark (type definitions ship with the package) |\n| Python          | pip install postmark-python |\n| Ruby            | gem install postmark |\n| Ruby on Rails   | bundle add postmark-rails |\n| PHP             | composer require wildbit/postmark-php |\n| .NET (C#)       | dotnet add package Postmark |\n| Java (Gradle)   | implementation 'com.postmarkapp:postmark:1.13.0' |\n\nSet the token in the environment:\n# macOS / Linux\nexport POSTMARK_SERVER_TOKEN=\"your-server-api-token\"\n# Windows (PowerShell)\n$env:POSTMARK_SERVER_TOKEN=\"your-server-api-token\"\n\n## Send API contract\nConstruct the client from the env token, then send a single message with these fields (names vary by SDK; canonical API names shown):\n- From (required): verified sender address\n- To (required): recipient (restricted to verified addresses until account approval)\n- Subject (required)\n- TextBody or HtmlBody (at least one)\n- MessageStream (recommended): use \"outbound\" for transactional\n\nReturns a response object whose key field is MessageID \u2014 the unique id used to track delivery, bounces, and opens.\n\n## Error contract\nCheck the HTTP status and the ErrorCode field. ErrorCode == 0 indicates success; surface Message for diagnostics.\n- 200 / ErrorCode 0   -> Success\n- 401 / ErrorCode 10  -> Bad or missing server API token\n- 422 / ErrorCode 300 -> Unprocessable (e.g. invalid/unverified From address)\n\n## Integration notes\n- Reuse the send call at each app event that needs mail: confirmations, password resets, payment receipts, account notifications, collaboration activity.\n- Use separate message streams for transactional vs. marketing mail.\n- Optional capabilities: templates, open/click tracking, inbound processing.\n1\nInstall your language\u2019s library\nWhatever your backend language, you can use a Postmark library or send\n          via SMTP. Here we use one of the\nofficial\n          SDKs\nto talk to the Postmark API. Copy the line for your language into your terminal or\n          package manager.\nNode.js\nTypeScript\nPython\nRuby\nRuby on Rails\nPHP\n.NET (C#)\nJava\nCopy\nnpm install postmark\n# Types ship with the package \u2014 no @types needed\nnpm install postmark\npip install postmark-python\ngem install postmark\nbundle add postmark-rails\ncomposer require wildbit/postmark-php\ndotnet add package Postmark\n// Gradle\nimplementation 'com.postmarkapp:postmark:1.13.0'\n\n<!-- Maven (pom.xml) -->\n<dependency>\n  <groupId>com.postmarkapp</groupId>\n  <artifactId>postmark</artifactId>\n  <version>1.13.0</version>\n</dependency>\n2\nSet your API token\nYou need a\nfree Postmark account\nto send emails.\n          Once you create one, log in and\nview your servers\n, select your first\n          server or create a new one, then click\nAPI Tokens\nand copy the Server API\n          token. The screen with your token should look something like this:\nCopy that token and save it locally as an environment variable. Setting it this way keeps it\n        out of your code \u2014 and secret, so no one else can send email using your account.\nmacOS / Linux\nWindows (PowerShell)\nCopy\nexport POSTMARK_SERVER_TOKEN=\"your-server-api-token\"\n$env:POSTMARK_SERVER_TOKEN=\"your-server-api-token\"\n3\nSend your first email\nThe library is installed and the token is set \u2014 all that\u2019s left is the\n          API call. Replace the example address with your own Postmark account address (look for the\nyour email here\ncomment), run it, and check your inbox. The email usually\n          arrives within seconds.\nNode.js\nTypeScript\nPython\nRuby\nRuby on Rails\nPHP\n.NET (C#)\nJava\nCopy\nimport * as postmark from \"postmark\";\n\nconst client = new postmark.ServerClient(process.env.POSTMARK_SERVER_TOKEN);\n\nconst result = await client.sendEmail({\n  From: \"sender@yourdomain.com\",\n  To: \"recipient@example.com\", // your email here\n  Subject: \"Hello from Postmark!\",\n  TextBody: \"Hello dear Postmark user.\",\n  HtmlBody: \"<strong>Hello</strong> dear Postmark user.\",\n  MessageStream: \"outbound\",\n});\n\nconsole.log(\"Message ID:\", result.MessageID);\nimport { ServerClient } from \"postmark\";\n\nconst client = new ServerClient(process.env.POSTMARK_SERVER_TOKEN as string);\n\nconst result = await client.sendEmail({\n  From: \"sender@yourdomain.com\",\n  To: \"recipient@example.com\", // your email here\n  Subject: \"Hello from Postmark!\",\n  TextBody: \"Hello dear Postmark user.\",\n  HtmlBody: \"<strong>Hello</strong> dear Postmark user.\",\n  MessageStream: \"outbound\",\n});\n\nconsole.log(\"Message ID:\", result.MessageID);\nimport asyncio\nimport os\nimport postmark\n\nasync def main():\n    async with postmark.ServerClient(os.environ[\"POSTMARK_SERVER_TOKEN\"]) as client:\n        response = await client.outbound.send({\n            \"sender\": \"sender@yourdomain.com\",\n            \"to\": \"recipient@example.com\",  # your email here\n            \"subject\": \"Hello from Postmark!\",\n            \"text_body\": \"Hello dear Postmark user.\",\n        })\n        print(f\"Message ID: {response.message_id}\")\n\nasyncio.run(main())\nrequire 'postmark'\n\nclient = Postmark::ApiClient.new(ENV['POSTMARK_SERVER_TOKEN'])\n\nresult = client.deliver(\n  from: 'sender@yourdomain.com',\n  to: 'recipient@example.com', # your email here\n  subject: 'Hello from Postmark!',\n  text_body: 'Hello dear Postmark user.',\n  html_body: '<strong>Hello</strong> dear Postmark user.',\n  message_stream: 'outbound'\n)\n\nputs \"Message ID: #{result[:message_id]}\"\n# config/application.rb \u2014 read the token from the environment\nconfig.action_mailer.delivery_method = :postmark\nconfig.action_mailer.postmark_settings = { api_token: ENV['POSTMARK_SERVER_TOKEN'] }\n\n# app/mailers/test_mailer.rb\nclass TestMailer < ApplicationMailer\n  def hello\n    message.message_stream = 'outbound'\n    mail(\n      from: 'sender@yourdomain.com',\n      to: 'recipient@example.com', # your email here\n      subject: 'Hello from Postmark!',\n      content_type: 'text/html',\n      body: '<strong>Hello</strong> dear Postmark user.'\n    )\n  end\nend\n\n# Deliver it (e.g. from a Rails console)\nTestMailer.hello.deliver_now\n<?php\nrequire 'vendor/autoload.php';\n\nuse Postmark\\PostmarkClient;\n\n$client = new PostmarkClient(getenv('POSTMARK_SERVER_TOKEN'));\n\n$result = $client->sendEmail(\n    'sender@yourdomain.com',\n    'recipient@example.com', // your email here\n    'Hello from Postmark!',\n    '<strong>Hello</strong> dear Postmark user.', // HtmlBody\n    'Hello dear Postmark user.',                  // TextBody\n    null, null, null, null, null, null, null, null, null,\n    'outbound'                                     // MessageStream\n);\n\necho 'Message ID: ' . $result['MessageID'];\nusing System;\nusing PostmarkDotNet;\n\nvar client = new PostmarkClient(Environment.GetEnvironmentVariable(\"POSTMARK_SERVER_TOKEN\"));\n\nvar message = new PostmarkMessage\n{\n    From = \"sender@yourdomain.com\",\n    To = \"recipient@example.com\", // your email here\n    Subject = \"Hello from Postmark!\",\n    TextBody = \"Hello dear Postmark user.\",\n    HtmlBody = \"<strong>Hello</strong> dear Postmark user.\",\n    MessageStream = \"outbound\"\n};\n\nvar result = await client.SendMessageAsync(message);\n\nConsole.WriteLine($\"Message ID: {result.MessageID}\");\nimport com.postmarkapp.postmark.Postmark;\nimport com.postmarkapp.postmark.client.ApiClient;\nimport com.postmarkapp.postmark.client.data.model.message.Message;\nimport com.postmarkapp.postmark.client.data.model.message.MessageResponse;\n\nApiClient client = Postmark.getApiClient(System.getenv(\"POSTMARK_SERVER_TOKEN\"));\n\nMessage message = new Message(\n    \"sender@yourdomain.com\",\n    \"recipient@example.com\", // your email here\n    \"Hello from Postmark!\",\n    \"<strong>Hello</strong> dear Postmark user.\", // HtmlBody\n    \"Hello dear Postmark user.\",                  // TextBody\n    \"outbound\"                                    // MessageStream\n);\n\nMessageResponse response = client.deliverMessage(message);\n\nSystem.out.println(\"Message ID: \" + response.getMessageId());\nNote.\nBefore you can send to other addresses, your account may need review \u2014\n        this is how Postmark keeps deliverability high and spam low. You can always send to your own\n        verified address right away.\n4\nCheck your response\nYou won\u2019t always be able to peek in the recipient\u2019s inbox \u2014 so the\n          Postmark libraries return the detailed API response. The most useful field is\nMessageID\n, a unique identifier you can use to track delivery, bounces, and\n          opens. Here are responses for common HTTP status codes (an HTTP\n200\nincludes\n          an\nErrorCode\nof\n0\nto indicate success):\n200 OK\n401 Unauthorized\n422 Unprocessable\nCopy\n{\n  \"To\": \"recipient@example.com\",\n  \"SubmittedAt\": \"2024-11-14T12:01:05.1794748-05:00\",\n  \"MessageID\": \"b7bc2f4a-e38e-4336-af7d-e6c392c2f817\",\n  \"ErrorCode\": 0,\n  \"Message\": \"OK\"\n}\n{\n  \"ErrorCode\": 10,\n  \"Message\": \"Bad or missing server API token.\"\n}\n{\n  \"ErrorCode\": 300,\n  \"Message\": \"Invalid 'From' address: 'sender@yourdomain.com'.\"\n}\nSee all HTTP responses here\n5\nUse Postmark in your app\nYou\u2019ve sent a test email to yourself. Next, drop similar code everywhere\n          your app sends email. Our templates are pre-built, editable email designs for common\n          transactional messages \u2014 password resets, welcome emails, receipts, and more. Edit them right\n          in Postmark, or skip them and use your own HTML instead. Either way, you send them the same\n          way: reference a template by ID, or drop your HTML straight into the API call.\nWelcome\nSend users a welcome email when they sign up to your product or service.\nReset password\nSend users a link to reset their password.\nReset password help\nHelp users reset their password if they can\u2019t remember their email.\nUser invitation\nHelp users invite others to use your product.\nComment notification\nNotify users of new comments by other users.\nReceipt\nSend a receipt to your customers after they made a purchase.\nInvoice\nRequest payments from your customers.\nTrial expiring\nLet your users know when their trial is about to expire.\nTrial expired\nLet your users know when their trial expired.\nDunning\nLet your customers know about a failed payment.\nTake your working code and paste it wherever you send important email. To get the most out of\n        Postmark, you can:\nCreate separate message streams\nfor\n          transactional and marketing email.\nUse\n          email templates\nfor consistent designs and common message types.\nTrack individual opens\nand clicks to identify engaged users.\nEncourage email replies\nyour app can interpret with inbound processing.\nMade with\n\u2665\nat\nActiveCampaign\nPrivacy Policy \u2197\nTerms of Service\nEU Data Protection\nCookie Policy\nCookie settings\n\u00a9 ActiveCampaign,\nLLC\n, 2026.\nOn this page\nUse this page with AI\nOpen in ChatGPT\nOpen in Claude\nPress\nEnter\nto search or\nEsc\nto close\nwindow['GoogleAnalyticsObject'] = 'ga';\n  window['ga'] = window['ga'] || function() {\n    (window['ga'].q = window['ga'].q || []).push(arguments)\n  };\n(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-PWV3TKM');\n(function () {\n  var root = document.querySelector('[data-gs-root]');\n  if (!root) { return; }\n  var live = root.querySelector('[data-gs-live]');\n  var slice = function (list) { return Array.prototype.slice.call(list); };\n\n  /* ---------- Tabs ---------- */\n  var bars = slice(root.querySelectorAll('[role=\"tablist\"][data-tabgroup]'));\n  var tabsIn = function (bar) { return slice(bar.querySelectorAll('[role=\"tab\"]')); };\n  var hasValue = function (bar, value) {\n    return tabsIn(bar).some(function (tab) { return tab.getAttribute('data-value') === value; });\n  };\n\n  function selectInGroup(group, value) {\n    bars.forEach(function (bar) {\n      if (bar.getAttribute('data-tabgroup') !== group) { return; }\n      /* Leave bars that don't offer this value alone, so a value only present in\n         one bar of a group never blanks the others. */\n      if (!hasValue(bar, value)) { return; }\n      tabsIn(bar).forEach(function (tab) {\n        var active = tab.getAttribute('data-value') === value;\n        tab.setAttribute('aria-selected', active ? 'true' : 'false');\n        tab.setAttribute('tabindex', active ? '0' : '-1');\n        tab.classList.toggle('is-active', active);\n        var panel = document.getElementById(tab.getAttribute('aria-controls'));\n        if (panel) { panel.hidden = !active; }\n      });\n    });\n  }\n\n  bars.forEach(function (bar) {\n    var group = bar.getAttribute('data-tabgroup');\n    var tabs = tabsIn(bar);\n\n    bar.addEventListener('click', function (e) {\n      var tab = e.target.closest('[role=\"tab\"]');\n      if (tab && bar.contains(tab)) { selectInGroup(group, tab.getAttribute('data-value')); }\n    });\n\n    bar.addEventListener('keydown', function (e) {\n      var current = e.target.closest('[role=\"tab\"]');\n      if (!current) { return; }\n      var idx = tabs.indexOf(current);\n      var next = null;\n      switch (e.key) {\n        case 'ArrowRight':\n        case 'ArrowDown': next = tabs[(idx + 1) % tabs.length]; break;\n        case 'ArrowLeft':\n        case 'ArrowUp': next = tabs[(idx - 1 + tabs.length) % tabs.length]; break;\n        case 'Home': next = tabs[0]; break;\n        case 'End': next = tabs[tabs.length - 1]; break;\n        default: return;\n      }\n      e.preventDefault();\n      selectInGroup(group, next.getAttribute('data-value'));\n      next.focus();\n    });\n  });\n\n  /* ---------- Copy buttons ---------- */\n  slice(root.querySelectorAll('.gs-copy__text')).forEach(function (el) {\n    el.setAttribute('data-default', el.textContent.trim());\n  });\n\n  function announce(msg) { if (live) { live.textContent = msg; } }\n\n  function markCopied(btn, ok) {\n    var label = btn.querySelector('.gs-copy__text');\n    if (!ok) {\n      announce('Copy failed \u2014 select the text and copy it manually.');\n      return;\n    }\n    /* The copied state sticks (per feedback) \u2014 no timed revert. */\n    btn.classList.add('is-copied');\n    if (label) { label.textContent = 'Copied'; }\n    announce('Copied to clipboard.');\n  }\n\n  function legacyCopy(text) {\n    try {\n      var ta = document.createElement('textarea');\n      ta.value = text;\n      ta.setAttribute('readonly', '');\n      ta.style.position = 'absolute';\n      ta.style.left = '-9999px';\n      document.body.appendChild(ta);\n      ta.select();\n      var ok = document.execCommand('copy');\n      document.body.removeChild(ta);\n      return ok;\n    } catch (err) {\n      return false;\n    }\n  }\n\n  /* A copy button either points at an explicit target (data-copy=\"#id\") or lives\n     in a code-panel bar, in which case it copies the panel that's currently\n     visible in its .gs-codetabs container. */\n  function resolveTarget(btn) {\n    var sel = btn.getAttribute('data-copy');\n    if (sel) { return document.querySelector(sel); }\n    var wrap = btn.closest('.gs-codetabs');\n    if (wrap) {\n      var panel = wrap.querySelector('[role=\"tabpanel\"]:not([hidden])');\n      if (panel) { return panel.querySelector('code') || panel; }\n    }\n    return null;\n  }\n\n  root.addEventListener('click', function (e) {\n    var btn = e.target.closest('.gs-copy');\n    if (!btn) { return; }\n    var target = resolveTarget(btn);\n    if (!target) { markCopied(btn, false); return; }\n    var text = target.textContent;\n\n    if (navigator.clipboard && navigator.clipboard.writeText) {\n      navigator.clipboard.writeText(text).then(\n        function () { markCopied(btn, true); },\n        function () { markCopied(btn, legacyCopy(text)); }\n      );\n    } else {\n      markCopied(btn, legacyCopy(text));\n    }\n  });\n})();\n{\n  \"@context\": \"http://schema.org\",\n  \"@type\": \"Organization\",\n  \"url\": \"https://postmarkapp.com\",\n  \"logo\": \"https://postmarkapp.com/images/logo-stamp-social.png\",\n  \"name\": \"Postmark\",\n  \"founder\": [\n    {\n      \"@type\": \"Person\",\n      \"name\": \"Jason VandeBoom\",\n      \"jobTitle\": \"CEO\"\n    }\n  ],\n  \"foundingLocation\": {\n    \"@type\": \"Place\",\n    \"address\": {\n      \"@type\": \"PostalAddress\",\n      \"streetAddress\": \"1 North Dearborn St, 5th Floor\",\n      \"addressLocality\": \"Chicago\",\n      \"addressRegion\": \"IL\",\n      \"postalCode\": \"60602\",\n      \"addressCountry\": \"US\"\n    }\n  },\n  \"location\": {\n    \"@type\": \"Place\",\n    \"address\": {\n      \"@type\": \"PostalAddress\",\n      \"streetAddress\": \"1 North Dearborn St, 5th Floor\",\n      \"addressLocality\": \"Chicago\",\n      \"addressRegion\": \"IL\",\n      \"postalCode\": \"60602\",\n      \"addressCountry\": \"US\"\n    }\n  },\n  \"sameAs\": [\n    \"https://twitter.com/postmarkapp\"\n  ]\n}\n{\n  \"@context\": \"http://schema.org\",\n  \"@type\": \"WebSite\",\n  \"name\": \"Postmark\",\n  \"url\": \"https://postmarkapp.com\"\n}\n",
+      "source": "codex_jsonl:item.completed",
+      "status": "completed"
+    },
+    {
+      "command": "/bin/zsh -lc \"rg --files -g '\"'!node_modules'\"' -g '\"'!postmark-official-get-started.html'\"' .\"",
+      "exit_code": 1,
+      "output": "",
+      "source": "codex_jsonl:item.completed",
+      "status": "failed"
+    }
+  ],
+  "candidate_execution_observed": true,
+  "content_sha256": "c5adb50dc2371a211217999104ed99e77b792ba35500192c0ea61d5e58cc7e24",
+  "controls": {
+    "firstcall_rescue": false,
+    "fresh_workspace": true,
+    "intervention": false,
+    "sandboxed_effect_required": true
+  },
+  "evidence_integrity": {
+    "checks": [
+      "exact_agent_credential",
+      "exact_verifier_credential",
+      "repository_secret_patterns"
+    ],
+    "redacted_locations": [],
+    "status": "clean"
+  },
+  "execution_nonce": "d0bd8c7ade2b",
+  "experiment": "MULTI-001",
+  "frozen_provenance": {
+    "README.md": {
+      "bytes": 553,
+      "sha256": "732e2584bf65b8f0bacef07c0f08c8e2216d06a3b19479a8e74655e414f50f29"
+    },
+    "candidates.json": {
+      "bytes": 1162,
+      "sha256": "85f78fb75aedebfccc4cb380c3de5ac87d40bc0380ae36953180cfec49677012"
+    },
+    "intent-manifest.json": {
+      "bytes": 474,
+      "sha256": "1b73a8b764e95fd157e4302da15577d6eb8ce7ae5eb8cd6b89516634083e44db"
+    },
+    "postmark/apparatus-manifest.json": {
+      "bytes": 613,
+      "sha256": "7bb258f82058346b9d85a88ba11fa1d70eddb113ef5c8a9ba623368f486ea4e6"
+    },
+    "postmark/invalidations/d631d6344557.json": {
+      "bytes": 1077,
+      "sha256": "e3e985b20a118a8cc4c29f61b6815e451bea3a1cd754341faa3cd677f0a348d9"
+    },
+    "postmark/official-onboarding/get-started.html": {
+      "bytes": 115244,
+      "sha256": "8410998e0f53c0d56b8804fab215dce9955dbcb6a81d70b2bd88a39cee2ca4cc"
+    },
+    "postmark/official-onboarding/manifest.json": {
+      "bytes": 288,
+      "sha256": "383b9a382a0b49352696c5c5083fec3222c0df27497eeda3efb0b4da7adf9021"
+    },
+    "postmark/policy.json": {
+      "bytes": 402,
+      "sha256": "01a69e8c3ec080ef0802d33096e903db4563f3fab20316fdb0d1f88bef68206e"
+    },
+    "postmark/subject-contract.json": {
+      "bytes": 328,
+      "sha256": "244732f4518aa18261656ec9c2fe48da10436d73607ac7efd09cf3a5a26351e7"
+    },
+    "postmark/task.txt": {
+      "bytes": 701,
+      "sha256": "168eb6ae140021c001ca9802f43a6ba4649bc737189d422fef256b1b3e3e7456"
+    },
+    "protocol.md": {
+      "bytes": 5075,
+      "sha256": "634b10f94d8a82ce23548aedac955ffa09cfa1cca231922ac5006b9eb28afc07"
+    }
+  },
+  "halt_cohort": false,
+  "integrity": {
+    "forbidden_files": [],
+    "secret_leaked": false
+  },
+  "journey_evidence": {
+    "base_path": "R02",
+    "description": "captured Codex exec JSONL",
+    "evidence_integrity": {
+      "checks": [
+        "exact_agent_credential",
+        "exact_verifier_credential",
+        "repository_secret_patterns"
+      ],
+      "redacted_locations": [],
+      "status": "clean"
+    },
+    "files": [
+      {
+        "bytes": 27438,
+        "evidence_integrity": "clean",
+        "path": "candidate-commands.json",
+        "sha256": "7f08b93e846b0f9ca536bb1298e90b73545c64083b5e04d9fc8ca156ee8834b7"
+      },
+      {
+        "bytes": 0,
+        "evidence_integrity": "clean",
+        "path": "codex.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 29076,
+        "evidence_integrity": "clean",
+        "path": "codex.stdout.jsonl",
+        "sha256": "d4dec53193189c27a240909cf50eea8aa7496091ffbcac487145f62ad79dba78"
+      },
+      {
+        "bytes": 166,
+        "evidence_integrity": "clean",
+        "path": "evidence-integrity.json",
+        "sha256": "889980a875b3ca5e55dfc97ecd49f37bac47d11045e06c91979ae4b511fddaea"
+      },
+      {
+        "bytes": 391,
+        "evidence_integrity": "clean",
+        "path": "workspace-manifest.json",
+        "sha256": "5488233e5f59d18c3909486159434e35bd7e1bcdefac3dac6681d3fe11511295"
+      },
+      {
+        "bytes": 115244,
+        "evidence_integrity": "clean",
+        "path": "workspace/postmark-official-get-started.html",
+        "sha256": "8410998e0f53c0d56b8804fab215dce9955dbcb6a81d70b2bd88a39cee2ca4cc"
+      }
+    ],
+    "workspace_exclusions": [
+      "*.pyc",
+      "*.pyo",
+      ".cache",
+      ".firstcall",
+      ".git",
+      ".mypy_cache",
+      ".nox",
+      ".pytest_cache",
+      ".ruff_cache",
+      ".tox",
+      ".venv",
+      "__pycache__",
+      "env",
+      "node_modules",
+      "symlinks",
+      "venv",
+      "virtual environments"
+    ]
+  },
+  "product": "POSTMARK",
+  "prompt_sha256": "7cb725a3de961285498820ffebf479dde8227b36d5bab7ac56d2ae2d0b5beaa1",
+  "recipient": "test@blackhole.postmarkapp.com",
+  "run_id": "R02",
+  "runner_sha256": "47557898ff255d8d244971194a51ff8b1cf4494b851affea1f6832c373e705e3",
+  "stage": "BASELINE_DISCOVERY",
+  "started_at": "2026-09-18T10:11:59.272499+00:00",
+  "subject": "FIRSTCALL MULTI-001 POSTMARK d0bd8c7ade2b R02",
+  "verdict": "EFFECT_FAILED",
+  "verification": {
+    "message_id": null,
+    "observed": false,
+    "reason": "vendor effect not observed",
+    "recipient": "test@blackhole.postmarkapp.com",
+    "status": null,
+    "subject": "FIRSTCALL MULTI-001 POSTMARK d0bd8c7ade2b R02"
+  }
+}

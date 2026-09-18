@@ -1,0 +1,36 @@
+{
+  "experiment": "MULTI-001",
+  "status": "DISCOVERY_NOT_STARTED",
+  "products": [
+    {
+      "id": "POSTMARK",
+      "category": "transactional_email",
+      "environment": "sandbox",
+      "candidate_outcome": "create exactly one sandbox message with a unique run-bound marker",
+      "independent_verification_required": true,
+      "production_effects_allowed": false,
+      "billing_allowed": false,
+      "priority": 1
+    },
+    {
+      "id": "STRIPE",
+      "category": "payments_api",
+      "environment": "sandbox_or_test",
+      "candidate_outcome": "create exactly one test-mode product-side object with a unique run-bound marker",
+      "independent_verification_required": true,
+      "production_effects_allowed": false,
+      "billing_allowed": false,
+      "priority": 2
+    },
+    {
+      "id": "CLERK",
+      "category": "identity",
+      "environment": "development_test_mode",
+      "candidate_outcome": "create exactly one test identity-side object with a unique run-bound marker",
+      "independent_verification_required": true,
+      "production_effects_allowed": false,
+      "billing_allowed": false,
+      "priority": 3
+    }
+  ]
+}

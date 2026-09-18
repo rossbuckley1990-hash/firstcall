@@ -1,0 +1,19 @@
+{
+  "experiment_id": "MULTI-001",
+  "product": "POSTMARK",
+  "cohort_nonce": "d631d6344557",
+  "disposition": "INVALID_BASELINE",
+  "reason": "APPARATUS_DEFECT",
+  "defect": "The frozen task required the autonomous customer to use supplied official Postmark onboarding material, but the cohort runner supplied no onboarding material.",
+  "observations": {
+    "R01_workspace_manifest": [],
+    "R02_workspace_manifest": [],
+    "R03_workspace_manifest": [],
+    "postmark_operation_attempt_established": false
+  },
+  "interpretation": "The observed 0/3 must not be attributed to Postmark onboarding and must not be used as the pre-intervention AFCR for a Postmark repair experiment.",
+  "evidence_preservation": "Original receipts and evidence remain unchanged.",
+  "next_action": "Prospectively freeze official Postmark onboarding material, deliver the exact frozen bytes to every fresh customer workspace, freeze the corrected apparatus, then execute a new baseline cohort with a new nonce.",
+  "intervention_status": "NONE",
+  "postmark_diagnosis_status": "NOT_PERFORMED"
+}

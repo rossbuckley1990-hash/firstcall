@@ -14,6 +14,7 @@ class CommandEvidence:
     exit_code: int | None
     output: str | None
     source: str
+    status: str | None = None
 
 
 @dataclass(frozen=True)
@@ -121,6 +122,15 @@ def _looks_like_candidate_command(text: str) -> bool:
 def extract_candidate_commands(
     events: list[dict],
 ) -> tuple[CommandEvidence, ...]:
+    return tuple(
+        command for command in extract_completed_commands(events)
+        if _looks_like_candidate_command(command.command)
+    )
+
+
+def extract_completed_commands(
+    events: list[dict] | tuple[dict, ...],
+) -> tuple[CommandEvidence, ...]:
     """
     Parse the documented codex exec --json command_execution schema.
 
@@ -159,12 +169,9 @@ def extract_candidate_commands(
         if not isinstance(command, str):
             continue
 
-        if not _looks_like_candidate_command(command):
-            continue
-
         exit_code = item.get("exit_code")
 
-        if not isinstance(exit_code, int):
+        if not isinstance(exit_code, int) or isinstance(exit_code, bool):
             exit_code = None
 
         output = item.get("aggregated_output")
@@ -174,10 +181,11 @@ def extract_candidate_commands(
 
         found.append(
             CommandEvidence(
-                command=" ".join(command.split()),
+                command=command,
                 exit_code=exit_code,
                 output=output,
                 source="codex_jsonl:item.completed",
+                status=item.get("status") if isinstance(item.get("status"), str) else None,
             )
         )
 

@@ -4,6 +4,7 @@ from dataclasses import dataclass
 import json
 import time
 import subprocess
+from datetime import datetime
 
 
 @dataclass(frozen=True)
@@ -23,12 +24,14 @@ class ResendVerifier:
         api_key: str,
         subject: str,
         recipient: str = "delivered@resend.dev",
+        created_after: str | None = None,
     ):
         self.api_key = api_key
         self.subject = subject
         self.recipient = recipient
+        self.created_after = created_after
 
-    def _list(self) -> dict:
+    def _list(self, *, after: str | None = None) -> dict:
         result = subprocess.run(
             [
                 "curl",
@@ -39,7 +42,14 @@ class ResendVerifier:
                 f"Authorization: Bearer {self.api_key}",
                 "-H",
                 "Accept: application/json",
-                "https://api.resend.com/emails?limit=100",
+                (
+                    "https://api.resend.com/emails?limit=100"
+                    + (
+                        "&after=" + after
+                        if after is not None
+                        else ""
+                    )
+                ),
             ],
             capture_output=True,
             text=True,
@@ -62,32 +72,103 @@ class ResendVerifier:
         last_reason = "matching vendor-side email not found"
 
         for _ in range(attempts):
-            try:
-                payload = self._list()
-            except (
-                RuntimeError,
-                subprocess.TimeoutExpired,
-                json.JSONDecodeError,
-            ) as exc:
-                last_reason = (
-                    "verifier API failure: "
-                    + type(exc).__name__
-                )
+            matches = []
+            after = None
+            seen_cursors = set()
+            verifier_failed = False
+
+            while True:
+                try:
+                    payload = self._list(after=after)
+                except (
+                    RuntimeError,
+                    subprocess.TimeoutExpired,
+                    json.JSONDecodeError,
+                ) as exc:
+                    last_reason = (
+                        "verifier API failure: "
+                        + type(exc).__name__
+                    )
+                    verifier_failed = True
+                    break
+
+                data = payload.get("data", [])
+
+                if not isinstance(data, list):
+                    last_reason = "invalid verifier list response"
+                    verifier_failed = True
+                    break
+
+                for item in data:
+                    if item.get("subject") != self.subject:
+                        continue
+
+                    recipients = item.get("to") or []
+
+                    if isinstance(recipients, str):
+                        recipients = [recipients]
+
+                    if self.recipient not in recipients:
+                        continue
+
+                    if self.created_after is not None:
+                        created_at = item.get("created_at")
+
+                        if not created_at:
+                            continue
+
+                        try:
+                            created = datetime.fromisoformat(
+                                created_at.replace("Z", "+00:00")
+                            )
+                            boundary = datetime.fromisoformat(
+                                self.created_after.replace("Z", "+00:00")
+                            )
+                        except ValueError:
+                            continue
+
+                        if created < boundary:
+                            continue
+
+                    matches.append(item)
+
+                    if len(matches) > 1:
+                        return ResendObservation(
+                            observed=False,
+                            email_id=None,
+                            subject=self.subject,
+                            recipient=self.recipient,
+                            last_event=None,
+                            reason=(
+                                "multiple matching vendor-side "
+                                "emails observed"
+                            ),
+                        )
+
+                if not payload.get("has_more"):
+                    break
+
+                if not data:
+                    last_reason = "invalid empty pagination page"
+                    verifier_failed = True
+                    break
+
+                cursor = data[-1].get("id")
+
+                if not cursor or cursor in seen_cursors:
+                    last_reason = "invalid verifier pagination cursor"
+                    verifier_failed = True
+                    break
+
+                seen_cursors.add(cursor)
+                after = cursor
+
+            if verifier_failed:
                 time.sleep(delay)
                 continue
 
-            for item in payload.get("data", []):
-                if item.get("subject") != self.subject:
-                    continue
-
-                recipients = item.get("to") or []
-
-                if isinstance(recipients, str):
-                    recipients = [recipients]
-
-                if self.recipient not in recipients:
-                    continue
-
+            if len(matches) == 1:
+                item = matches[0]
                 return ResendObservation(
                     observed=True,
                     email_id=item.get("id"),

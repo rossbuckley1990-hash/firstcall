@@ -1,0 +1,19 @@
+{
+  "apparatus_sha256": "a13bbf38f620d4a6643de02e2c4ca473f515fc870c5e15d11c01fddc3a220412",
+  "firstcall/verifiers/postmark.py": {
+    "bytes": 5668,
+    "sha256": "a5ccee347bf0b3fd3978926c9a6d283815fc72b546a2583d32a4f21fcc510aa3"
+  },
+  "policy.json": {
+    "bytes": 402,
+    "sha256": "01a69e8c3ec080ef0802d33096e903db4563f3fab20316fdb0d1f88bef68206e"
+  },
+  "subject-contract.json": {
+    "bytes": 328,
+    "sha256": "244732f4518aa18261656ec9c2fe48da10436d73607ac7efd09cf3a5a26351e7"
+  },
+  "task.txt": {
+    "bytes": 701,
+    "sha256": "168eb6ae140021c001ca9802f43a6ba4649bc737189d422fef256b1b3e3e7456"
+  }
+}

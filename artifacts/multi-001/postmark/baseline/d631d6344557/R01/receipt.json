@@ -1,0 +1,172 @@
+{
+  "agent": {
+    "claim_ok": false,
+    "duration_ms": 25554,
+    "exit_code": 0
+  },
+  "apparatus_commit": "5ac92e1d3971bba8a061405d6c9173b1baaed218",
+  "apparatus_dirty": false,
+  "apparatus_files": {
+    "firstcall/agents/codex_events.py": "c61e063a85499e2a46b26df4e4d580590bf43aab8fa2b5edcb9500a297f2eb9c",
+    "firstcall/agents/codex_live.py": "1265f353e531c7940e09203ea6a63e5ed76d63a4a9da79ee3f1a7cc84b2c79e0",
+    "firstcall/grade.py": "4ba7304bc5f1ffa79f4500cfc0145c7cabb5535842bee5cff6ba9e3bc0e72244",
+    "firstcall/journey_evidence.py": "2cab91da7fcdf34c70d02061174560ea6443147ba39eeba8abcc237e55c400bb",
+    "firstcall/postmark_preflight.py": "967f92f90dc49cb87ed52056d14e32203624fffc0cfa81dbbcc63ee547570ddc",
+    "firstcall/verifiers/postmark.py": "7ac6b91fc78190e566e887e7bfaf6e105b049f676919c77e4b81eaa350ef9cf6"
+  },
+  "candidate_commands": [
+    {
+      "command": "/bin/zsh -lc \"pwd; rg --files -g '\"'!node_modules'\"' -g '\"'!package-lock.json'\"' -g '\"'!yarn.lock'\"' -g '\"'!pnpm-lock.yaml'\"' -g '\"'!'\"\\\\.git/**' -g '\"'!'\"\\\\.env*' .\"",
+      "exit_code": 1,
+      "output": "/private/var/folders/tz/y04t4d0900xdbmz96jp608180000gn/T/firstcall-run-n094t1wc\n",
+      "source": "codex_jsonl:item.completed",
+      "status": "failed"
+    },
+    {
+      "command": "/bin/zsh -lc \"ls -la; python3 - <<'PY'\nimport os\nprint('POSTMARK_SERVER_TOKEN present:', bool(os.environ.get('POSTMARK_SERVER_TOKEN')))\nprint('Material-related environment variable names:', ', '.join(k for k in os.environ if any(s in k.upper() for s in ['POSTMARK','ONBOARD','MATERIAL'])))\nPY\"",
+      "exit_code": 0,
+      "output": "total 0\ndrwx------      2 ross  staff      64 Sep 18 09:19 .\ndrwx------@ 18153 ross  staff  580896 Sep 18 09:19 ..\nPOSTMARK_SERVER_TOKEN present: True\nMaterial-related environment variable names: POSTMARK_SERVER_TOKEN\n",
+      "source": "codex_jsonl:item.completed",
+      "status": "completed"
+    }
+  ],
+  "candidate_execution_observed": true,
+  "content_sha256": "90b45320217918fcb8e3fcb3c237bc07556758a98944a6acb80f3037c025efd1",
+  "controls": {
+    "firstcall_rescue": false,
+    "fresh_workspace": true,
+    "intervention": false,
+    "sandboxed_effect_required": true
+  },
+  "evidence_integrity": {
+    "checks": [
+      "exact_agent_credential",
+      "exact_verifier_credential",
+      "repository_secret_patterns"
+    ],
+    "redacted_locations": [],
+    "status": "clean"
+  },
+  "execution_nonce": "d631d6344557",
+  "experiment": "MULTI-001",
+  "frozen_provenance": {
+    "README.md": {
+      "bytes": 553,
+      "sha256": "732e2584bf65b8f0bacef07c0f08c8e2216d06a3b19479a8e74655e414f50f29"
+    },
+    "candidates.json": {
+      "bytes": 1162,
+      "sha256": "85f78fb75aedebfccc4cb380c3de5ac87d40bc0380ae36953180cfec49677012"
+    },
+    "intent-manifest.json": {
+      "bytes": 474,
+      "sha256": "1b73a8b764e95fd157e4302da15577d6eb8ce7ae5eb8cd6b89516634083e44db"
+    },
+    "postmark/apparatus-manifest.json": {
+      "bytes": 613,
+      "sha256": "7bb258f82058346b9d85a88ba11fa1d70eddb113ef5c8a9ba623368f486ea4e6"
+    },
+    "postmark/policy.json": {
+      "bytes": 402,
+      "sha256": "01a69e8c3ec080ef0802d33096e903db4563f3fab20316fdb0d1f88bef68206e"
+    },
+    "postmark/subject-contract.json": {
+      "bytes": 328,
+      "sha256": "244732f4518aa18261656ec9c2fe48da10436d73607ac7efd09cf3a5a26351e7"
+    },
+    "postmark/task.txt": {
+      "bytes": 701,
+      "sha256": "168eb6ae140021c001ca9802f43a6ba4649bc737189d422fef256b1b3e3e7456"
+    },
+    "protocol.md": {
+      "bytes": 5075,
+      "sha256": "634b10f94d8a82ce23548aedac955ffa09cfa1cca231922ac5006b9eb28afc07"
+    }
+  },
+  "halt_cohort": false,
+  "integrity": {
+    "forbidden_files": [],
+    "secret_leaked": false
+  },
+  "journey_evidence": {
+    "base_path": "R01",
+    "description": "captured Codex exec JSONL",
+    "evidence_integrity": {
+      "checks": [
+        "exact_agent_credential",
+        "exact_verifier_credential",
+        "repository_secret_patterns"
+      ],
+      "redacted_locations": [],
+      "status": "clean"
+    },
+    "files": [
+      {
+        "bytes": 1058,
+        "evidence_integrity": "clean",
+        "path": "candidate-commands.json",
+        "sha256": "7c16379a081e7f4fa53284d23d6e9876c34afd3920a17242e9ff5f803cf3b27f"
+      },
+      {
+        "bytes": 0,
+        "evidence_integrity": "clean",
+        "path": "codex.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "bytes": 76564,
+        "evidence_integrity": "clean",
+        "path": "codex.stdout.jsonl",
+        "sha256": "687595bd6c6331cda3529db42a8fec040cd30a459605562221ec67900b10f83a"
+      },
+      {
+        "bytes": 166,
+        "evidence_integrity": "clean",
+        "path": "evidence-integrity.json",
+        "sha256": "889980a875b3ca5e55dfc97ecd49f37bac47d11045e06c91979ae4b511fddaea"
+      },
+      {
+        "bytes": 2,
+        "evidence_integrity": "clean",
+        "path": "workspace-manifest.json",
+        "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      }
+    ],
+    "workspace_exclusions": [
+      "*.pyc",
+      "*.pyo",
+      ".cache",
+      ".firstcall",
+      ".git",
+      ".mypy_cache",
+      ".nox",
+      ".pytest_cache",
+      ".ruff_cache",
+      ".tox",
+      ".venv",
+      "__pycache__",
+      "env",
+      "node_modules",
+      "symlinks",
+      "venv",
+      "virtual environments"
+    ]
+  },
+  "product": "POSTMARK",
+  "prompt_sha256": "0ec5ec9fb7a9c9309dbd6e6237a223cedbecd5cfff2e7f6c4cd3bfcf44ecbcb6",
+  "recipient": "test@blackhole.postmarkapp.com",
+  "run_id": "R01",
+  "runner_sha256": "b0b85f5677e06c64afed40d6dbef9a3836204a8107d91e8472616d71411827bc",
+  "stage": "BASELINE_DISCOVERY",
+  "started_at": "2026-09-18T08:19:05.427886+00:00",
+  "subject": "FIRSTCALL MULTI-001 POSTMARK d631d6344557 R01",
+  "verdict": "EFFECT_FAILED",
+  "verification": {
+    "message_id": null,
+    "observed": false,
+    "reason": "vendor effect not observed",
+    "recipient": "test@blackhole.postmarkapp.com",
+    "status": null,
+    "subject": "FIRSTCALL MULTI-001 POSTMARK d631d6344557 R01"
+  }
+}
