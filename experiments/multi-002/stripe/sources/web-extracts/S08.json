@@ -1,0 +1,7 @@
+{
+  "id": "S08",
+  "url": "https://docs.stripe.com/payments/checkout/product-catalog.md",
+  "started": "2026-09-18T15:00:46.352Z",
+  "result": "Internal Error ()\nciteturn8view0 [wordlim: 200] Source: open({\"ref_id\":\"https://docs.stripe.com/payments/checkout/product-catalog.md\",\"lineno\":null}); Total lines: 1\nL0: URL https://docs.stripe.com/payments/checkout/product-catalog.md is not accessible via this tool.\n",
+  "ended": "2026-09-18T15:00:48.547Z"
+}

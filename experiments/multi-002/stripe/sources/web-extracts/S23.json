@@ -1,0 +1,7 @@
+{
+  "id": "S23",
+  "url": "https://docs.stripe.com/error-handling",
+  "started": "2026-09-18T15:01:04.804Z",
+  "result": " (https://docs.stripe.com/error-handling)\nciteturn30view0 [wordlim: 200] Crawled: today; Content type: text/markdown; Source: open({\"ref_id\":\"https://docs.stripe.com/error-handling\",\"lineno\":null}); Total lines: 13\nL0: # Error handling\nL1: \nL2: Catch and respond to declines, invalid data, network problems, and more.\nL3: ## Index\nL4: \nL5: This article has multiple variants. Fetch one of the following URLs to view specific content for your use case:\nL6: - [Ruby](https://docs.stripe.com/error-handling.md?lang=ruby)\nL7: - [Python](https://docs.stripe.com/error-handling.md?lang=python)\nL8: - [PHP](https://docs.stripe.com/error-handling.md?lang=php)\nL9: - [Java](https://docs.stripe.com/error-handling.md?lang=java)\nL10: - [Node.js](https://docs.stripe.com/error-handling.md?lang=node)\nL11: - [Go](https://docs.stripe.com/error-handling.md?lang=go)\nL12: - [.NET](https://docs.stripe.com/error-handling.md?lang=dotnet)\n",
+  "ended": "2026-09-18T15:01:12.034Z"
+}

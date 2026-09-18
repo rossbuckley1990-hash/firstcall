@@ -1,0 +1,7 @@
+{
+  "id": "S29",
+  "url": "https://docs.stripe.com/api/libraries",
+  "started": "2026-09-18T15:01:04.804Z",
+  "result": "Internal Error ()\nciteturn27view0 [wordlim: 200] Source: open({\"ref_id\":\"https://docs.stripe.com/api/libraries\",\"lineno\":null}); Total lines: 1\nL0: URL https://docs.stripe.com/api/libraries is not accessible via this tool.\n",
+  "ended": "2026-09-18T15:01:10.081Z"
+}
