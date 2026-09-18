@@ -1,0 +1,2230 @@
+
+
+<!doctype html>
+
+  <html lang="en" class="no-js">
+
+<head>
+  
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>
+      Get started | Postmark Developer Documentation  </title>
+<meta name="description" content="Send your first email with Postmark in minutes. Install an official library, set your API token, send a test email, and check the response — in your favorite language.">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="globalsign-domain-verification" content="F0n5fUwYguswb99EGyC5qD87O15uv5VBUiX9yRrxX6">
+<meta name="theme-color" content="#FFDE00">
+
+
+<script>dataLayer = [{'siteType': 'developer', 'visitorIP': '163.116.137.123'}];</script>
+
+  <link href="https://postmarkapp.com/dist/css/core.07c629365806ca721a26.css" rel="stylesheet">
+  
+      <link href="https://postmarkapp.com/dist/css/postmark.051c6593bcd013deec2b.css" rel="stylesheet">
+      
+<link rel="dns-prefetch" href="https://ssl.google-analytics.com">
+<link rel="dns-prefetch" href="https://www.google-analytics.com">
+
+
+
+<link rel="shortcut icon" href="/images/favicon.ico">
+<link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
+
+
+
+
+      <link rel="canonical" href="https://postmarkapp.com/developer/get-started">
+  <meta property="og:url" content="https://postmarkapp.com/developer/get-started">
+
+  <meta property="og:type" content="website">
+  <meta property="fb:app_id" content="244883355940334">
+
+  <meta property="og:title" content="Get started | Postmark Developer Documentation">
+
+  <meta property="og:description" content="Send your first email with Postmark in minutes. Install an official library, set your API token, send a test email, and check the response — in your favorite language.">
+
+
+
+
+          <meta property="og:image" content="https://postmarkapp.com/images/logo-stamp-social.png">
+  
+
+
+    <meta name="twitter:title" content="Get started | Postmark Developer Documentation">
+ 
+    <meta name="twitter:description" content="Send your first email with Postmark in minutes. Install an official library, set your API token, send a test email, and check the response — in your favorite language.">
+ 
+      <meta name="twitter:card" content="summary">
+
+        <meta name="twitter:image" content="https://postmarkapp.com/images/logo-stamp-social.png">
+  
+  <meta name="twitter:site" content="@postmarkapp">
+
+
+
+
+<meta name="slack-app-id" content="A8LSJN934">
+  <link href="https://postmarkapp.com/dist/css/developerDocs.6ee72682a452fef183bd.css" rel="stylesheet">
+  </head>
+
+<body id="api" class="docs-modern">
+
+
+
+
+
+
+
+
+<header class="header header--full-width header--compact">
+  <div class="u-container header_container">
+
+    <div class="header_branding">
+      <a href="https://postmarkapp.com/" class="header_postmark-logo">Postmark</a>
+      <div class="header_actions">
+                  <a href="https://account.postmarkapp.com/login" class="header_login cta-btn cta-btn--small ">Log In</a>
+                  <button class="header_hamburger js-nav-mobile-button" aria-haspopup="true">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+      </div>
+    </div>
+
+    
+
+  
+
+
+<nav class="nav nav--header nav--desktop" role="navigation" aria-label="Main">
+
+      
+
+<ul class="nav_list">
+  
+  <li class="nav_item ">
+    <a href="https://postmarkapp.com/why" class="nav_link">Why Postmark?</a>
+  </li>
+  <li class="nav_item nav_item--dropdown">
+    <button class="nav_link js-nav-popup" aria-haspopup="true" aria-expanded="false" data-target=".js-dropdown-product">Product</button>
+
+    <div class="nav_dropdown js-dropdown-product">
+      <div class="nav_dropdown-wrapper nav_dropdown-wrapper--product">
+        <div class="nav_features">
+          <h2 class="nav_sub-heading nav_sub-heading--features">Features</h2>
+          <ul class="nav_list">
+            <li class="nav_item">
+              <a href="https://postmarkapp.com/email-api" class="nav_link">
+                <span class="nav_icon nav_icon--email-api"></span>
+                <span class="nav_title">Email API</span>
+              </a>
+            </li>
+            <li class="nav_item">
+              <a href="https://postmarkapp.com/smtp-service" class="nav_link">
+                <span class="nav_icon nav_icon--smtp"></span>
+                <span class="nav_title">SMTP Service</span>
+              </a>
+            </li>
+            <li class="nav_item">
+              <a href="https://postmarkapp.com/message-streams" class="nav_link">
+                <span class="nav_icon nav_icon--streams"></span>
+                <span class="nav_title">Message Streams</span>
+              </a>
+            </li>
+            <li class="nav_item">
+              <a href="https://postmarkapp.com/transactional-email" class="nav_link">
+                <span class="nav_icon nav_icon--transactional"></span>
+                <span class="nav_title">Transactional Email</span>
+              </a>
+            </li>
+            <li class="nav_item">
+              <a href="https://postmarkapp.com/email-delivery" class="nav_link">
+                <span class="nav_icon nav_icon--delivery"></span>
+                <span class="nav_title">Email Delivery</span>
+              </a>
+            </li>
+            <li class="nav_item">
+              <a href="https://postmarkapp.com/email-templates" class="nav_link">
+                <span class="nav_icon nav_icon--templates"></span>
+                <span class="nav_title">Email Templates</span>
+              </a>
+            </li>
+            <li class="nav_item">
+              <a href="https://postmarkapp.com/inbound-email" class="nav_link">
+                <span class="nav_icon nav_icon--inbound"></span>
+                <span class="nav_title">Inbound Email</span>
+              </a>
+            </li>
+            <li class="nav_item">
+              <a href="https://postmarkapp.com/email-analytics" class="nav_link">
+                <span class="nav_icon nav_icon--insight"></span>
+                <span class="nav_title">Analytics & Retention</span>
+              </a>
+            </li>
+            <li class="nav_item">
+              <a href="https://postmarkapp.com/integrations" class="nav_link">
+                <span class="nav_icon nav_icon--integrations"></span>
+                <span class="nav_title">Integrations</span>
+              </a>
+            </li>
+            <li class="nav_item">
+              <a href="https://postmarkapp.com/bulk-api" class="nav_link">
+                <span class="nav_icon nav_icon--bulk-api"></span>
+                <span class="nav_title">Bulk API</span>
+                <span class="nav_label">New</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="nav_sub">
+          <h2 class="nav_sub-heading">
+            <span class="nav_icon nav_icon--for"></span>
+            <span class="nav_text">Postmark For</span>
+          </h2>
+          <ul class="nav_list">
+            <li><a href="https://postmarkapp.com/for/agencies" class="nav_sub-link">Agencies</a></li>
+            <li><a href="https://postmarkapp.com/for/enterprise" class="nav_sub-link">Enterprise</a></li>
+            <li><a href="https://postmarkapp.com/for/startups" class="nav_sub-link">Startups</a></li>
+            <li><a href="https://postmarkapp.com/for/bootstrapped-startups" class="nav_sub-link">Bootstrapped Startups</a></li>
+            <li><a href="https://postmarkapp.com/for/side-projects" class="nav_sub-link">Side Projects</a></li>
+          </ul>
+
+          <h2 class="nav_sub-heading u-pad-top--xs">
+            <span class="nav_icon nav_icon--versus"></span>
+            <span class="nav_text">Postmark vs.</span>
+          </h2>
+          <ul class="nav_list">
+            <li><a href="https://postmarkapp.com/compare/sendgrid-alternative" class="nav_sub-link">SendGrid</a></li>
+            <li><a href="https://postmarkapp.com/compare/mailgun-alternative" class="nav_sub-link">Mailgun</a></li>
+            <li><a href="https://postmarkapp.com/compare/amazon-ses-alternative" class="nav_sub-link">Amazon SES</a></li>
+            <li><a href="https://postmarkapp.com/compare/sparkpost-alternative" class="nav_sub-link">SparkPost</a></li>
+            <li><a href="https://postmarkapp.com/compare/mandrill-alternative" class="nav_sub-link">Mandrill</a></li>
+            <li>
+              <a href="https://postmarkapp.com/compare/resend-alternative" class="nav_sub-link">
+                <span>Resend</span>
+                <span class="nav_label">New</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </li>
+  <li class="nav_item">
+    <a href="https://postmarkapp.com/pricing" class="nav_link">Pricing</a>
+  </li>
+  <li class="nav_item nav_item--dropdown nav_item--current">
+    <button class="nav_link js-nav-popup" aria-haspopup="true" aria-expanded="false" data-target=".js-dropdown-resources">Resources</button>
+
+    <div class="nav_dropdown js-dropdown-resources">
+      <div class="nav_dropdown-wrapper">
+        <ul class="nav_list">
+          <li class="nav_item">
+            <a href="https://postmarkapp.com/blog" class="nav_link">
+              <span class="nav_icon nav_icon--blog"></span>
+              <span class="nav_title">Blog</span>
+            </a>
+          </li>
+          <li class="nav_item">
+            <a href="https://postmarkapp.com/developer" class="nav_link">
+              <span class="nav_icon nav_icon--api-docs"></span>
+              <span class="nav_title">API Documentation</span>
+            </a>
+          </li>
+          <li class="nav_item">
+            <a href="https://postmarkapp.com/manual" class="nav_link">
+              <span class="nav_icon nav_icon--manual"></span>
+              <span class="nav_title">Getting Started</span>
+            </a>
+          </li>
+          <li class="nav_item">
+            <a href="https://postmarkapp.com/guides" class="nav_link">
+              <span class="nav_icon nav_icon--guides"></span>
+              <span class="nav_title">Email Guides</span>
+            </a>
+          </li>
+          <li class="nav_item">
+            <a href="https://postmarkapp.com/postmark-express" class="nav_link">
+              <span class="nav_icon nav_icon--comic"></span>
+              <span class="nav_title">Email Comic</span>
+            </a>
+          </li>
+          <li class="nav_item">
+            <a href="https://postmarkapp.com/webinars" class="nav_link">
+              <span class="nav_icon nav_icon--webinars"></span>
+              <span class="nav_title">Webinars</span>
+            </a>
+          </li>
+          <li class="nav_item">
+            <a href="https://postmarkapp.com/videos" class="nav_link">
+              <span class="nav_icon nav_icon--videos"></span>
+              <span class="nav_title">Videos</span>
+            </a>
+          </li>
+          <li class="nav_item">
+            <a href="https://postmarkapp.com/podcast" class="nav_link">
+              <span class="nav_icon nav_icon--podcast"></span>
+              <span class="nav_title">Podcast</span>
+            </a>
+          </li>
+          <li class="nav_item">
+            <a href="https://postmarkapp.com/labs" class="nav_link">
+              <span class="nav_icon nav_icon--labs"></span>
+              <span class="nav_title">Labs</span>
+            </a>
+          </li>
+          <li class="nav_item">
+            <a href="https://dmarcdigests.com" target="_blank" rel="noopener" class="nav_link">
+              <span class="nav_icon nav_icon--dmarc"></span>
+              <span class="nav_title">DMARC Digests</span>
+            </a>
+          </li>
+          <li class="nav_item">
+            <a href="https://postmarkapp.com/glossary" class="nav_link">
+              <span class="nav_icon nav_icon--glossary"></span>
+              <span class="nav_title">Glossary</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </li>
+  <li class="nav_item nav_item--dropdown">
+    <button class="nav_link js-nav-popup" aria-haspopup="true" aria-expanded="false" data-target=".js-dropdown-help">Help</button>
+
+    <div class="nav_dropdown js-dropdown-help">
+      <div class="nav_dropdown-wrapper">
+        <ul class="nav_list">
+          <li class="nav_item">
+            <a href="https://postmarkapp.com/support" class="nav_link">
+              <span class="nav_icon nav_icon--support"></span>
+              <span class="nav_title">Support Center</span>
+            </a>
+          </li>
+          <li class="nav_item">
+            <a href="https://postmarkapp.com/contact" class="nav_link">
+              <span class="nav_icon nav_icon--contact"></span>
+              <span class="nav_title">Contact Support</span>
+            </a>
+          </li>
+          <li class="nav_item">
+            <a href="https://postmarkapp.com/talk-to-sales" class="nav_link">
+              <span class="nav_icon nav_icon--contact-sales"></span>
+              <span class="nav_title">Talk to Sales</span>
+            </a>
+          </li>
+          <li class="nav_item">
+            <a href="https://status.postmarkapp.com/" target="_blank" rel="noopener noreferrer" class="nav_link">
+              <span class="nav_icon nav_icon--status"></span>
+              <span class="nav_title">Status</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </li>
+
+  
+      <li class="nav_item nav_item--btn">
+      <a href="https://account.postmarkapp.com/login" id="nav-btn-log-in" class="nav_btn cta-btn ">Log in</a>
+    </li>
+    <li class="nav_item nav_item--btn">
+      <a href="https://account.postmarkapp.com/sign_up"
+         id="nav-btn-signup"
+         class="nav_btn cta-btn cta-btn--default js-signup"
+         data-track="Click"
+         data-category="Signup Button"
+         data-label="Header">Start free trial</a>
+    </li>
+  </ul>
+  
+</nav>
+
+    <div class="nav-mobile js-nav-mobile hidden--at-l-2">
+      <img src="/images/logo-stamp-simple.svg" class="nav-mobile_logo" />
+      
+
+  
+
+
+<nav class="nav nav--header nav--mobile" role="navigation" aria-label="Main">
+
+      
+
+<ul class="nav_list">
+  
+  <li class="nav_item ">
+    <a href="https://postmarkapp.com/why" class="nav_link">Why Postmark?</a>
+  </li>
+  <li class="nav_item nav_item--dropdown">
+    <button class="nav_link js-nav-popup" aria-haspopup="true" aria-expanded="false" data-target=".js-dropdown-product">Product</button>
+
+    <div class="nav_dropdown js-dropdown-product">
+      <div class="nav_dropdown-wrapper nav_dropdown-wrapper--product">
+        <div class="nav_features">
+          <h2 class="nav_sub-heading nav_sub-heading--features">Features</h2>
+          <ul class="nav_list">
+            <li class="nav_item">
+              <a href="https://postmarkapp.com/email-api" class="nav_link">
+                <span class="nav_icon nav_icon--email-api"></span>
+                <span class="nav_title">Email API</span>
+              </a>
+            </li>
+            <li class="nav_item">
+              <a href="https://postmarkapp.com/smtp-service" class="nav_link">
+                <span class="nav_icon nav_icon--smtp"></span>
+                <span class="nav_title">SMTP Service</span>
+              </a>
+            </li>
+            <li class="nav_item">
+              <a href="https://postmarkapp.com/message-streams" class="nav_link">
+                <span class="nav_icon nav_icon--streams"></span>
+                <span class="nav_title">Message Streams</span>
+              </a>
+            </li>
+            <li class="nav_item">
+              <a href="https://postmarkapp.com/transactional-email" class="nav_link">
+                <span class="nav_icon nav_icon--transactional"></span>
+                <span class="nav_title">Transactional Email</span>
+              </a>
+            </li>
+            <li class="nav_item">
+              <a href="https://postmarkapp.com/email-delivery" class="nav_link">
+                <span class="nav_icon nav_icon--delivery"></span>
+                <span class="nav_title">Email Delivery</span>
+              </a>
+            </li>
+            <li class="nav_item">
+              <a href="https://postmarkapp.com/email-templates" class="nav_link">
+                <span class="nav_icon nav_icon--templates"></span>
+                <span class="nav_title">Email Templates</span>
+              </a>
+            </li>
+            <li class="nav_item">
+              <a href="https://postmarkapp.com/inbound-email" class="nav_link">
+                <span class="nav_icon nav_icon--inbound"></span>
+                <span class="nav_title">Inbound Email</span>
+              </a>
+            </li>
+            <li class="nav_item">
+              <a href="https://postmarkapp.com/email-analytics" class="nav_link">
+                <span class="nav_icon nav_icon--insight"></span>
+                <span class="nav_title">Analytics & Retention</span>
+              </a>
+            </li>
+            <li class="nav_item">
+              <a href="https://postmarkapp.com/integrations" class="nav_link">
+                <span class="nav_icon nav_icon--integrations"></span>
+                <span class="nav_title">Integrations</span>
+              </a>
+            </li>
+            <li class="nav_item">
+              <a href="https://postmarkapp.com/bulk-api" class="nav_link">
+                <span class="nav_icon nav_icon--bulk-api"></span>
+                <span class="nav_title">Bulk API</span>
+                <span class="nav_label">New</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="nav_sub">
+          <h2 class="nav_sub-heading">
+            <span class="nav_icon nav_icon--for"></span>
+            <span class="nav_text">Postmark For</span>
+          </h2>
+          <ul class="nav_list">
+            <li><a href="https://postmarkapp.com/for/agencies" class="nav_sub-link">Agencies</a></li>
+            <li><a href="https://postmarkapp.com/for/enterprise" class="nav_sub-link">Enterprise</a></li>
+            <li><a href="https://postmarkapp.com/for/startups" class="nav_sub-link">Startups</a></li>
+            <li><a href="https://postmarkapp.com/for/bootstrapped-startups" class="nav_sub-link">Bootstrapped Startups</a></li>
+            <li><a href="https://postmarkapp.com/for/side-projects" class="nav_sub-link">Side Projects</a></li>
+          </ul>
+
+          <h2 class="nav_sub-heading u-pad-top--xs">
+            <span class="nav_icon nav_icon--versus"></span>
+            <span class="nav_text">Postmark vs.</span>
+          </h2>
+          <ul class="nav_list">
+            <li><a href="https://postmarkapp.com/compare/sendgrid-alternative" class="nav_sub-link">SendGrid</a></li>
+            <li><a href="https://postmarkapp.com/compare/mailgun-alternative" class="nav_sub-link">Mailgun</a></li>
+            <li><a href="https://postmarkapp.com/compare/amazon-ses-alternative" class="nav_sub-link">Amazon SES</a></li>
+            <li><a href="https://postmarkapp.com/compare/sparkpost-alternative" class="nav_sub-link">SparkPost</a></li>
+            <li><a href="https://postmarkapp.com/compare/mandrill-alternative" class="nav_sub-link">Mandrill</a></li>
+            <li>
+              <a href="https://postmarkapp.com/compare/resend-alternative" class="nav_sub-link">
+                <span>Resend</span>
+                <span class="nav_label">New</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </li>
+  <li class="nav_item">
+    <a href="https://postmarkapp.com/pricing" class="nav_link">Pricing</a>
+  </li>
+  <li class="nav_item nav_item--dropdown nav_item--current">
+    <button class="nav_link js-nav-popup" aria-haspopup="true" aria-expanded="false" data-target=".js-dropdown-resources">Resources</button>
+
+    <div class="nav_dropdown js-dropdown-resources">
+      <div class="nav_dropdown-wrapper">
+        <ul class="nav_list">
+          <li class="nav_item">
+            <a href="https://postmarkapp.com/blog" class="nav_link">
+              <span class="nav_icon nav_icon--blog"></span>
+              <span class="nav_title">Blog</span>
+            </a>
+          </li>
+          <li class="nav_item">
+            <a href="https://postmarkapp.com/developer" class="nav_link">
+              <span class="nav_icon nav_icon--api-docs"></span>
+              <span class="nav_title">API Documentation</span>
+            </a>
+          </li>
+          <li class="nav_item">
+            <a href="https://postmarkapp.com/manual" class="nav_link">
+              <span class="nav_icon nav_icon--manual"></span>
+              <span class="nav_title">Getting Started</span>
+            </a>
+          </li>
+          <li class="nav_item">
+            <a href="https://postmarkapp.com/guides" class="nav_link">
+              <span class="nav_icon nav_icon--guides"></span>
+              <span class="nav_title">Email Guides</span>
+            </a>
+          </li>
+          <li class="nav_item">
+            <a href="https://postmarkapp.com/postmark-express" class="nav_link">
+              <span class="nav_icon nav_icon--comic"></span>
+              <span class="nav_title">Email Comic</span>
+            </a>
+          </li>
+          <li class="nav_item">
+            <a href="https://postmarkapp.com/webinars" class="nav_link">
+              <span class="nav_icon nav_icon--webinars"></span>
+              <span class="nav_title">Webinars</span>
+            </a>
+          </li>
+          <li class="nav_item">
+            <a href="https://postmarkapp.com/videos" class="nav_link">
+              <span class="nav_icon nav_icon--videos"></span>
+              <span class="nav_title">Videos</span>
+            </a>
+          </li>
+          <li class="nav_item">
+            <a href="https://postmarkapp.com/podcast" class="nav_link">
+              <span class="nav_icon nav_icon--podcast"></span>
+              <span class="nav_title">Podcast</span>
+            </a>
+          </li>
+          <li class="nav_item">
+            <a href="https://postmarkapp.com/labs" class="nav_link">
+              <span class="nav_icon nav_icon--labs"></span>
+              <span class="nav_title">Labs</span>
+            </a>
+          </li>
+          <li class="nav_item">
+            <a href="https://dmarcdigests.com" target="_blank" rel="noopener" class="nav_link">
+              <span class="nav_icon nav_icon--dmarc"></span>
+              <span class="nav_title">DMARC Digests</span>
+            </a>
+          </li>
+          <li class="nav_item">
+            <a href="https://postmarkapp.com/glossary" class="nav_link">
+              <span class="nav_icon nav_icon--glossary"></span>
+              <span class="nav_title">Glossary</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </li>
+  <li class="nav_item nav_item--dropdown">
+    <button class="nav_link js-nav-popup" aria-haspopup="true" aria-expanded="false" data-target=".js-dropdown-help">Help</button>
+
+    <div class="nav_dropdown js-dropdown-help">
+      <div class="nav_dropdown-wrapper">
+        <ul class="nav_list">
+          <li class="nav_item">
+            <a href="https://postmarkapp.com/support" class="nav_link">
+              <span class="nav_icon nav_icon--support"></span>
+              <span class="nav_title">Support Center</span>
+            </a>
+          </li>
+          <li class="nav_item">
+            <a href="https://postmarkapp.com/contact" class="nav_link">
+              <span class="nav_icon nav_icon--contact"></span>
+              <span class="nav_title">Contact Support</span>
+            </a>
+          </li>
+          <li class="nav_item">
+            <a href="https://postmarkapp.com/talk-to-sales" class="nav_link">
+              <span class="nav_icon nav_icon--contact-sales"></span>
+              <span class="nav_title">Talk to Sales</span>
+            </a>
+          </li>
+          <li class="nav_item">
+            <a href="https://status.postmarkapp.com/" target="_blank" rel="noopener noreferrer" class="nav_link">
+              <span class="nav_icon nav_icon--status"></span>
+              <span class="nav_title">Status</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </li>
+
+  
+      <li class="nav_item nav_item--btn">
+      <a href="https://account.postmarkapp.com/login" id="nav-btn-log-in" class="nav_btn cta-btn ">Log in</a>
+    </li>
+    <li class="nav_item nav_item--btn">
+      <a href="https://account.postmarkapp.com/sign_up"
+         id="nav-btn-signup"
+         class="nav_btn cta-btn cta-btn--default js-signup"
+         data-track="Click"
+         data-category="Signup Button"
+         data-label="Header">Start free trial</a>
+    </li>
+  </ul>
+  
+</nav>
+
+      <div class="nav-mobile_extras">
+                  <a href="https://account.postmarkapp.com/sign_up"
+             class="cta-btn cta-btn--default cta-btn--medium js-signup"
+             data-track="Click"
+             data-category="Signup Button"
+             data-label="Header (Mobile)">Start free trial</a>
+          <p class="nav-mobile_login">Already have an account? <a href="https://account.postmarkapp.com/login">Log in →</a></p>
+              </div>
+    </div>
+
+  </div>
+</header>
+
+<div class="page">
+    <div class="docs-toc docs-toc--mobile">
+  <button type="button" class="docs-search__button docs-search__button--mobile js-open-modal" data-modal="developer-search">
+    <svg class="docs-search__icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M7 13C10.3137 13 13 10.3137 13 7C13 3.68629 10.3137 1 7 1C3.68629 1 1 3.68629 1 7C1 10.3137 3.68629 13 7 13Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M15 15L11.5 11.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <span class="docs-search__text">Search docs...</span>
+  </button>
+
+  <select>
+    <optgroup label="Overview">
+      <option value="/developer">Introduction</option>
+      <option value="/developer/get-started" selected>Get started</option>
+    </optgroup>
+    
+    <optgroup label="Integration">
+        <option value="https://postmarkapp.com/developer/integration/official-libraries" >Official libraries</option>
+  
+      <option value="https://postmarkapp.com/developer/integration/official-libraries#typescript" >- TypeScript</option>
+      <option value="https://postmarkapp.com/developer/integration/official-libraries#python-sdk" >- Python SDK</option>
+      <option value="https://postmarkapp.com/developer/integration/official-libraries#rails-gem" >- Rails gem</option>
+      <option value="https://postmarkapp.com/developer/integration/official-libraries#ruby-gem" >- Ruby gem</option>
+      <option value="https://postmarkapp.com/developer/integration/official-libraries#dot-net" >- .NET</option>
+      <option value="https://postmarkapp.com/developer/integration/official-libraries#java" >- Java</option>
+      <option value="https://postmarkapp.com/developer/integration/official-libraries#php" >- PHP</option>
+      <option value="https://postmarkapp.com/developer/integration/official-libraries#postmark-craft-plugin" >- Craft plugin</option>
+      <option value="https://postmarkapp.com/developer/integration/official-libraries#node-js" >- Node.js</option>
+      <option value="https://postmarkapp.com/developer/integration/official-libraries#postmark-cli" >- CLI</option>
+      <option value="https://postmarkapp.com/developer/integration/official-libraries#wordpress" >- WordPress plugin</option>
+      <option value="https://postmarkapp.com/developer/integration/official-libraries#grunt" >- Grunt plugin</option>
+      <option value="https://postmarkapp.com/developer/integration/official-libraries#postmark-zapier-actions" >- Zapier Actions</option>
+    <option value="https://postmarkapp.com/developer/integration/community-libraries" >Community libraries</option>
+  
+      <option value="https://postmarkapp.com/developer/integration/community-libraries#classic-asp" >- Classic ASP</option>
+      <option value="https://postmarkapp.com/developer/integration/community-libraries#clojure" >- Clojure</option>
+      <option value="https://postmarkapp.com/developer/integration/community-libraries#coldfusion" >- ColdFusion</option>
+      <option value="https://postmarkapp.com/developer/integration/community-libraries#django" >- Django</option>
+      <option value="https://postmarkapp.com/developer/integration/community-libraries#drupal-module" >- Drupal module</option>
+      <option value="https://postmarkapp.com/developer/integration/community-libraries#elixir" >- Elixir</option>
+      <option value="https://postmarkapp.com/developer/integration/community-libraries#erlang" >- Erlang</option>
+      <option value="https://postmarkapp.com/developer/integration/community-libraries#google-go" >- Google Go</option>
+      <option value="https://postmarkapp.com/developer/integration/community-libraries#grails-plugin" >- Grails plugin</option>
+      <option value="https://postmarkapp.com/developer/integration/community-libraries#haskell" >- Haskell</option>
+      <option value="https://postmarkapp.com/developer/integration/community-libraries#java" >- Java</option>
+      <option value="https://postmarkapp.com/developer/integration/community-libraries#laravel" >- Laravel</option>
+      <option value="https://postmarkapp.com/developer/integration/community-libraries#magento-extension" >- Magento extension</option>
+      <option value="https://postmarkapp.com/developer/integration/community-libraries#node-js" >- Node.js</option>
+      <option value="https://postmarkapp.com/developer/integration/community-libraries#objective-c" >- Objective-C</option>
+      <option value="https://postmarkapp.com/developer/integration/community-libraries#perl-wwwpostmark" >- Perl</option>
+      <option value="https://postmarkapp.com/developer/integration/community-libraries#pharo-smalltalk" >- Pharo Smalltalk</option>
+      <option value="https://postmarkapp.com/developer/integration/community-libraries#php-5" >- PHP 5</option>
+      <option value="https://postmarkapp.com/developer/integration/community-libraries#powershell-snap-in" >- PowerShell Snap-in</option>
+      <option value="https://postmarkapp.com/developer/integration/community-libraries#python" >- Python</option>
+      <option value="https://postmarkapp.com/developer/integration/community-libraries#scala" >- Scala</option>
+      <option value="https://postmarkapp.com/developer/integration/community-libraries#swift" >- Swift</option>
+      <option value="https://postmarkapp.com/developer/integration/community-libraries#wordpress-plugins" >- WordPress</option>
+      <option value="https://postmarkapp.com/developer/integration/community-libraries#zend" >- Zend</option>
+    <option value="https://postmarkapp.com/developer/integration/other-tools-and-integrations" >Tools and Integrations</option>
+  
+    <option value="https://postmarkapp.com/developer/integration/ai-prompts" >AI Prompts</option>
+  
+      <option value="https://postmarkapp.com/developer/integration/ai-prompts#integrate-postmark-with-node-js-express" >- Integrate Postmark with Node.js/Express</option>
+      <option value="https://postmarkapp.com/developer/integration/ai-prompts#add-postmark-to-a-rails-application" >- Add Postmark to a Rails application</option>
+      <option value="https://postmarkapp.com/developer/integration/ai-prompts#implement-postmark-in-laravel" >- Implement Postmark in Laravel</option>
+      <option value="https://postmarkapp.com/developer/integration/ai-prompts#build-a-password-reset-flow-with-postmark" >- Build a password reset flow with Postmark</option>
+      <option value="https://postmarkapp.com/developer/integration/ai-prompts#send-batch-notifications-with-failure-handling" >- Send batch notifications with failure handling</option>
+      <option value="https://postmarkapp.com/developer/integration/ai-prompts#handle-delivery-and-bounce-webhooks" >- Handle delivery and bounce webhooks</option>
+      <option value="https://postmarkapp.com/developer/integration/ai-prompts#set-up-email-notifications-for-user-actions" >- Set up email notifications for user actions</option>
+      <option value="https://postmarkapp.com/developer/integration/ai-prompts#send-a-receipt-with-templates" >- Send a receipt with templates</option>
+      <option value="https://postmarkapp.com/developer/integration/ai-prompts#handle-inbound-email-with-webhooks" >- Handle inbound email with webhooks</option>
+      <option value="https://postmarkapp.com/developer/integration/ai-prompts#integrate-with-better-auth" >- Integrate with Better Auth</option>
+      </optgroup>
+
+    <optgroup label="User guide">
+        <option value="https://postmarkapp.com/developer/user-guide/send-email-with-api" >Sending email with API</option>
+  
+      <option value="https://postmarkapp.com/developer/user-guide/send-email-with-api/send-a-single-email" >- Send a single email</option>
+      <option value="https://postmarkapp.com/developer/user-guide/send-email-with-api/batch-emails" >- Send batch emails</option>
+    <option value="https://postmarkapp.com/developer/user-guide/send-email-with-smtp" >Sending email with SMTP</option>
+  
+    <option value="https://postmarkapp.com/developer/user-guide/ip-allowlisting" >IP Allowlisting</option>
+  
+    <option value="https://postmarkapp.com/developer/user-guide/inbound" >Processing email</option>
+  
+      <option value="https://postmarkapp.com/developer/user-guide/inbound/configure-an-inbound-server" >- Configure an inbound server</option>
+      <option value="https://postmarkapp.com/developer/user-guide/inbound/inbound-domain-forwarding" >- Inbound domain forwarding</option>
+      <option value="https://postmarkapp.com/developer/user-guide/inbound/parse-an-email" >- Parse an email</option>
+      <option value="https://postmarkapp.com/developer/user-guide/inbound/configure-inbound-blocking" >- Configure inbound blocking</option>
+      <option value="https://postmarkapp.com/developer/user-guide/inbound/sample-inbound-workflow" >- Sample inbound workflow</option>
+    <option value="https://postmarkapp.com/developer/user-guide/tracking-opens" >Tracking opens</option>
+  
+      <option value="https://postmarkapp.com/developer/user-guide/tracking-opens/tracking-opens-per-message-stream" >- Tracking opens per Server</option>
+      <option value="https://postmarkapp.com/developer/user-guide/tracking-opens/tracking-opens-per-email" >- Tracking opens per email</option>
+      <option value="https://postmarkapp.com/developer/user-guide/tracking-opens/message-opens-api" >- Message opens API</option>
+    <option value="https://postmarkapp.com/developer/user-guide/tracking-links" >Tracking links</option>
+  
+    <option value="https://postmarkapp.com/developer/user-guide/managing-your-account" >Managing your account</option>
+  
+      <option value="https://postmarkapp.com/developer/user-guide/managing-your-account/managing-sender-signatures" >- Managing sender signatures</option>
+      <option value="https://postmarkapp.com/developer/user-guide/managing-your-account/managing-servers" >- Managing servers</option>
+    <option value="https://postmarkapp.com/developer/user-guide/sandbox-mode" >Sandbox mode</option>
+  
+      <option value="https://postmarkapp.com/developer/user-guide/sandbox-mode/server-sandbox-mode" >- Server sandbox mode</option>
+      <option value="https://postmarkapp.com/developer/user-guide/sandbox-mode/generate-fake-bounces" >- Generate fake bounces</option>
+      </optgroup>
+
+    <optgroup label="API reference">
+        <option value="https://postmarkapp.com/developer/api/overview" >Overview</option>
+  
+      <option value="https://postmarkapp.com/developer/api/overview#endpoint-url" >- Endpoint URL</option>
+      <option value="https://postmarkapp.com/developer/api/overview#authentication" >- Authentication</option>
+      <option value="https://postmarkapp.com/developer/api/overview#response-codes" >- HTTP response codes</option>
+      <option value="https://postmarkapp.com/developer/api/overview#error-codes" >- API error codes</option>
+    <option value="https://postmarkapp.com/developer/api/email-api" >Email</option>
+  
+      <option value="https://postmarkapp.com/developer/api/email-api#send-a-single-email" >- Send a single email</option>
+      <option value="https://postmarkapp.com/developer/api/email-api#send-batch-emails" >- Send batch emails</option>
+    <option value="https://postmarkapp.com/developer/api/bulk-email" >Bulk</option>
+  
+      <option value="https://postmarkapp.com/developer/api/bulk-email#send-bulk-emails" >- Send bulk emails</option>
+      <option value="https://postmarkapp.com/developer/api/bulk-email#get-a-bulk-send-status" >- Get the status/details of a bulk API request</option>
+      <option value="https://postmarkapp.com/developer/api/bulk-email#list-bulk-api-requests" >- List bulk API requests</option>
+      <option value="https://postmarkapp.com/developer/api/bulk-email#error-responses" >- Error responses</option>
+    <option value="https://postmarkapp.com/developer/api/bounce-api" >Bounce</option>
+  
+      <option value="https://postmarkapp.com/developer/api/bounce-api#delivery-stats" >- Get delivery stats</option>
+      <option value="https://postmarkapp.com/developer/api/bounce-api#bounces" >- Get bounces</option>
+      <option value="https://postmarkapp.com/developer/api/bounce-api#single-bounce" >- Get a single bounce</option>
+      <option value="https://postmarkapp.com/developer/api/bounce-api#bounce-dump" >- Get bounce dump</option>
+      <option value="https://postmarkapp.com/developer/api/bounce-api#activate-bounce" >- Activate a bounce</option>
+      <option value="https://postmarkapp.com/developer/api/bounce-api#bounce-types" >- Bounce types</option>
+      <option value="https://postmarkapp.com/developer/api/bounce-api#rebound-javascript-snippet-api" >- Rebound</option>
+    <option value="https://postmarkapp.com/developer/api/templates-api" >Templates</option>
+  
+      <option value="https://postmarkapp.com/developer/api/templates-api#email-with-template" >- Send email with template</option>
+      <option value="https://postmarkapp.com/developer/api/templates-api#send-batch-with-templates" >- Send batch with templates</option>
+      <option value="https://postmarkapp.com/developer/api/templates-api#send-a-receipt-with-templates" >- Send a receipt with templates</option>
+      <option value="https://postmarkapp.com/developer/api/templates-api#push-templates" >- Push templates to another server</option>
+      <option value="https://postmarkapp.com/developer/api/templates-api#get-template" >- Get a template</option>
+      <option value="https://postmarkapp.com/developer/api/templates-api#create-template" >- Create a template</option>
+      <option value="https://postmarkapp.com/developer/api/templates-api#edit-template" >- Edit a template</option>
+      <option value="https://postmarkapp.com/developer/api/templates-api#list-templates" >- List templates</option>
+      <option value="https://postmarkapp.com/developer/api/templates-api#delete-template" >- Delete a template</option>
+      <option value="https://postmarkapp.com/developer/api/templates-api#validate-template" >- Validate a template</option>
+    <option value="https://postmarkapp.com/developer/api/server-api" >Server</option>
+  
+      <option value="https://postmarkapp.com/developer/api/server-api#get-server" >- Get the server</option>
+      <option value="https://postmarkapp.com/developer/api/server-api#edit-server" >- Edit the server</option>
+    <option value="https://postmarkapp.com/developer/api/servers-api" >Servers</option>
+  
+      <option value="https://postmarkapp.com/developer/api/servers-api#get-server" >- Get a server</option>
+      <option value="https://postmarkapp.com/developer/api/servers-api#create-server" >- Create a server</option>
+      <option value="https://postmarkapp.com/developer/api/servers-api#edit-server" >- Edit a server</option>
+      <option value="https://postmarkapp.com/developer/api/servers-api#list-servers" >- List servers</option>
+      <option value="https://postmarkapp.com/developer/api/servers-api#delete-server" >- Delete a server</option>
+    <option value="https://postmarkapp.com/developer/api/message-streams-api" >Message Streams</option>
+  
+      <option value="https://postmarkapp.com/developer/api/message-streams-api#list-message-streams" >- List message streams</option>
+      <option value="https://postmarkapp.com/developer/api/message-streams-api#get-a-message-stream" >- Get a message stream</option>
+      <option value="https://postmarkapp.com/developer/api/message-streams-api#edit-a-message-stream" >- Edit a message stream</option>
+      <option value="https://postmarkapp.com/developer/api/message-streams-api#create-a-message-stream" >- Create a message stream</option>
+      <option value="https://postmarkapp.com/developer/api/message-streams-api#archive-a-message-stream" >- Archive a message stream</option>
+      <option value="https://postmarkapp.com/developer/api/message-streams-api#unarchive-a-stream" >- Unarchive a message stream</option>
+    <option value="https://postmarkapp.com/developer/api/messages-api" >Messages</option>
+  
+      <option value="https://postmarkapp.com/developer/api/messages-api#outbound-message-search" >- Outbound message search</option>
+      <option value="https://postmarkapp.com/developer/api/messages-api#outbound-message-details" >- Outbound message details</option>
+      <option value="https://postmarkapp.com/developer/api/messages-api#outbound-message-dump" >- Outbound message dump</option>
+      <option value="https://postmarkapp.com/developer/api/messages-api#inbound-message-search" >- Inbound message search</option>
+      <option value="https://postmarkapp.com/developer/api/messages-api#inbound-message-details" >- Inbound message details</option>
+      <option value="https://postmarkapp.com/developer/api/messages-api#inbound-message-bypass" >- Bypass rules for a blocked inbound message</option>
+      <option value="https://postmarkapp.com/developer/api/messages-api#inbound-message-retry" >- Retry a failed inbound message for processing</option>
+      <option value="https://postmarkapp.com/developer/api/messages-api#message-opens" >- Message opens</option>
+      <option value="https://postmarkapp.com/developer/api/messages-api#opens-for-message" >- Opens for a single message</option>
+      <option value="https://postmarkapp.com/developer/api/messages-api#message-clicks" >- Message clicks</option>
+      <option value="https://postmarkapp.com/developer/api/messages-api#clicks-for-message" >- Clicks for a single message</option>
+    <option value="https://postmarkapp.com/developer/api/domains-api" >Domains</option>
+  
+      <option value="https://postmarkapp.com/developer/api/domains-api#list-domains" >- List domains</option>
+      <option value="https://postmarkapp.com/developer/api/domains-api#domain" >- Get domain details</option>
+      <option value="https://postmarkapp.com/developer/api/domains-api#create-domain" >- Create domain</option>
+      <option value="https://postmarkapp.com/developer/api/domains-api#edit-domain" >- Edit domain</option>
+      <option value="https://postmarkapp.com/developer/api/domains-api#delete-domain" >- Delete domain</option>
+      <option value="https://postmarkapp.com/developer/api/domains-api#domains-verify-dkim" >- Verify DKIM</option>
+      <option value="https://postmarkapp.com/developer/api/domains-api#domains-verify-return-path" >- Verify Return-Path</option>
+      <option value="https://postmarkapp.com/developer/api/domains-api#verify-spf" >- Verify an SPF record</option>
+      <option value="https://postmarkapp.com/developer/api/domains-api#rotate-dkim" >- Rotate DKIM keys</option>
+    <option value="https://postmarkapp.com/developer/api/signatures-api" >Sender signatures</option>
+  
+      <option value="https://postmarkapp.com/developer/api/signatures-api#list-sender-signatures" >- List sender signatures</option>
+      <option value="https://postmarkapp.com/developer/api/signatures-api#sender-signature" >- Get sender signature</option>
+      <option value="https://postmarkapp.com/developer/api/signatures-api#create-signature" >- Create a signature</option>
+      <option value="https://postmarkapp.com/developer/api/signatures-api#edit-signature" >- Edit a signature</option>
+      <option value="https://postmarkapp.com/developer/api/signatures-api#delete-signature" >- Delete a signature</option>
+      <option value="https://postmarkapp.com/developer/api/signatures-api#resend-confirmation" >- Resend a confirmation</option>
+      <option value="https://postmarkapp.com/developer/api/signatures-api#verify-spf" >- Verify an SPF record</option>
+      <option value="https://postmarkapp.com/developer/api/signatures-api#request-dkim" >- Request a new DKIM</option>
+    <option value="https://postmarkapp.com/developer/api/stats-api" >Stats</option>
+  
+      <option value="https://postmarkapp.com/developer/api/stats-api#overview" >- Get outbound overview</option>
+      <option value="https://postmarkapp.com/developer/api/stats-api#sent-counts" >- Get sent counts</option>
+      <option value="https://postmarkapp.com/developer/api/stats-api#bounce-counts" >- Get bounce counts</option>
+      <option value="https://postmarkapp.com/developer/api/stats-api#spam-complaints" >- Get spam complaints</option>
+      <option value="https://postmarkapp.com/developer/api/stats-api#email-tracked-count" >- Get tracked email counts</option>
+      <option value="https://postmarkapp.com/developer/api/stats-api#email-open-counts" >- Get email open counts</option>
+      <option value="https://postmarkapp.com/developer/api/stats-api#email-platform-usage" >- Get email platform usage</option>
+      <option value="https://postmarkapp.com/developer/api/stats-api#email-client-usage" >- Get email client usage</option>
+      <option value="https://postmarkapp.com/developer/api/stats-api#click-counts" >- Get click counts</option>
+      <option value="https://postmarkapp.com/developer/api/stats-api#browser-usage" >- Get browser usage</option>
+      <option value="https://postmarkapp.com/developer/api/stats-api#browser-platform-usage" >- Get browser platform usage</option>
+      <option value="https://postmarkapp.com/developer/api/stats-api#click-location" >- Get click location</option>
+    <option value="https://postmarkapp.com/developer/api/inbound-rules-triggers-api" >Triggers: Inbound rules</option>
+  
+      <option value="https://postmarkapp.com/developer/api/inbound-rules-triggers-api#list-triggers" >- List inbound rule triggers</option>
+      <option value="https://postmarkapp.com/developer/api/inbound-rules-triggers-api#create-trigger" >- Create an inbound rule trigger</option>
+      <option value="https://postmarkapp.com/developer/api/inbound-rules-triggers-api#delete-single-trigger" >- Delete a single trigger</option>
+    <option value="https://postmarkapp.com/developer/api/webhooks-api" >Webhooks</option>
+  
+      <option value="https://postmarkapp.com/developer/api/webhooks-api#list-webhooks" >- List webhooks</option>
+      <option value="https://postmarkapp.com/developer/api/webhooks-api#get-a-webhook" >- Get a webhook</option>
+      <option value="https://postmarkapp.com/developer/api/webhooks-api#create-a-webhook" >- Create a webhook</option>
+      <option value="https://postmarkapp.com/developer/api/webhooks-api#edit-a-webhook" >- Edit a webhook</option>
+      <option value="https://postmarkapp.com/developer/api/webhooks-api#verify-a-webhook" >- Verify a webhook</option>
+      <option value="https://postmarkapp.com/developer/api/webhooks-api#delete-a-webhook" >- Delete a webhook</option>
+      <option value="https://postmarkapp.com/developer/api/webhooks-api#get-webhook-statistics" >- Get webhook statistics</option>
+    <option value="https://postmarkapp.com/developer/api/suppressions-api" >Suppressions</option>
+  
+      <option value="https://postmarkapp.com/developer/api/suppressions-api#suppression-dump" >- Suppression dump</option>
+      <option value="https://postmarkapp.com/developer/api/suppressions-api#create-a-suppression" >- Create a Suppression</option>
+      <option value="https://postmarkapp.com/developer/api/suppressions-api#delete-a-suppression" >- Delete a Suppression</option>
+    <option value="https://postmarkapp.com/developer/api/data-removals-api" >Data Removal</option>
+  
+      <option value="https://postmarkapp.com/developer/api/data-removals-api#create-a-data-removal-request" >- Create a Data Removal request</option>
+      <option value="https://postmarkapp.com/developer/api/data-removals-api#check-a-data-removal-request-status" >- Check a Data Removal request status</option>
+      </optgroup>
+
+    <optgroup label="Webhooks">
+        <option value="https://postmarkapp.com/developer/webhooks/webhooks-overview" >Webhooks overview</option>
+  
+      <option value="https://postmarkapp.com/developer/webhooks/webhooks-overview#what-is-a-webhook" >- What is a webhook?</option>
+      <option value="https://postmarkapp.com/developer/webhooks/webhooks-overview#verifying-your-webhook" >- Verifying your webhook</option>
+      <option value="https://postmarkapp.com/developer/webhooks/webhooks-overview#protecting-your-webhook" >- Protecting your webhook</option>
+      <option value="https://postmarkapp.com/developer/webhooks/webhooks-overview#handle-delivery-and-bounce-events" >- Handle delivery and bounce events</option>
+      <option value="https://postmarkapp.com/developer/webhooks/webhooks-overview#testing-your-webhook" >- Testing your webhook</option>
+      <option value="https://postmarkapp.com/developer/webhooks/webhooks-overview#retries" >- Retry attempts</option>
+    <option value="https://postmarkapp.com/developer/webhooks/delivery-webhook" >Delivery webhook</option>
+  
+      <option value="https://postmarkapp.com/developer/webhooks/delivery-webhook#what-is-a-delivery-webhook" >- What is a delivery webhook?</option>
+      <option value="https://postmarkapp.com/developer/webhooks/delivery-webhook#set-the-webhook-url" >- create webhook</option>
+      <option value="https://postmarkapp.com/developer/webhooks/delivery-webhook#delivery-webhook-data" >- event data</option>
+      <option value="https://postmarkapp.com/developer/webhooks/delivery-webhook#testing-with-curl" >- Testing events</option>
+      <option value="https://postmarkapp.com/developer/webhooks/delivery-webhook#typescript-handle-delivery-events" >- code examples</option>
+    <option value="https://postmarkapp.com/developer/webhooks/bounce-webhook" >Bounce webhook</option>
+  
+      <option value="https://postmarkapp.com/developer/webhooks/bounce-webhook#what-is-a-bounce-webhook" >- What is a bounce webhook?</option>
+      <option value="https://postmarkapp.com/developer/webhooks/bounce-webhook#set-the-webhook-url" >- create webhook</option>
+      <option value="https://postmarkapp.com/developer/webhooks/bounce-webhook#bounce-webhook-data" >- Event data</option>
+      <option value="https://postmarkapp.com/developer/webhooks/bounce-webhook#testing-with-curl" >- Testing with curl</option>
+      <option value="https://postmarkapp.com/developer/webhooks/bounce-webhook#typescript-handle-bounce-events" >- Code examples</option>
+    <option value="https://postmarkapp.com/developer/webhooks/spam-complaint-webhook" >Spam complaint webhook</option>
+  
+      <option value="https://postmarkapp.com/developer/webhooks/spam-complaint-webhook#what-is-a-spam-complaint" >- What is a spam complaint webhook?</option>
+      <option value="https://postmarkapp.com/developer/webhooks/spam-complaint-webhook#set-the-webhook-url" >- create webhook</option>
+      <option value="https://postmarkapp.com/developer/webhooks/spam-complaint-webhook#spam-complaint-webhook-data" >- Event data</option>
+      <option value="https://postmarkapp.com/developer/webhooks/spam-complaint-webhook#testing-the-spam-complaint-webhook-with-curl" >- Testing events</option>
+    <option value="https://postmarkapp.com/developer/webhooks/open-tracking-webhook" >Open tracking webhook</option>
+  
+      <option value="https://postmarkapp.com/developer/webhooks/open-tracking-webhook#what-is-an-open-webhook" >- What is an open webhook?</option>
+      <option value="https://postmarkapp.com/developer/webhooks/open-tracking-webhook#set-the-webhook-url" >- create webhook</option>
+      <option value="https://postmarkapp.com/developer/webhooks/open-tracking-webhook#open-webhook-data" >- event data</option>
+      <option value="https://postmarkapp.com/developer/webhooks/open-tracking-webhook#testing-with-curl" >- testing events</option>
+    <option value="https://postmarkapp.com/developer/webhooks/click-webhook" >Click webhook</option>
+  
+      <option value="https://postmarkapp.com/developer/webhooks/click-webhook#what-is-a-click-webhook" >- What is a click webhook?</option>
+      <option value="https://postmarkapp.com/developer/webhooks/click-webhook#set-the-webhook-url" >- create webhook</option>
+      <option value="https://postmarkapp.com/developer/webhooks/click-webhook#click-webhook-data" >- event data</option>
+      <option value="https://postmarkapp.com/developer/webhooks/click-webhook#testing-with-curl" >- testing events</option>
+    <option value="https://postmarkapp.com/developer/webhooks/subscription-change-webhook" >Subscription change webhook</option>
+  
+      <option value="https://postmarkapp.com/developer/webhooks/subscription-change-webhook#what-is-a-subscription-change" >- What is a subscription change?</option>
+      <option value="https://postmarkapp.com/developer/webhooks/subscription-change-webhook#set-the-subscription-change-webhook-url" >- create webhook</option>
+      <option value="https://postmarkapp.com/developer/webhooks/subscription-change-webhook#subscription-change-webhook-data" >- event data</option>
+      <option value="https://postmarkapp.com/developer/webhooks/subscription-change-webhook#testing-the-subscription-change-webhook-with-curl" >- testing events</option>
+    <option value="https://postmarkapp.com/developer/webhooks/inbound-webhook" >Inbound webhook</option>
+  
+      <option value="https://postmarkapp.com/developer/webhooks/inbound-webhook#what-is-an-inbound-webhook" >- What is an inbound webhook?</option>
+      <option value="https://postmarkapp.com/developer/webhooks/inbound-webhook#set-the-webhook-url" >- create webhook</option>
+      <option value="https://postmarkapp.com/developer/webhooks/inbound-webhook#inbound-webhook-data" >- event data</option>
+      <option value="https://postmarkapp.com/developer/webhooks/inbound-webhook#testing-with-curl" >- testing events</option>
+      <option value="https://postmarkapp.com/developer/webhooks/inbound-webhook#errors-and-retries" >- Errors and retries</option>
+    <option value="https://postmarkapp.com/developer/webhooks/smtp-api-error" >SMTP API Error</option>
+  
+      <option value="https://postmarkapp.com/developer/webhooks/smtp-api-error#what-is-an-smtp-api-error" >- What is an SMTP API Error</option>
+      <option value="https://postmarkapp.com/developer/webhooks/smtp-api-error#set-smtp-api-errors-for-a-server" >- Set SMTP API Errors for a Server</option>
+      <option value="https://postmarkapp.com/developer/webhooks/smtp-api-error#smtpi-api-error-data" >- SMTP API Error Data</option>
+      <option value="https://postmarkapp.com/developer/webhooks/smtp-api-error#testing-the-smtp-api-error" >- Testing the SMTP API Error</option>
+      <option value="https://postmarkapp.com/developer/webhooks/smtp-api-error#how-can-you-use-smtp-api-error" >- How can you use SMTP API Error</option>
+      </optgroup>
+  </select>
+</div>
+    <div class="docs-layout">
+      <section id="toc" class="docs-toc docs-toc--desktop">
+  <div class="docs-search">
+    <button type="button" class="docs-search__button js-open-modal" data-modal="developer-search">
+      <svg class="docs-search__icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M7 13C10.3137 13 13 10.3137 13 7C13 3.68629 10.3137 1 7 1C3.68629 1 1 3.68629 1 7C1 10.3137 3.68629 13 7 13Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M15 15L11.5 11.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span class="docs-search__text">Search docs...</span>
+      <kbd class="docs-search__kbd">⌘K</kbd>
+    </button>
+  </div>
+
+    <h3>Overview</h3>
+  <ul>
+    <li >
+      <a href="/developer">Introduction</a>
+    </li>
+    <li class="active">
+      <a href="/developer/get-started">Get started</a>
+    </li>
+  </ul>
+
+  <h3>Integration</h3>
+  <ul>
+      <li class="">
+      <a href="https://postmarkapp.com/developer/integration/official-libraries">
+        Official libraries
+      </a>
+          </li>
+      <li class="">
+      <a href="https://postmarkapp.com/developer/integration/community-libraries">
+        Community libraries
+      </a>
+          </li>
+      <li class="">
+      <a href="https://postmarkapp.com/developer/integration/other-tools-and-integrations">
+        Tools and Integrations
+      </a>
+          </li>
+      <li class="">
+      <a href="https://postmarkapp.com/developer/integration/ai-prompts">
+        AI Prompts
+      </a>
+          </li>
+  </ul>
+
+  <h3>User guide</h3>
+  <ul>
+      <li class="">
+      <a href="https://postmarkapp.com/developer/user-guide/send-email-with-api">
+        Sending email with API
+      </a>
+          </li>
+      <li class="">
+      <a href="https://postmarkapp.com/developer/user-guide/send-email-with-smtp">
+        Sending email with SMTP
+      </a>
+          </li>
+      <li class="">
+      <a href="https://postmarkapp.com/developer/user-guide/ip-allowlisting">
+        IP Allowlisting
+      </a>
+          </li>
+      <li class="">
+      <a href="https://postmarkapp.com/developer/user-guide/inbound">
+        Processing email
+      </a>
+          </li>
+      <li class="">
+      <a href="https://postmarkapp.com/developer/user-guide/tracking-opens">
+        Tracking opens
+      </a>
+          </li>
+      <li class="">
+      <a href="https://postmarkapp.com/developer/user-guide/tracking-links">
+        Tracking links
+      </a>
+          </li>
+      <li class="">
+      <a href="https://postmarkapp.com/developer/user-guide/managing-your-account">
+        Managing your account
+      </a>
+          </li>
+      <li class="">
+      <a href="https://postmarkapp.com/developer/user-guide/sandbox-mode">
+        Sandbox mode
+      </a>
+          </li>
+  </ul>
+
+  <h3>API reference</h3>
+  <ul>
+      <li class="">
+      <a href="https://postmarkapp.com/developer/api/overview">
+        Overview
+      </a>
+          </li>
+      <li class="">
+      <a href="https://postmarkapp.com/developer/api/email-api">
+        Email
+      </a>
+          </li>
+      <li class="">
+      <a href="https://postmarkapp.com/developer/api/bulk-email">
+        Bulk
+      </a>
+          </li>
+      <li class="">
+      <a href="https://postmarkapp.com/developer/api/bounce-api">
+        Bounce
+      </a>
+          </li>
+      <li class="">
+      <a href="https://postmarkapp.com/developer/api/templates-api">
+        Templates
+      </a>
+          </li>
+      <li class="">
+      <a href="https://postmarkapp.com/developer/api/server-api">
+        Server
+      </a>
+          </li>
+      <li class="">
+      <a href="https://postmarkapp.com/developer/api/servers-api">
+        Servers
+      </a>
+          </li>
+      <li class="">
+      <a href="https://postmarkapp.com/developer/api/message-streams-api">
+        Message Streams
+      </a>
+          </li>
+      <li class="">
+      <a href="https://postmarkapp.com/developer/api/messages-api">
+        Messages
+      </a>
+          </li>
+      <li class="">
+      <a href="https://postmarkapp.com/developer/api/domains-api">
+        Domains
+      </a>
+          </li>
+      <li class="">
+      <a href="https://postmarkapp.com/developer/api/signatures-api">
+        Sender signatures
+      </a>
+          </li>
+      <li class="">
+      <a href="https://postmarkapp.com/developer/api/stats-api">
+        Stats
+      </a>
+          </li>
+      <li class="">
+      <a href="https://postmarkapp.com/developer/api/inbound-rules-triggers-api">
+        Triggers: Inbound rules
+      </a>
+          </li>
+      <li class="">
+      <a href="https://postmarkapp.com/developer/api/webhooks-api">
+        Webhooks
+      </a>
+          </li>
+      <li class="">
+      <a href="https://postmarkapp.com/developer/api/suppressions-api">
+        Suppressions
+      </a>
+          </li>
+      <li class="">
+      <a href="https://postmarkapp.com/developer/api/data-removals-api">
+        Data Removal
+      </a>
+          </li>
+  </ul>
+
+  <h3>Webhooks</h3>
+  <ul>
+      <li class="">
+      <a href="https://postmarkapp.com/developer/webhooks/webhooks-overview">
+        Webhooks overview
+      </a>
+          </li>
+      <li class="">
+      <a href="https://postmarkapp.com/developer/webhooks/delivery-webhook">
+        Delivery webhook
+      </a>
+          </li>
+      <li class="">
+      <a href="https://postmarkapp.com/developer/webhooks/bounce-webhook">
+        Bounce webhook
+      </a>
+          </li>
+      <li class="">
+      <a href="https://postmarkapp.com/developer/webhooks/spam-complaint-webhook">
+        Spam complaint webhook
+      </a>
+          </li>
+      <li class="">
+      <a href="https://postmarkapp.com/developer/webhooks/open-tracking-webhook">
+        Open tracking webhook
+      </a>
+          </li>
+      <li class="">
+      <a href="https://postmarkapp.com/developer/webhooks/click-webhook">
+        Click webhook
+      </a>
+          </li>
+      <li class="">
+      <a href="https://postmarkapp.com/developer/webhooks/subscription-change-webhook">
+        Subscription change webhook
+      </a>
+          </li>
+      <li class="">
+      <a href="https://postmarkapp.com/developer/webhooks/inbound-webhook">
+        Inbound webhook
+      </a>
+          </li>
+      <li class="">
+      <a href="https://postmarkapp.com/developer/webhooks/smtp-api-error">
+        SMTP API Error
+      </a>
+          </li>
+  </ul>
+</section>
+
+      <div class="docs-layout__main">
+        <div class="dl gs" data-gs-root>
+
+    <header class="dl-hero">
+    <p class="dl-eyebrow">Get started</p>
+    <h1 class="dl-hero__title">Get started with Postmark</h1>
+    <p class="dl-hero__lede">
+      Send your first email within minutes and get your app’s important messages into inboxes.
+      Postmark officially supports <strong>seven languages and frameworks</strong>, with even more
+      available from the community.
+    </p>
+    <p class="dl-hero__meta">
+      Find your favorite stack below and follow these steps to deliver email from your app to
+      your users’ inboxes.
+    </p>
+
+    <section class="gs-card gs-card--ai" aria-labelledby="gs-ai-title">
+      <div class="gs-card--ai__head">
+        <span class="gs-card--ai__icon" aria-hidden="true">✦</span>
+        <div class="gs-card--ai__body">
+          <h2 class="gs-card__title" id="gs-ai-title">Get started with your AI agent</h2>
+          <p>In a hurry? Copy the Markdown build spec below and paste it as a prompt to your coding
+            agent — Cursor, Claude Code, Copilot — to wire up Postmark for you.</p>
+        </div>
+        <button type="button" class="gs-btn gs-btn--brand gs-copy" data-copy="#gs-ai-spec" aria-label="Copy the Postmark build spec for your AI agent">
+          <svg class="gs-copy__icon gs-copy__icon--copy" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <rect x="5.5" y="5.5" width="8" height="8" rx="1.6" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M10.5 3.5V3a1.5 1.5 0 0 0-1.5-1.5H3A1.5 1.5 0 0 0 1.5 3v6A1.5 1.5 0 0 0 3 10.5h.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          <svg class="gs-copy__icon gs-copy__icon--done" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M13 4.5 6.5 11 3 7.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span class="gs-copy__text">Copy build spec</span>
+        </button>
+      </div>
+      <div class="gs-card--ai__rec">
+        <p><strong>Recommended:</strong> Add the Postmark Skills skill to give your agent Postmark-specific
+          guidance — run:</p>
+        <div class="gs-codetabs">
+          <div class="gs-codetabs__bar">
+            <span class="gs-codetabs__label">Terminal</span>
+            <button type="button" class="gs-copy gs-codetabs__copy" data-copy="#gs-skills-cmd" aria-label="Copy the Postmark Skills install command">
+              <svg class="gs-copy__icon gs-copy__icon--copy" width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                <rect x="5.5" y="5.5" width="8" height="8" rx="1.6" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M10.5 3.5V3a1.5 1.5 0 0 0-1.5-1.5H3A1.5 1.5 0 0 0 1.5 3v6A1.5 1.5 0 0 0 3 10.5h.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+              <svg class="gs-copy__icon gs-copy__icon--done" width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                <path d="M13 4.5 6.5 11 3 7.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <span class="gs-copy__text">Copy</span>
+            </button>
+          </div>
+          <pre class="gs-code__pre"><code id="gs-skills-cmd" class="gs-code__code">npx skills add ActiveCampaign/postmark-skills</code></pre>
+        </div>
+      </div>
+      <pre id="gs-ai-spec" class="gs-spec" tabindex="0" role="region" aria-label="Postmark build spec (Markdown)"># Postmark Email Integration — Build Spec
+
+## Objective
+Integrate Postmark to send transactional email from an application via an official SDK (or SMTP). Implement for the target language/framework using the API contract and reference implementations below.
+
+## Requirements & constraints
+- The server API token MUST be read from the POSTMARK_SERVER_TOKEN environment variable. Never hardcode it.
+- Obtain the token from the Postmark dashboard: Servers -> select/create server -> API Tokens -> "Server API tokens". Account signup: https://account.postmarkapp.com/sign_up
+- The sender (From) address MUST belong to a verified domain or signature.
+- Until the account is approved, sends are only delivered to the account owner's own verified address.
+- The default message stream for transactional mail is "outbound".
+
+## Install (target language only)
+| Language        | Install |
+| Node.js         | npm install postmark |
+| TypeScript      | npm install postmark (type definitions ship with the package) |
+| Python          | pip install postmark-python |
+| Ruby            | gem install postmark |
+| Ruby on Rails   | bundle add postmark-rails |
+| PHP             | composer require wildbit/postmark-php |
+| .NET (C#)       | dotnet add package Postmark |
+| Java (Gradle)   | implementation 'com.postmarkapp:postmark:1.13.0' |
+
+Set the token in the environment:
+# macOS / Linux
+export POSTMARK_SERVER_TOKEN="your-server-api-token"
+# Windows (PowerShell)
+$env:POSTMARK_SERVER_TOKEN="your-server-api-token"
+
+## Send API contract
+Construct the client from the env token, then send a single message with these fields (names vary by SDK; canonical API names shown):
+- From (required): verified sender address
+- To (required): recipient (restricted to verified addresses until account approval)
+- Subject (required)
+- TextBody or HtmlBody (at least one)
+- MessageStream (recommended): use "outbound" for transactional
+
+Returns a response object whose key field is MessageID — the unique id used to track delivery, bounces, and opens.
+
+## Error contract
+Check the HTTP status and the ErrorCode field. ErrorCode == 0 indicates success; surface Message for diagnostics.
+- 200 / ErrorCode 0   -> Success
+- 401 / ErrorCode 10  -> Bad or missing server API token
+- 422 / ErrorCode 300 -> Unprocessable (e.g. invalid/unverified From address)
+
+## Integration notes
+- Reuse the send call at each app event that needs mail: confirmations, password resets, payment receipts, account notifications, collaboration activity.
+- Use separate message streams for transactional vs. marketing mail.
+- Optional capabilities: templates, open/click tracking, inbound processing.</pre>
+    </section>
+  </header>
+
+    <section class="gs-step" aria-labelledby="install">
+    <div class="gs-step__head">
+      <span class="gs-step__num" aria-hidden="true">1</span>
+      <div>
+        <h2 class="gs-step__title" id="install">Install your language’s library</h2>
+        <p class="gs-step__lede">Whatever your backend language, you can use a Postmark library or send
+          via SMTP. Here we use one of the <a href="/developer/integration/official-libraries">official
+          SDKs</a> to talk to the Postmark API. Copy the line for your language into your terminal or
+          package manager.</p>
+      </div>
+    </div>
+
+    <div class="gs-card gs-card--flush">
+      <div class="gs-codetabs">
+        <div class="gs-codetabs__bar">
+          <div class="gs-codetabs__tabs" role="tablist" aria-label="Choose a programming language" data-tabgroup="postmark">
+              <button
+    type="button"
+    role="tab"
+    id="gs-tab-install-nodejs"
+    class="gs-codetab is-active"
+    aria-selected="true"
+    aria-controls="gs-install-nodejs"
+    tabindex="0"
+    data-value="nodejs"
+  >Node.js</button>
+  <button
+    type="button"
+    role="tab"
+    id="gs-tab-install-typescript"
+    class="gs-codetab"
+    aria-selected="false"
+    aria-controls="gs-install-typescript"
+    tabindex="-1"
+    data-value="typescript"
+  >TypeScript</button>
+  <button
+    type="button"
+    role="tab"
+    id="gs-tab-install-python"
+    class="gs-codetab"
+    aria-selected="false"
+    aria-controls="gs-install-python"
+    tabindex="-1"
+    data-value="python"
+  >Python</button>
+  <button
+    type="button"
+    role="tab"
+    id="gs-tab-install-ruby"
+    class="gs-codetab"
+    aria-selected="false"
+    aria-controls="gs-install-ruby"
+    tabindex="-1"
+    data-value="ruby"
+  >Ruby</button>
+  <button
+    type="button"
+    role="tab"
+    id="gs-tab-install-rails"
+    class="gs-codetab"
+    aria-selected="false"
+    aria-controls="gs-install-rails"
+    tabindex="-1"
+    data-value="rails"
+  >Ruby on Rails</button>
+  <button
+    type="button"
+    role="tab"
+    id="gs-tab-install-php"
+    class="gs-codetab"
+    aria-selected="false"
+    aria-controls="gs-install-php"
+    tabindex="-1"
+    data-value="php"
+  >PHP</button>
+  <button
+    type="button"
+    role="tab"
+    id="gs-tab-install-dotnet"
+    class="gs-codetab"
+    aria-selected="false"
+    aria-controls="gs-install-dotnet"
+    tabindex="-1"
+    data-value="dotnet"
+  >.NET (C#)</button>
+  <button
+    type="button"
+    role="tab"
+    id="gs-tab-install-java"
+    class="gs-codetab"
+    aria-selected="false"
+    aria-controls="gs-install-java"
+    tabindex="-1"
+    data-value="java"
+  >Java</button>
+          </div>
+            <button type="button" class="gs-copy gs-codetabs__copy" aria-label="Copy the install command to clipboard">
+    <svg class="gs-copy__icon gs-copy__icon--copy" width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+      <rect x="5.5" y="5.5" width="8" height="8" rx="1.6" stroke="currentColor" stroke-width="1.5"/>
+      <path d="M10.5 3.5V3a1.5 1.5 0 0 0-1.5-1.5H3A1.5 1.5 0 0 0 1.5 3v6A1.5 1.5 0 0 0 3 10.5h.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+    <svg class="gs-copy__icon gs-copy__icon--done" width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+      <path d="M13 4.5 6.5 11 3 7.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <span class="gs-copy__text">Copy</span>
+  </button>
+
+        </div>
+          <div id="gs-install-nodejs" role="tabpanel" tabindex="0" aria-labelledby="gs-tab-install-nodejs" data-value="nodejs" class="gs-codetabs__panel"><pre class="gs-code__pre"><code id="code-install-nodejs" class="gs-code__code">npm install postmark</code></pre></div>
+
+          <div id="gs-install-typescript" role="tabpanel" tabindex="0" aria-labelledby="gs-tab-install-typescript" data-value="typescript" class="gs-codetabs__panel" hidden><pre class="gs-code__pre"><code id="code-install-typescript" class="gs-code__code"># Types ship with the package — no @types needed
+npm install postmark</code></pre></div>
+
+          <div id="gs-install-python" role="tabpanel" tabindex="0" aria-labelledby="gs-tab-install-python" data-value="python" class="gs-codetabs__panel" hidden><pre class="gs-code__pre"><code id="code-install-python" class="gs-code__code">pip install postmark-python</code></pre></div>
+
+          <div id="gs-install-ruby" role="tabpanel" tabindex="0" aria-labelledby="gs-tab-install-ruby" data-value="ruby" class="gs-codetabs__panel" hidden><pre class="gs-code__pre"><code id="code-install-ruby" class="gs-code__code">gem install postmark</code></pre></div>
+
+          <div id="gs-install-rails" role="tabpanel" tabindex="0" aria-labelledby="gs-tab-install-rails" data-value="rails" class="gs-codetabs__panel" hidden><pre class="gs-code__pre"><code id="code-install-rails" class="gs-code__code">bundle add postmark-rails</code></pre></div>
+
+          <div id="gs-install-php" role="tabpanel" tabindex="0" aria-labelledby="gs-tab-install-php" data-value="php" class="gs-codetabs__panel" hidden><pre class="gs-code__pre"><code id="code-install-php" class="gs-code__code">composer require wildbit/postmark-php</code></pre></div>
+
+          <div id="gs-install-dotnet" role="tabpanel" tabindex="0" aria-labelledby="gs-tab-install-dotnet" data-value="dotnet" class="gs-codetabs__panel" hidden><pre class="gs-code__pre"><code id="code-install-dotnet" class="gs-code__code">dotnet add package Postmark</code></pre></div>
+
+          <div id="gs-install-java" role="tabpanel" tabindex="0" aria-labelledby="gs-tab-install-java" data-value="java" class="gs-codetabs__panel" hidden><pre class="gs-code__pre"><code id="code-install-java" class="gs-code__code">// Gradle
+implementation &#039;com.postmarkapp:postmark:1.13.0&#039;
+
+&lt;!-- Maven (pom.xml) --&gt;
+&lt;dependency&gt;
+  &lt;groupId&gt;com.postmarkapp&lt;/groupId&gt;
+  &lt;artifactId&gt;postmark&lt;/artifactId&gt;
+  &lt;version&gt;1.13.0&lt;/version&gt;
+&lt;/dependency&gt;</code></pre></div>
+
+      </div>
+    </div>
+  </section>
+
+    <section class="gs-step" aria-labelledby="api-token">
+    <div class="gs-step__head">
+      <span class="gs-step__num" aria-hidden="true">2</span>
+      <div>
+        <h2 class="gs-step__title" id="api-token">Set your API token</h2>
+        <p class="gs-step__lede">You need a
+          <a href="https://account.postmarkapp.com/sign_up">free Postmark account</a> to send emails.
+          Once you create one, log in and
+          <a href="https://account.postmarkapp.com/servers">view your servers</a>, select your first
+          server or create a new one, then click <strong>API Tokens</strong> and copy the Server API
+          token. The screen with your token should look something like this:</p>
+      </div>
+    </div>
+
+    <div class="gs-card gs-card--flush">
+      <figure class="gs-figure">
+        <img src="/images/developers/get-started-api-token.png" alt="The Postmark API Tokens screen, showing a Server API token ready to copy." width="891" height="447" loading="lazy" decoding="async">
+      </figure>
+
+      <p>Copy that token and save it locally as an environment variable. Setting it this way keeps it
+        out of your code — and secret, so no one else can send email using your account.</p>
+
+      <div class="gs-codetabs">
+        <div class="gs-codetabs__bar">
+          <div class="gs-codetabs__tabs" role="tablist" aria-label="Choose your operating system" data-tabgroup="postmark-os">
+              <button
+    type="button"
+    role="tab"
+    id="gs-tab-token-unix"
+    class="gs-codetab is-active"
+    aria-selected="true"
+    aria-controls="gs-token-unix"
+    tabindex="0"
+    data-value="unix"
+  >macOS / Linux</button>
+
+              <button
+    type="button"
+    role="tab"
+    id="gs-tab-token-windows"
+    class="gs-codetab"
+    aria-selected="false"
+    aria-controls="gs-token-windows"
+    tabindex="-1"
+    data-value="windows"
+  >Windows (PowerShell)</button>
+
+          </div>
+            <button type="button" class="gs-copy gs-codetabs__copy" aria-label="Copy the environment variable command to clipboard">
+    <svg class="gs-copy__icon gs-copy__icon--copy" width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+      <rect x="5.5" y="5.5" width="8" height="8" rx="1.6" stroke="currentColor" stroke-width="1.5"/>
+      <path d="M10.5 3.5V3a1.5 1.5 0 0 0-1.5-1.5H3A1.5 1.5 0 0 0 1.5 3v6A1.5 1.5 0 0 0 3 10.5h.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+    <svg class="gs-copy__icon gs-copy__icon--done" width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+      <path d="M13 4.5 6.5 11 3 7.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <span class="gs-copy__text">Copy</span>
+  </button>
+
+        </div>
+          <div id="gs-token-unix" role="tabpanel" tabindex="0" aria-labelledby="gs-tab-token-unix" data-value="unix" class="gs-codetabs__panel"><pre class="gs-code__pre"><code id="code-token-unix" class="gs-code__code">export POSTMARK_SERVER_TOKEN=&quot;your-server-api-token&quot;</code></pre></div>
+
+          <div id="gs-token-windows" role="tabpanel" tabindex="0" aria-labelledby="gs-tab-token-windows" data-value="windows" class="gs-codetabs__panel" hidden><pre class="gs-code__pre"><code id="code-token-win" class="gs-code__code">$env:POSTMARK_SERVER_TOKEN=&quot;your-server-api-token&quot;</code></pre></div>
+
+      </div>
+    </div>
+  </section>
+
+    <section class="gs-step" aria-labelledby="send">
+    <div class="gs-step__head">
+      <span class="gs-step__num" aria-hidden="true">3</span>
+      <div>
+        <h2 class="gs-step__title" id="send">Send your first email</h2>
+        <p class="gs-step__lede">The library is installed and the token is set — all that’s left is the
+          API call. Replace the example address with your own Postmark account address (look for the
+          <code>your email here</code> comment), run it, and check your inbox. The email usually
+          arrives within seconds.</p>
+      </div>
+    </div>
+
+    <div class="gs-card gs-card--flush">
+      <div class="gs-codetabs">
+        <div class="gs-codetabs__bar">
+          <div class="gs-codetabs__tabs" role="tablist" aria-label="Choose a programming language for the send example" data-tabgroup="postmark">
+              <button
+    type="button"
+    role="tab"
+    id="gs-tab-send-nodejs"
+    class="gs-codetab is-active"
+    aria-selected="true"
+    aria-controls="gs-send-nodejs"
+    tabindex="0"
+    data-value="nodejs"
+  >Node.js</button>
+  <button
+    type="button"
+    role="tab"
+    id="gs-tab-send-typescript"
+    class="gs-codetab"
+    aria-selected="false"
+    aria-controls="gs-send-typescript"
+    tabindex="-1"
+    data-value="typescript"
+  >TypeScript</button>
+  <button
+    type="button"
+    role="tab"
+    id="gs-tab-send-python"
+    class="gs-codetab"
+    aria-selected="false"
+    aria-controls="gs-send-python"
+    tabindex="-1"
+    data-value="python"
+  >Python</button>
+  <button
+    type="button"
+    role="tab"
+    id="gs-tab-send-ruby"
+    class="gs-codetab"
+    aria-selected="false"
+    aria-controls="gs-send-ruby"
+    tabindex="-1"
+    data-value="ruby"
+  >Ruby</button>
+  <button
+    type="button"
+    role="tab"
+    id="gs-tab-send-rails"
+    class="gs-codetab"
+    aria-selected="false"
+    aria-controls="gs-send-rails"
+    tabindex="-1"
+    data-value="rails"
+  >Ruby on Rails</button>
+  <button
+    type="button"
+    role="tab"
+    id="gs-tab-send-php"
+    class="gs-codetab"
+    aria-selected="false"
+    aria-controls="gs-send-php"
+    tabindex="-1"
+    data-value="php"
+  >PHP</button>
+  <button
+    type="button"
+    role="tab"
+    id="gs-tab-send-dotnet"
+    class="gs-codetab"
+    aria-selected="false"
+    aria-controls="gs-send-dotnet"
+    tabindex="-1"
+    data-value="dotnet"
+  >.NET (C#)</button>
+  <button
+    type="button"
+    role="tab"
+    id="gs-tab-send-java"
+    class="gs-codetab"
+    aria-selected="false"
+    aria-controls="gs-send-java"
+    tabindex="-1"
+    data-value="java"
+  >Java</button>
+          </div>
+            <button type="button" class="gs-copy gs-codetabs__copy" aria-label="Copy the send code to clipboard">
+    <svg class="gs-copy__icon gs-copy__icon--copy" width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+      <rect x="5.5" y="5.5" width="8" height="8" rx="1.6" stroke="currentColor" stroke-width="1.5"/>
+      <path d="M10.5 3.5V3a1.5 1.5 0 0 0-1.5-1.5H3A1.5 1.5 0 0 0 1.5 3v6A1.5 1.5 0 0 0 3 10.5h.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+    <svg class="gs-copy__icon gs-copy__icon--done" width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+      <path d="M13 4.5 6.5 11 3 7.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <span class="gs-copy__text">Copy</span>
+  </button>
+
+        </div>
+          <div id="gs-send-nodejs" role="tabpanel" tabindex="0" aria-labelledby="gs-tab-send-nodejs" data-value="nodejs" class="gs-codetabs__panel"><pre class="gs-code__pre"><code id="code-send-nodejs" class="gs-code__code">import * as postmark from &quot;postmark&quot;;
+
+const client = new postmark.ServerClient(process.env.POSTMARK_SERVER_TOKEN);
+
+const result = await client.sendEmail({
+  From: &quot;sender@yourdomain.com&quot;,
+  To: &quot;recipient@example.com&quot;, // your email here
+  Subject: &quot;Hello from Postmark!&quot;,
+  TextBody: &quot;Hello dear Postmark user.&quot;,
+  HtmlBody: &quot;&lt;strong&gt;Hello&lt;/strong&gt; dear Postmark user.&quot;,
+  MessageStream: &quot;outbound&quot;,
+});
+
+console.log(&quot;Message ID:&quot;, result.MessageID);</code></pre></div>
+
+          <div id="gs-send-typescript" role="tabpanel" tabindex="0" aria-labelledby="gs-tab-send-typescript" data-value="typescript" class="gs-codetabs__panel" hidden><pre class="gs-code__pre"><code id="code-send-typescript" class="gs-code__code">import { ServerClient } from &quot;postmark&quot;;
+
+const client = new ServerClient(process.env.POSTMARK_SERVER_TOKEN as string);
+
+const result = await client.sendEmail({
+  From: &quot;sender@yourdomain.com&quot;,
+  To: &quot;recipient@example.com&quot;, // your email here
+  Subject: &quot;Hello from Postmark!&quot;,
+  TextBody: &quot;Hello dear Postmark user.&quot;,
+  HtmlBody: &quot;&lt;strong&gt;Hello&lt;/strong&gt; dear Postmark user.&quot;,
+  MessageStream: &quot;outbound&quot;,
+});
+
+console.log(&quot;Message ID:&quot;, result.MessageID);</code></pre></div>
+
+          <div id="gs-send-python" role="tabpanel" tabindex="0" aria-labelledby="gs-tab-send-python" data-value="python" class="gs-codetabs__panel" hidden><pre class="gs-code__pre"><code id="code-send-python" class="gs-code__code">import asyncio
+import os
+import postmark
+
+async def main():
+    async with postmark.ServerClient(os.environ[&quot;POSTMARK_SERVER_TOKEN&quot;]) as client:
+        response = await client.outbound.send({
+            &quot;sender&quot;: &quot;sender@yourdomain.com&quot;,
+            &quot;to&quot;: &quot;recipient@example.com&quot;,  # your email here
+            &quot;subject&quot;: &quot;Hello from Postmark!&quot;,
+            &quot;text_body&quot;: &quot;Hello dear Postmark user.&quot;,
+        })
+        print(f&quot;Message ID: {response.message_id}&quot;)
+
+asyncio.run(main())</code></pre></div>
+
+          <div id="gs-send-ruby" role="tabpanel" tabindex="0" aria-labelledby="gs-tab-send-ruby" data-value="ruby" class="gs-codetabs__panel" hidden><pre class="gs-code__pre"><code id="code-send-ruby" class="gs-code__code">require &#039;postmark&#039;
+
+client = Postmark::ApiClient.new(ENV[&#039;POSTMARK_SERVER_TOKEN&#039;])
+
+result = client.deliver(
+  from: &#039;sender@yourdomain.com&#039;,
+  to: &#039;recipient@example.com&#039;, # your email here
+  subject: &#039;Hello from Postmark!&#039;,
+  text_body: &#039;Hello dear Postmark user.&#039;,
+  html_body: &#039;&lt;strong&gt;Hello&lt;/strong&gt; dear Postmark user.&#039;,
+  message_stream: &#039;outbound&#039;
+)
+
+puts &quot;Message ID: #{result[:message_id]}&quot;</code></pre></div>
+
+          <div id="gs-send-rails" role="tabpanel" tabindex="0" aria-labelledby="gs-tab-send-rails" data-value="rails" class="gs-codetabs__panel" hidden><pre class="gs-code__pre"><code id="code-send-rails" class="gs-code__code"># config/application.rb — read the token from the environment
+config.action_mailer.delivery_method = :postmark
+config.action_mailer.postmark_settings = { api_token: ENV[&#039;POSTMARK_SERVER_TOKEN&#039;] }
+
+# app/mailers/test_mailer.rb
+class TestMailer &lt; ApplicationMailer
+  def hello
+    message.message_stream = &#039;outbound&#039;
+    mail(
+      from: &#039;sender@yourdomain.com&#039;,
+      to: &#039;recipient@example.com&#039;, # your email here
+      subject: &#039;Hello from Postmark!&#039;,
+      content_type: &#039;text/html&#039;,
+      body: &#039;&lt;strong&gt;Hello&lt;/strong&gt; dear Postmark user.&#039;
+    )
+  end
+end
+
+# Deliver it (e.g. from a Rails console)
+TestMailer.hello.deliver_now</code></pre></div>
+
+          <div id="gs-send-php" role="tabpanel" tabindex="0" aria-labelledby="gs-tab-send-php" data-value="php" class="gs-codetabs__panel" hidden><pre class="gs-code__pre"><code id="code-send-php" class="gs-code__code">&lt;?php
+require &#039;vendor/autoload.php&#039;;
+
+use Postmark\PostmarkClient;
+
+$client = new PostmarkClient(getenv(&#039;POSTMARK_SERVER_TOKEN&#039;));
+
+$result = $client-&gt;sendEmail(
+    &#039;sender@yourdomain.com&#039;,
+    &#039;recipient@example.com&#039;, // your email here
+    &#039;Hello from Postmark!&#039;,
+    &#039;&lt;strong&gt;Hello&lt;/strong&gt; dear Postmark user.&#039;, // HtmlBody
+    &#039;Hello dear Postmark user.&#039;,                  // TextBody
+    null, null, null, null, null, null, null, null, null,
+    &#039;outbound&#039;                                     // MessageStream
+);
+
+echo &#039;Message ID: &#039; . $result[&#039;MessageID&#039;];</code></pre></div>
+
+          <div id="gs-send-dotnet" role="tabpanel" tabindex="0" aria-labelledby="gs-tab-send-dotnet" data-value="dotnet" class="gs-codetabs__panel" hidden><pre class="gs-code__pre"><code id="code-send-dotnet" class="gs-code__code">using System;
+using PostmarkDotNet;
+
+var client = new PostmarkClient(Environment.GetEnvironmentVariable(&quot;POSTMARK_SERVER_TOKEN&quot;));
+
+var message = new PostmarkMessage
+{
+    From = &quot;sender@yourdomain.com&quot;,
+    To = &quot;recipient@example.com&quot;, // your email here
+    Subject = &quot;Hello from Postmark!&quot;,
+    TextBody = &quot;Hello dear Postmark user.&quot;,
+    HtmlBody = &quot;&lt;strong&gt;Hello&lt;/strong&gt; dear Postmark user.&quot;,
+    MessageStream = &quot;outbound&quot;
+};
+
+var result = await client.SendMessageAsync(message);
+
+Console.WriteLine($&quot;Message ID: {result.MessageID}&quot;);</code></pre></div>
+
+          <div id="gs-send-java" role="tabpanel" tabindex="0" aria-labelledby="gs-tab-send-java" data-value="java" class="gs-codetabs__panel" hidden><pre class="gs-code__pre"><code id="code-send-java" class="gs-code__code">import com.postmarkapp.postmark.Postmark;
+import com.postmarkapp.postmark.client.ApiClient;
+import com.postmarkapp.postmark.client.data.model.message.Message;
+import com.postmarkapp.postmark.client.data.model.message.MessageResponse;
+
+ApiClient client = Postmark.getApiClient(System.getenv(&quot;POSTMARK_SERVER_TOKEN&quot;));
+
+Message message = new Message(
+    &quot;sender@yourdomain.com&quot;,
+    &quot;recipient@example.com&quot;, // your email here
+    &quot;Hello from Postmark!&quot;,
+    &quot;&lt;strong&gt;Hello&lt;/strong&gt; dear Postmark user.&quot;, // HtmlBody
+    &quot;Hello dear Postmark user.&quot;,                  // TextBody
+    &quot;outbound&quot;                                    // MessageStream
+);
+
+MessageResponse response = client.deliverMessage(message);
+
+System.out.println(&quot;Message ID: &quot; + response.getMessageId());</code></pre></div>
+
+      </div>
+
+      <div class="gs-note gs-note--tip">
+        <strong>Note.</strong> Before you can send to other addresses, your account may need review —
+        this is how Postmark keeps deliverability high and spam low. You can always send to your own
+        verified address right away.
+      </div>
+    </div>
+  </section>
+
+    <section class="gs-step" aria-labelledby="response">
+    <div class="gs-step__head">
+      <span class="gs-step__num" aria-hidden="true">4</span>
+      <div>
+        <h2 class="gs-step__title" id="response">Check your response</h2>
+        <p class="gs-step__lede">You won’t always be able to peek in the recipient’s inbox — so the
+          Postmark libraries return the detailed API response. The most useful field is
+          <code>MessageID</code>, a unique identifier you can use to track delivery, bounces, and
+          opens. Here are responses for common HTTP status codes (an HTTP <strong>200</strong> includes
+          an <code>ErrorCode</code> of <code>0</code> to indicate success):</p>
+      </div>
+    </div>
+
+    <div class="gs-card gs-card--flush">
+      <div class="gs-codetabs">
+        <div class="gs-codetabs__bar">
+          <div class="gs-codetabs__tabs" role="tablist" aria-label="Choose an HTTP response status" data-tabgroup="postmark-resp">
+              <button
+    type="button"
+    role="tab"
+    id="gs-tab-resp-200"
+    class="gs-codetab is-active"
+    aria-selected="true"
+    aria-controls="gs-resp-200"
+    tabindex="0"
+    data-value="200"
+  >200 OK</button>
+
+              <button
+    type="button"
+    role="tab"
+    id="gs-tab-resp-401"
+    class="gs-codetab"
+    aria-selected="false"
+    aria-controls="gs-resp-401"
+    tabindex="-1"
+    data-value="401"
+  >401 Unauthorized</button>
+
+              <button
+    type="button"
+    role="tab"
+    id="gs-tab-resp-422"
+    class="gs-codetab"
+    aria-selected="false"
+    aria-controls="gs-resp-422"
+    tabindex="-1"
+    data-value="422"
+  >422 Unprocessable</button>
+
+          </div>
+            <button type="button" class="gs-copy gs-codetabs__copy" aria-label="Copy the JSON response to clipboard">
+    <svg class="gs-copy__icon gs-copy__icon--copy" width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+      <rect x="5.5" y="5.5" width="8" height="8" rx="1.6" stroke="currentColor" stroke-width="1.5"/>
+      <path d="M10.5 3.5V3a1.5 1.5 0 0 0-1.5-1.5H3A1.5 1.5 0 0 0 1.5 3v6A1.5 1.5 0 0 0 3 10.5h.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+    <svg class="gs-copy__icon gs-copy__icon--done" width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+      <path d="M13 4.5 6.5 11 3 7.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <span class="gs-copy__text">Copy</span>
+  </button>
+
+        </div>
+          <div id="gs-resp-200" role="tabpanel" tabindex="0" aria-labelledby="gs-tab-resp-200" data-value="200" class="gs-codetabs__panel"><pre class="gs-code__pre"><code id="code-resp-200" class="gs-code__code">{
+  &quot;To&quot;: &quot;recipient@example.com&quot;,
+  &quot;SubmittedAt&quot;: &quot;2024-11-14T12:01:05.1794748-05:00&quot;,
+  &quot;MessageID&quot;: &quot;b7bc2f4a-e38e-4336-af7d-e6c392c2f817&quot;,
+  &quot;ErrorCode&quot;: 0,
+  &quot;Message&quot;: &quot;OK&quot;
+}</code></pre></div>
+
+          <div id="gs-resp-401" role="tabpanel" tabindex="0" aria-labelledby="gs-tab-resp-401" data-value="401" class="gs-codetabs__panel" hidden><pre class="gs-code__pre"><code id="code-resp-401" class="gs-code__code">{
+  &quot;ErrorCode&quot;: 10,
+  &quot;Message&quot;: &quot;Bad or missing server API token.&quot;
+}</code></pre></div>
+
+          <div id="gs-resp-422" role="tabpanel" tabindex="0" aria-labelledby="gs-tab-resp-422" data-value="422" class="gs-codetabs__panel" hidden><pre class="gs-code__pre"><code id="code-resp-422" class="gs-code__code">{
+  &quot;ErrorCode&quot;: 300,
+  &quot;Message&quot;: &quot;Invalid &#039;From&#039; address: &#039;sender@yourdomain.com&#039;.&quot;
+}</code></pre></div>
+
+      </div>
+
+      <p class="gs-step__aside u-text-center">
+        <a href="/developer/api/overview">See all HTTP responses here</a></p>
+    </div>
+  </section>
+
+    <section class="gs-step" aria-labelledby="use-in-app">
+    <div class="gs-step__head">
+      <span class="gs-step__num" aria-hidden="true">5</span>
+      <div>
+        <h2 class="gs-step__title" id="use-in-app">Use Postmark in your app</h2>
+        <p class="gs-step__lede">You’ve sent a test email to yourself. Next, drop similar code everywhere
+          your app sends email. Our templates are pre-built, editable email designs for common
+          transactional messages — password resets, welcome emails, receipts, and more. Edit them right
+          in Postmark, or skip them and use your own HTML instead. Either way, you send them the same
+          way: reference a template by ID, or drop your HTML straight into the API call.</p>
+      </div>
+    </div>
+
+    <div class="gs-card">
+            <ul class="gs-template-grid">
+                  <li class="gs-template">
+                          <a href="https://postmarkapp.com/transactional-email-templates/welcome" class="gs-template__preview" tabindex="-1" aria-hidden="true">
+                <img src="https://postmark-app.transforms.svdcdn.com/production/icons/welcome@2x.png?w=180&amp;h=232&amp;q=85&amp;auto=format&amp;fit=crop&amp;dm=1777233263&amp;s=9e0dc91a676026364601025109e9672d" alt="" class="gs-template__icon" loading="lazy">
+              </a>
+                        <div class="gs-template__body">
+              <h3 class="gs-template__title"><a href="https://postmarkapp.com/transactional-email-templates/welcome">Welcome</a></h3>
+              <p class="gs-template__desc">Send users a welcome email when they sign up to your product or service.</p>
+            </div>
+          </li>
+                  <li class="gs-template">
+                          <a href="https://postmarkapp.com/transactional-email-templates/reset-password" class="gs-template__preview" tabindex="-1" aria-hidden="true">
+                <img src="https://postmark-app.transforms.svdcdn.com/production/icons/reset-password@2x.png?w=180&amp;h=232&amp;q=85&amp;auto=format&amp;fit=crop&amp;dm=1777233259&amp;s=a875264f56ea10db41293c74d0b6b9ad" alt="" class="gs-template__icon" loading="lazy">
+              </a>
+                        <div class="gs-template__body">
+              <h3 class="gs-template__title"><a href="https://postmarkapp.com/transactional-email-templates/reset-password">Reset password</a></h3>
+              <p class="gs-template__desc">Send users a link to reset their password.</p>
+            </div>
+          </li>
+                  <li class="gs-template">
+                          <a href="https://postmarkapp.com/transactional-email-templates/reset-password-help" class="gs-template__preview" tabindex="-1" aria-hidden="true">
+                <img src="https://postmark-app.transforms.svdcdn.com/production/icons/reset-password-alt@2x.png?w=180&amp;h=234&amp;q=85&amp;auto=format&amp;fit=crop&amp;dm=1777233259&amp;s=b9257a08d72644ef498ca7efc7d9b538" alt="" class="gs-template__icon" loading="lazy">
+              </a>
+                        <div class="gs-template__body">
+              <h3 class="gs-template__title"><a href="https://postmarkapp.com/transactional-email-templates/reset-password-help">Reset password help</a></h3>
+              <p class="gs-template__desc">Help users reset their password if they can’t remember their email.</p>
+            </div>
+          </li>
+                  <li class="gs-template">
+                          <a href="https://postmarkapp.com/transactional-email-templates/user-invitation" class="gs-template__preview" tabindex="-1" aria-hidden="true">
+                <img src="https://postmark-app.transforms.svdcdn.com/production/icons/user-invite@2x.png?w=180&amp;h=232&amp;q=85&amp;auto=format&amp;fit=crop&amp;dm=1777233263&amp;s=ba486e0c376483219561acea252b0f7d" alt="" class="gs-template__icon" loading="lazy">
+              </a>
+                        <div class="gs-template__body">
+              <h3 class="gs-template__title"><a href="https://postmarkapp.com/transactional-email-templates/user-invitation">User invitation</a></h3>
+              <p class="gs-template__desc">Help users invite others to use your product.</p>
+            </div>
+          </li>
+                  <li class="gs-template">
+                          <a href="https://postmarkapp.com/transactional-email-templates/comment-notification" class="gs-template__preview" tabindex="-1" aria-hidden="true">
+                <img src="https://postmark-app.transforms.svdcdn.com/production/icons/comment-notification@2x_2022-06-28-180901_ncqc.png?w=180&amp;h=232&amp;q=85&amp;auto=format&amp;fit=crop&amp;dm=1777233248&amp;s=85e000343727fe5a2a3b1e1fe89adde3" alt="" class="gs-template__icon" loading="lazy">
+              </a>
+                        <div class="gs-template__body">
+              <h3 class="gs-template__title"><a href="https://postmarkapp.com/transactional-email-templates/comment-notification">Comment notification</a></h3>
+              <p class="gs-template__desc">Notify users of new comments by other users.</p>
+            </div>
+          </li>
+                  <li class="gs-template">
+                          <a href="https://postmarkapp.com/transactional-email-templates/receipt" class="gs-template__preview" tabindex="-1" aria-hidden="true">
+                <img src="https://postmark-app.transforms.svdcdn.com/production/icons/billing@2x.png?w=180&amp;h=232&amp;q=85&amp;auto=format&amp;fit=crop&amp;dm=1777233247&amp;s=74b2784b41ee54889b248f3c4e90ec0a" alt="" class="gs-template__icon" loading="lazy">
+              </a>
+                        <div class="gs-template__body">
+              <h3 class="gs-template__title"><a href="https://postmarkapp.com/transactional-email-templates/receipt">Receipt</a></h3>
+              <p class="gs-template__desc">Send a receipt to your customers after they made a purchase.</p>
+            </div>
+          </li>
+                  <li class="gs-template">
+                          <a href="https://postmarkapp.com/transactional-email-templates/invoice" class="gs-template__preview" tabindex="-1" aria-hidden="true">
+                <img src="https://postmark-app.transforms.svdcdn.com/production/icons/billing@2x.png?w=180&amp;h=232&amp;q=85&amp;auto=format&amp;fit=crop&amp;dm=1777233247&amp;s=74b2784b41ee54889b248f3c4e90ec0a" alt="" class="gs-template__icon" loading="lazy">
+              </a>
+                        <div class="gs-template__body">
+              <h3 class="gs-template__title"><a href="https://postmarkapp.com/transactional-email-templates/invoice">Invoice</a></h3>
+              <p class="gs-template__desc">Request payments from your customers.</p>
+            </div>
+          </li>
+                  <li class="gs-template">
+                          <a href="https://postmarkapp.com/transactional-email-templates/trial-expiring" class="gs-template__preview" tabindex="-1" aria-hidden="true">
+                <img src="https://postmark-app.transforms.svdcdn.com/production/icons/trial@2x.png?w=180&amp;h=232&amp;q=85&amp;auto=format&amp;fit=crop&amp;dm=1777233262&amp;s=0224d2d457154ae3719a287b8fa08357" alt="" class="gs-template__icon" loading="lazy">
+              </a>
+                        <div class="gs-template__body">
+              <h3 class="gs-template__title"><a href="https://postmarkapp.com/transactional-email-templates/trial-expiring">Trial expiring</a></h3>
+              <p class="gs-template__desc">Let your users know when their trial is about to expire.</p>
+            </div>
+          </li>
+                  <li class="gs-template">
+                          <a href="https://postmarkapp.com/transactional-email-templates/trial-expired" class="gs-template__preview" tabindex="-1" aria-hidden="true">
+                <img src="https://postmark-app.transforms.svdcdn.com/production/icons/trial@2x.png?w=180&amp;h=232&amp;q=85&amp;auto=format&amp;fit=crop&amp;dm=1777233262&amp;s=0224d2d457154ae3719a287b8fa08357" alt="" class="gs-template__icon" loading="lazy">
+              </a>
+                        <div class="gs-template__body">
+              <h3 class="gs-template__title"><a href="https://postmarkapp.com/transactional-email-templates/trial-expired">Trial expired</a></h3>
+              <p class="gs-template__desc">Let your users know when their trial expired.</p>
+            </div>
+          </li>
+                  <li class="gs-template">
+                          <a href="https://postmarkapp.com/transactional-email-templates/dunning" class="gs-template__preview" tabindex="-1" aria-hidden="true">
+                <img src="https://postmark-app.transforms.svdcdn.com/production/icons/trial@2x.png?w=180&amp;h=232&amp;q=85&amp;auto=format&amp;fit=crop&amp;dm=1777233262&amp;s=0224d2d457154ae3719a287b8fa08357" alt="" class="gs-template__icon" loading="lazy">
+              </a>
+                        <div class="gs-template__body">
+              <h3 class="gs-template__title"><a href="https://postmarkapp.com/transactional-email-templates/dunning">Dunning</a></h3>
+              <p class="gs-template__desc">Let your customers know about a failed payment.</p>
+            </div>
+          </li>
+              </ul>
+
+      <p>Take your working code and paste it wherever you send important email. To get the most out of
+        Postmark, you can:</p>
+      <ul class="gs-list">
+        <li><a href="https://postmarkapp.com/message-streams">Create separate message streams</a> for
+          transactional and marketing email.</li>
+        <li><a href="https://postmarkapp.com/support/article/786-using-a-postmark-starter-template">Use
+          email templates</a> for consistent designs and common message types.</li>
+        <li><a href="https://postmarkapp.com/developer/user-guide/tracking-opens">Track individual opens</a>
+          and clicks to identify engaged users.</li>
+        <li><a href="https://postmarkapp.com/developer/user-guide/inbound">Encourage email replies</a>
+          your app can interpret with inbound processing.</li>
+      </ul>
+    </div>
+  </section>
+
+    <div class="gs-visually-hidden" role="status" aria-live="polite" data-gs-live></div>
+</div>
+
+                <footer class="docs-footer">
+          <div class="u-grid u-grid--full u-grid--1of3-at-large footer_lower">
+  <div class="u-grid-cell">
+    <div class="footer_ac">
+      Made with <span class="footer_love">♥</span> at <a href="https://www.activecampaign.com?utm_source=postmark&utm_medium=referral&utm_campaign=postmark_web&utm_content=postmark_footer" class="footer_ac-logo" target="_blank" rel="noopener">ActiveCampaign</a></a>
+    </div>
+  </div>
+  <div class="u-grid-cell u-grid-cell--2of3">
+    <div class="nav nav--legal">
+      <ul class="nav_list nav_list--legal">
+        <li class="nav_item">
+          <a href="https://www.activecampaign.com/legal/privacy-policy" target="_blank" class="nav_link">Privacy Policy &#x2197;</a>
+        </li>
+        <li class="nav_item">
+          <a href="https://postmarkapp.com/terms-of-service" class="nav_link">Terms of Service</a>
+        </li>
+        <li class="nav_item">
+          <a href="https://postmarkapp.com/eu-privacy" class="nav_link">EU Data Protection</a>
+        </li>
+        <li class="nav_item">
+          <a href="https://postmarkapp.com/cookie-policy" class="nav_link">Cookie Policy</a>
+        </li>
+        <li class="nav_item">
+          <!-- OneTrust cookies settings button start -->
+          <button id="ot-sdk-btn" class="ot-sdk-show-settings">Cookie settings</button>
+          <!-- OneTrust cookies settings button end -->
+        </li>
+        <li class="nav_item">&copy; ActiveCampaign, <abbr>LLC</abbr>, 2026.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+        </footer>
+      </div>
+
+      
+
+<aside class="docs-outline js-docs-outline" aria-label="On this page">
+  <div class="docs-outline__inner">
+    <p class="docs-outline__title js-docs-outline-title">On this page</p>
+    <nav class="docs-outline__nav js-docs-outline-nav mb-4"></nav>
+
+        <div class="">
+      <p class="docs-outline__title">Use this page with AI</p>
+
+      <a
+        class="flex items-center gap-2 mb-1.5 rounded-md border border-grey-200 bg-white px-2.5 py-2 text-sm text-grey-700! no-underline transition-colors hover:border-grey-300 hover:bg-grey-50 hover:text-grey-900!"
+        href="https://chatgpt.com/?q=Read%20https%3A%2F%2Fpostmarkapp.com%2Fdeveloper%2Fget-started%20from%20the%20Postmark%20developer%20documentation%20so%20I%20can%20ask%20questions%20about%20it."
+        target="_blank"
+        rel="noopener"
+      >
+        <svg class="h-4 w-4 shrink-0" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <path d="M8 1l1.6 4.4L14 7l-4.4 1.6L8 13l-1.6-4.4L2 7l4.4-1.6L8 1z" fill="currentColor" />
+        </svg>
+        Open in ChatGPT
+      </a>
+
+      <a
+        class="flex items-center gap-2 rounded-md border border-grey-200 bg-white px-2.5 py-2 text-sm text-grey-700! no-underline transition-colors hover:border-grey-300 hover:bg-grey-50 hover:text-grey-900!"
+        href="https://claude.ai/new?q=Read%20https%3A%2F%2Fpostmarkapp.com%2Fdeveloper%2Fget-started%20from%20the%20Postmark%20developer%20documentation%20so%20I%20can%20ask%20questions%20about%20it."
+        target="_blank"
+        rel="noopener"
+      >
+        <svg class="h-4 w-4 shrink-0" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <path d="M8 1l1.6 4.4L14 7l-4.4 1.6L8 13l-1.6-4.4L2 7l4.4-1.6L8 1z" fill="currentColor" />
+        </svg>
+        Open in Claude
+      </a>
+    </div>
+  </div>
+</aside>
+    </div>
+</div>
+
+<div class="modal modal--search hidden" data-id="developer-search">
+  <div class="modal-container modal-container--search">
+    <form action="/search/results" method="get" class="developer-search-form" id="developer-search-form">
+      <input type="hidden" name="categories" value="apiReference,integration,userGuide,webhooks">
+      <div class="developer-search-form__wrapper">
+        <svg class="developer-search-form__icon" width="20" height="20" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M7 13C10.3137 13 13 10.3137 13 7C13 3.68629 10.3137 1 7 1C3.68629 1 1 3.68629 1 7C1 10.3137 3.68629 13 7 13Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M15 15L11.5 11.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <input 
+          type="search" 
+          name="query" 
+          placeholder="Search developer documentation..." 
+          class="developer-search-form__input" 
+          id="developer-search-input"
+          autocomplete="off"
+          required
+        >
+        <button type="button" class="developer-search-form__close js-close-modal" data-modal="developer-search" aria-label="Close search">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 4L4 12M4 4L12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+      <div class="developer-search-form__hint">
+        Press <kbd>Enter</kbd> to search or <kbd>Esc</kbd> to close
+      </div>
+    </form>
+  </div>
+</div>
+
+
+
+  <script
+  src="https://solve-widget.forethought.ai/embed.js"
+  id="forethought-widget-embed-script"
+  data-api-key="2310ff96-9b16-4a77-9601-827429c9507c"
+  data-ft-Workflow-Tag="postmark"
+></script>
+
+  <script src="https://postmarkapp.com/dist/js/landing.37f841d2d154b91ec421.js"></script>
+
+<script type="text/javascript">
+  window['GoogleAnalyticsObject'] = 'ga';
+  window['ga'] = window['ga'] || function() {
+    (window['ga'].q = window['ga'].q || []).push(arguments)
+  };
+</script>
+
+<!-- Google Tag Manager -->
+<noscript><iframe src="//www.googletagmanager.com/ns.html?id=GTM-PWV3TKM" width="0" height="0" style="display:none; visibility:hidden"></iframe></noscript>
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-PWV3TKM');</script><script src="https://postmarkapp.com/dist/js/developerDocs.c2a8921d3b9f58bffb12.js"></script>
+
+  
+<script>
+(function () {
+  var root = document.querySelector('[data-gs-root]');
+  if (!root) { return; }
+  var live = root.querySelector('[data-gs-live]');
+  var slice = function (list) { return Array.prototype.slice.call(list); };
+
+  /* ---------- Tabs ---------- */
+  var bars = slice(root.querySelectorAll('[role="tablist"][data-tabgroup]'));
+  var tabsIn = function (bar) { return slice(bar.querySelectorAll('[role="tab"]')); };
+  var hasValue = function (bar, value) {
+    return tabsIn(bar).some(function (tab) { return tab.getAttribute('data-value') === value; });
+  };
+
+  function selectInGroup(group, value) {
+    bars.forEach(function (bar) {
+      if (bar.getAttribute('data-tabgroup') !== group) { return; }
+      /* Leave bars that don't offer this value alone, so a value only present in
+         one bar of a group never blanks the others. */
+      if (!hasValue(bar, value)) { return; }
+      tabsIn(bar).forEach(function (tab) {
+        var active = tab.getAttribute('data-value') === value;
+        tab.setAttribute('aria-selected', active ? 'true' : 'false');
+        tab.setAttribute('tabindex', active ? '0' : '-1');
+        tab.classList.toggle('is-active', active);
+        var panel = document.getElementById(tab.getAttribute('aria-controls'));
+        if (panel) { panel.hidden = !active; }
+      });
+    });
+  }
+
+  bars.forEach(function (bar) {
+    var group = bar.getAttribute('data-tabgroup');
+    var tabs = tabsIn(bar);
+
+    bar.addEventListener('click', function (e) {
+      var tab = e.target.closest('[role="tab"]');
+      if (tab && bar.contains(tab)) { selectInGroup(group, tab.getAttribute('data-value')); }
+    });
+
+    bar.addEventListener('keydown', function (e) {
+      var current = e.target.closest('[role="tab"]');
+      if (!current) { return; }
+      var idx = tabs.indexOf(current);
+      var next = null;
+      switch (e.key) {
+        case 'ArrowRight':
+        case 'ArrowDown': next = tabs[(idx + 1) % tabs.length]; break;
+        case 'ArrowLeft':
+        case 'ArrowUp': next = tabs[(idx - 1 + tabs.length) % tabs.length]; break;
+        case 'Home': next = tabs[0]; break;
+        case 'End': next = tabs[tabs.length - 1]; break;
+        default: return;
+      }
+      e.preventDefault();
+      selectInGroup(group, next.getAttribute('data-value'));
+      next.focus();
+    });
+  });
+
+  /* ---------- Copy buttons ---------- */
+  slice(root.querySelectorAll('.gs-copy__text')).forEach(function (el) {
+    el.setAttribute('data-default', el.textContent.trim());
+  });
+
+  function announce(msg) { if (live) { live.textContent = msg; } }
+
+  function markCopied(btn, ok) {
+    var label = btn.querySelector('.gs-copy__text');
+    if (!ok) {
+      announce('Copy failed — select the text and copy it manually.');
+      return;
+    }
+    /* The copied state sticks (per feedback) — no timed revert. */
+    btn.classList.add('is-copied');
+    if (label) { label.textContent = 'Copied'; }
+    announce('Copied to clipboard.');
+  }
+
+  function legacyCopy(text) {
+    try {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.setAttribute('readonly', '');
+      ta.style.position = 'absolute';
+      ta.style.left = '-9999px';
+      document.body.appendChild(ta);
+      ta.select();
+      var ok = document.execCommand('copy');
+      document.body.removeChild(ta);
+      return ok;
+    } catch (err) {
+      return false;
+    }
+  }
+
+  /* A copy button either points at an explicit target (data-copy="#id") or lives
+     in a code-panel bar, in which case it copies the panel that's currently
+     visible in its .gs-codetabs container. */
+  function resolveTarget(btn) {
+    var sel = btn.getAttribute('data-copy');
+    if (sel) { return document.querySelector(sel); }
+    var wrap = btn.closest('.gs-codetabs');
+    if (wrap) {
+      var panel = wrap.querySelector('[role="tabpanel"]:not([hidden])');
+      if (panel) { return panel.querySelector('code') || panel; }
+    }
+    return null;
+  }
+
+  root.addEventListener('click', function (e) {
+    var btn = e.target.closest('.gs-copy');
+    if (!btn) { return; }
+    var target = resolveTarget(btn);
+    if (!target) { markCopied(btn, false); return; }
+    var text = target.textContent;
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(
+        function () { markCopied(btn, true); },
+        function () { markCopied(btn, legacyCopy(text)); }
+      );
+    } else {
+      markCopied(btn, legacyCopy(text));
+    }
+  });
+})();
+</script>
+
+
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Organization",
+  "url": "https://postmarkapp.com",
+  "logo": "https://postmarkapp.com/images/logo-stamp-social.png",
+  "name": "Postmark",
+  "founder": [
+    {
+      "@type": "Person",
+      "name": "Jason VandeBoom",
+      "jobTitle": "CEO"
+    }
+  ],
+  "foundingLocation": {
+    "@type": "Place",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "1 North Dearborn St, 5th Floor",
+      "addressLocality": "Chicago",
+      "addressRegion": "IL",
+      "postalCode": "60602",
+      "addressCountry": "US"
+    }
+  },
+  "location": {
+    "@type": "Place",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "1 North Dearborn St, 5th Floor",
+      "addressLocality": "Chicago",
+      "addressRegion": "IL",
+      "postalCode": "60602",
+      "addressCountry": "US"
+    }
+  },
+  "sameAs": [
+    "https://twitter.com/postmarkapp"
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "WebSite",
+  "name": "Postmark",
+  "url": "https://postmarkapp.com"
+}
+</script>
+
+</body>
+</html>
