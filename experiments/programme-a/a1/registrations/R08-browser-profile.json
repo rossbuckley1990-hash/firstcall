@@ -1,0 +1,54 @@
+{
+  "schema": "firstcall.programmeA.a1_registration_record.v1",
+  "component_id": "R08",
+  "component": "PINNED_BROWSER_PROFILE (human documentary adjudication; not a crawler)",
+  "status": "CONDITIONALLY_REGISTERED_PENDING_ANCHOR",
+  "artifact": {
+    "browser_family": "Mozilla Firefox ESR (Extended Support Release), desktop",
+    "version_policy": "each adjudicator records the exact installed ESR version (about:support 'Version') and the policy status (about:policies 'Active') in an installation attestation (forms/R08-installation-attestation.form.json) BEFORE their first block; the version may not change within a decision block; updates only between blocks, each recorded; both adjudicators must be on the same ESR major line",
+    "enterprise_policies": "R08-firefox-policies.template.json installed as policies.json (extensions blocked, updates off during blocks, no password saving, no form history, no search suggestions, no accounts, telemetry off, sanitise on shutdown, private browsing forced)",
+    "session": "one fresh private window per RDG; all windows closed and the browser restarted between RDGs; never logged in; no stored credentials; no history or personalised search carried between RDGs",
+    "javascript": "enabled (documentation is judged as rendered)",
+    "cookies": "refuse non-essential cookies where a choice is offered; if a consent wall requires accepting non-essential cookies to read the page, do not accept: the page is an access restriction and its evidence gap follows the frozen UNRESOLVED rules",
+    "locale": "en-GB interface; Accept-Language en-GB,en",
+    "timezone": "record the OS timezone in the attestation; all evidence timestamps in UTC",
+    "network": "UK egress (frozen UK-customer context); no VPN or proxy that changes country",
+    "navigation": "start only from the frozen E1/E2 leads produced by R17 for the RDG's primary entry; follow only visible first-party links whose path contains a frozen vocabulary term; depth <= 2; eligibility 16 pages/60 min; terms 6 pages/20 min; one retry after >= 30 min (decision-protocol.json, unchanged)",
+    "prohibited": [
+      "search engines or address-bar searching",
+      "typed or guessed URLs other than the exact E2 leads",
+      "login, signup or account creation",
+      "vendor API calls",
+      "extensions, scripts, automation, crawling or bulk download",
+      "creating archive copies",
+      "switching to another entry of the RDG"
+    ],
+    "access_controls": "respect technical and explicit access restrictions; never circumvent",
+    "evidence_recording": "evidence-record.schema.json per consulted page (URL, UTC time, title, tier, proposition, predicate, code, reason, minimal excerpt where appropriate, adjudicator, record SHA256, optional existing archive pointer); no page copies or screenshots by default"
+  },
+  "version": "specification 1.0.0 (installed ESR version recorded per adjudicator before first block)",
+  "digests": {
+    "R08-firefox-policies.template.json": "a64ea0938304bf7e129be2bd7e196670aadfdd53cd4bb148ffb2dc2230b400aa"
+  },
+  "registered_utc": "2026-09-19T00:11:22Z",
+  "controlling_clause": "roles.json R08; decision-protocol.json navigation (browser, prohibited, vocabulary, budgets)",
+  "prerequisites": [
+    "R17 (E2 leads)"
+  ],
+  "required_before": "G4_SCREENING",
+  "conditions": [
+    "per-adjudicator installation attestations (exact version, policy status, OS timezone) must be recorded and anchored before that adjudicator's first block"
+  ],
+  "conflicts_independence": "none (profile); attestations are made by R05/R06",
+  "registrant": {
+    "kind": "machine_registration",
+    "name": "prepared in the pre-reveal registration task"
+  },
+  "binding": "Binding only when committed, annotated-tagged programme-a-freeze-1.2.1-pre-reveal and pushed; G1 remains on HOLD in this task.",
+  "immutability": "specification immutable after anchoring; changing it requires re-registration before G4",
+  "anchor_parent": {
+    "commit": "3def4227285453c253e2c6df969bb3eefc291fa8",
+    "tag": "programme-a-freeze-1.2-a1"
+  },
+  "amendment": "Freeze 1.2.1"
+}

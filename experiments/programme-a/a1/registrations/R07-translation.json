@@ -1,0 +1,45 @@
+{
+  "schema": "firstcall.programmeA.a1_registration_record.v1",
+  "component_id": "R07",
+  "component": "TRANSLATION_TOOL",
+  "status": "REGISTERED_PENDING_ANCHOR",
+  "artifact": {
+    "mechanism": "NO_MACHINE_TRANSLATION (fail-closed null translator)",
+    "rule": "Non-English documentary text is never machine-translated and is not interpreted through an adjudicator's own language skills. A predicate whose only relevant evidence within budget is non-English is coded UNRESOLVED with reason TRANSLATION_NOT_AVAILABLE. English-language first-party pages reachable by the frozen navigation (e.g. a first-party English version linked from the page) are used normally.",
+    "language_identification": "the page's declared <html lang> value when present, otherwise the adjudicator's record 'non-English (language: <ISO 639-1 or unknown>)'; no detector software",
+    "retained": [
+      "original excerpt (minimal, where appropriate)",
+      "source language as identified",
+      "translated text: none",
+      "mechanism and version: NO_MACHINE_TRANSLATION 1.0.0",
+      "timestamp of the evidence record (UTC)",
+      "adjudicator's final predicate code and reason"
+    ],
+    "why_no_mt": "Explicit prospective custodian decision: no machine translation; unavailable translation is UNRESOLVED, never negative.",
+    "policy": "NO_MACHINE_TRANSLATION / FAIL_CLOSED",
+    "implementation": "translation_policy.py"
+  },
+  "version": "1.0.0",
+  "digests": {
+    "translation_policy.py": "87eff641ef683ba49ff1cc8950432e631350137b904f29a8902547b96012b2b1"
+  },
+  "registered_utc": "2026-09-19T00:11:22Z",
+  "controlling_clause": "roles.json R07 ('one pinned offline tool and language detector'); decision-protocol.json navigation.translation ('non-English pages only through the registered translation tool; uncertain translation => UNRESOLVED'); Freeze-1.1 §4; explicitly authorised by Freeze 1.2.1",
+  "prerequisites": [],
+  "required_before": "G3_ENTROPY (roles.json)",
+  "conditions": [
+    "Declared bias: surfaces documented only in non-English languages become UNRESOLVED (excluded from S_G), narrowing A1 toward English-documented surfaces; the count of TRANSLATION_NOT_AVAILABLE codes is reported."
+  ],
+  "conflicts_independence": "none",
+  "registrant": {
+    "kind": "machine_registration",
+    "name": "prepared in the pre-reveal registration task"
+  },
+  "binding": "Binding only when committed, annotated-tagged programme-a-freeze-1.2.1-pre-reveal and pushed; G1 remains on HOLD in this task.",
+  "immutability": "changing the mechanism after G3 requires a prospective amendment",
+  "anchor_parent": {
+    "commit": "3def4227285453c253e2c6df969bb3eefc291fa8",
+    "tag": "programme-a-freeze-1.2-a1"
+  },
+  "amendment": "Freeze 1.2.1"
+}

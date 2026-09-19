@@ -1,0 +1,14 @@
+{
+  "form": "R08 browser installation attestation (per adjudicator, before first block)",
+  "status": "TEMPLATE_UNFILLED",
+  "fields": {
+    "adjudicator_slot": null,
+    "firefox_esr_version": null,
+    "about_policies_status": "Active",
+    "policies_sha256": "a64ea0938304bf7e129be2bd7e196670aadfdd53cd4bb148ffb2dc2230b400aa",
+    "os_timezone": null,
+    "egress_country": "GB",
+    "recorded_utc": null,
+    "signature": null
+  }
+}

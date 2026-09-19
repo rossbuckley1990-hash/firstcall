@@ -1,0 +1,20 @@
+{
+  "form": "A1 entropy custodian registration (R03)",
+  "status": "TEMPLATE_UNFILLED",
+  "fields": {
+    "full_name": null,
+    "public_contact": null,
+    "registered_utc": null,
+    "signature": null
+  },
+  "attestations_all_required_true": [
+    "I am a natural person registering myself; this record was not created on my behalf by any model or other person",
+    "I have read the anchored Freeze-1.2 A1 amendment (commit 3def4227285453c253e2c6df969bb3eefc291fa8) and the role's duties in roles.json",
+    "I hold no source, identity, eligibility or apparatus role: I am not R01, R02, R05, R06 or R10",
+    "On the registered runtime I will generate the tape with ONE call a1_permutation.generate_tape(|G|) (os.urandom(32*|G|)) after the RDG frame G is sealed, in the presence of the registered witness",
+    "I will record and publish SHA256(tape) and the sealed G_sha256 before interpreting the tape; any failure, short tape, tie or repeat invocation aborts the cohort",
+    "I will keep the tape and permutation in custody, release one block of 6 at a time only after the previous block is sealed, and compute selection mechanically",
+    "I will not reveal the tape, priorities or order to adjudicators before the sample is sealed"
+  ],
+  "required_before": "G3_ENTROPY"
+}

@@ -1,0 +1,40 @@
+{
+  "schema": "firstcall.programmeA.a1_registration_record.v1",
+  "component_id": "SEAL-TOOL",
+  "component": "DUAL_HUMAN_RECORD_SEALING",
+  "status": "CONDITIONALLY_REGISTERED_PENDING_ANCHOR",
+  "artifact": {
+    "implementation": "record_seal.py",
+    "schema": "firstcall.dual_human_seals.v1",
+    "mode_tested": "SYNTHETIC_ONLY",
+    "threat_model": "Trusted custodian, separate authenticated human intake, participants have no direct store access; plaintext; append-only triggers/hash chain/checkpoints; not secure against privileged administrator",
+    "human_roster": "UNFILLED; no fictional people registered"
+  },
+  "version": "1.0.0",
+  "digests": {
+    "record_seal.py": "b9f00c92b5c8844bc0bf2598746f0c7767a46856e7bfb9f2f0291caa2c47a321"
+  },
+  "registered_utc": "2026-09-19T00:11:22Z",
+  "controlling_clause": "Freeze-1.2 independent sealed block exchange; Freeze-1.2.1 implementation",
+  "prerequisites": [
+    "R05",
+    "R06"
+  ],
+  "required_before": "G4_SCREENING",
+  "conditions": [
+    "Two genuine prospectively anchored R05/R06 records",
+    "Custodian attestation of separate authenticated intake and filesystem isolation before G4"
+  ],
+  "conflicts_independence": "none (machine)",
+  "registrant": {
+    "kind": "machine_registration",
+    "name": "prepared in the pre-reveal registration task"
+  },
+  "binding": "Binding only when committed, annotated-tagged programme-a-freeze-1.2.1-pre-reveal and pushed; G1 remains on HOLD in this task.",
+  "immutability": "immutable after anchoring; any change requires re-registration before G4 (and a prospective amendment if E2 semantics change)",
+  "anchor_parent": {
+    "commit": "3def4227285453c253e2c6df969bb3eefc291fa8",
+    "tag": "programme-a-freeze-1.2-a1"
+  },
+  "amendment": "Freeze 1.2.1"
+}

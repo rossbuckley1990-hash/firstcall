@@ -1,0 +1,44 @@
+{
+  "schema": "firstcall.programmeA.a1_registration_record.v1",
+  "component_id": "RT-A1-RUNTIME",
+  "component": "registered runtime for frame construction (NFC, IDNA), entropy call, permutation, screening engine and spec parser",
+  "status": "REGISTERED_PENDING_ANCHOR",
+  "artifact": {
+    "interpreter_realpath": "/opt/homebrew/Cellar/python@3.14/3.14.6/Frameworks/Python.framework/Versions/3.14/bin/python3.14",
+    "python_version": "3.14.6 (main, Jun 10 2026, 10:03:53) [Clang 21.0.0 (clang-2100.0.123.102)]",
+    "unicode_version": "16.0.0",
+    "idna_codec": "vendored idna 3.11, strict IDNA2008, uts46=False; a1_host.canonical_host",
+    "idna_vectors": {
+      "bücher.de": "xn--bcher-kva.de",
+      "straße.de": "xn--strae-oqa.de",
+      "xn--strae-oqa.de": "xn--strae-oqa.de",
+      "BÜCHER.DE.": "xn--bcher-kva.de"
+    },
+    "git_version": "git version 2.50.1 (Apple Git-155)",
+    "platform": "macOS-26.4.1-arm64-arm-64bit-Mach-O",
+    "invocation": "<interpreter_realpath> -B <script> with PYTHONDONTWRITEBYTECODE=1"
+  },
+  "version": "3.14.6",
+  "digests": {
+    "interpreter_sha256": "b502cb4c5b46b8d4192ec6bcb600ce8922f1afc396fcf646e8765c6eba74a0bf",
+    "a1_host.py": "7a273b62c8746d03007cd28afb8f45a6017e9a2d9213a4eed2a5720a117e4552"
+  },
+  "registered_utc": "2026-09-19T00:11:22Z",
+  "controlling_clause": "Freeze 1.2.1 supersedes ONLY Freeze-1.2 §5 stdlib host codec; Freeze-1.1 IDNA2008 authoritative; runtime otherwise unchanged",
+  "prerequisites": [
+    "G0_ANCHOR"
+  ],
+  "required_before": "G1_SNAPSHOT (frame construction)",
+  "conflicts_independence": "none (machine)",
+  "registrant": {
+    "kind": "machine_registration",
+    "name": "prepared in the pre-reveal registration task; binding on the protocol custodian's anchoring"
+  },
+  "binding": "Binding only when committed, annotated-tagged programme-a-freeze-1.2.1-pre-reveal and pushed; G1 remains on HOLD in this task.",
+  "immutability": "any interpreter, Unicode-database, IDNA or git change before sample sealing requires a new prospective registration BEFORE the affected gate; a mismatch at G1-G4 halts",
+  "anchor_parent": {
+    "commit": "3def4227285453c253e2c6df969bb3eefc291fa8",
+    "tag": "programme-a-freeze-1.2-a1"
+  },
+  "amendment": "Freeze 1.2.1"
+}

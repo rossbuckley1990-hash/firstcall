@@ -1,0 +1,50 @@
+{
+  "package": "PyYAML",
+  "version": "6.0.3",
+  "license": "MIT",
+  "source": "pre-existing cached source archive and package metadata; no takeover download",
+  "archive_sha256": "d76623373421df22fb4cf8817020cbb7ef15c725b9d5e45f17e189bfc384190f",
+  "release_record": {
+    "comment_text": null,
+    "core-metadata": false,
+    "digests": {
+      "blake2b_256": "058e961c0007c59b8dd7729d542c61a4d537767a59645b82a0b521206e1e25c2",
+      "md5": "dbc6f815cd75160ccf12e470be1c8d6e",
+      "sha256": "d76623373421df22fb4cf8817020cbb7ef15c725b9d5e45f17e189bfc384190f"
+    },
+    "downloads": -1,
+    "filename": "pyyaml-6.0.3.tar.gz",
+    "has_sig": false,
+    "md5_digest": "dbc6f815cd75160ccf12e470be1c8d6e",
+    "packagetype": "sdist",
+    "python_version": "source",
+    "requires_python": ">=3.8",
+    "size": 130960,
+    "upload_time": "2025-09-25T21:33:16",
+    "upload_time_iso_8601": "2025-09-25T21:33:16.546886Z",
+    "url": "https://files.pythonhosted.org/packages/05/8e/961c0007c59b8dd7729d542c61a4d537767a59645b82a0b521206e1e25c2/pyyaml-6.0.3.tar.gz",
+    "yanked": false,
+    "yanked_reason": null
+  },
+  "package_members_match": {
+    "LICENSE": true,
+    "yaml/scanner.py": true,
+    "yaml/error.py": true,
+    "yaml/constructor.py": true,
+    "yaml/composer.py": true,
+    "yaml/events.py": true,
+    "yaml/__init__.py": true,
+    "yaml/representer.py": true,
+    "yaml/tokens.py": true,
+    "yaml/dumper.py": true,
+    "yaml/cyaml.py": true,
+    "yaml/parser.py": true,
+    "yaml/reader.py": true,
+    "yaml/loader.py": true,
+    "yaml/resolver.py": true,
+    "yaml/serializer.py": true,
+    "yaml/nodes.py": true,
+    "yaml/emitter.py": true
+  },
+  "threat_model": "Offline package identity/byte pinning; cached metadata trusted; no independent upstream signature claim"
+}

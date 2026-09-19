@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "array",
+  "minItems": 2,
+  "maxItems": 2,
+  "items": {
+    "type": "object",
+    "required": [
+      "id",
+      "role",
+      "kind",
+      "status",
+      "full_name",
+      "signature",
+      "independence_attestation"
+    ],
+    "properties": {
+      "kind": {
+        "const": "human"
+      },
+      "status": {
+        "const": "FILLED"
+      },
+      "role": {
+        "enum": [
+          "R05",
+          "R06"
+        ]
+      }
+    }
+  }
+}

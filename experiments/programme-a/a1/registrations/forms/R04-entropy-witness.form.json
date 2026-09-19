@@ -1,0 +1,17 @@
+{
+  "form": "A1 entropy witness registration (R04)",
+  "status": "TEMPLATE_UNFILLED",
+  "fields": {
+    "full_name": null,
+    "public_contact": null,
+    "registered_utc": null,
+    "signature": null
+  },
+  "attestations_all_required_true": [
+    "I am a natural person registering myself; this record was not created on my behalf by any model or other person",
+    "I have read the anchored Freeze-1.2 A1 amendment (commit 3def4227285453c253e2c6df969bb3eefc291fa8) and the role's duties in roles.json",
+    "I am not R01, R02, R03, R05 or R06",
+    "I will witness the single entropy call, verify the registered runtime and G_sha256, and sign the generation log and tape commitment"
+  ],
+  "required_before": "G3_ENTROPY"
+}

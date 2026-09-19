@@ -1,0 +1,145 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "firstcall.programmeA.a1_registration_record.v1",
+  "type": "object",
+  "required": [
+    "schema",
+    "component_id",
+    "component",
+    "status",
+    "artifact",
+    "version",
+    "digests",
+    "registered_utc",
+    "controlling_clause",
+    "prerequisites",
+    "conflicts_independence",
+    "registrant",
+    "binding",
+    "immutability",
+    "anchor_parent"
+  ],
+  "properties": {
+    "schema": {
+      "const": "firstcall.programmeA.a1_registration_record.v1",
+      "type": "string",
+      "minLength": 1
+    },
+    "component_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "status": {
+      "enum": [
+        "REGISTERED_PENDING_ANCHOR",
+        "CONDITIONALLY_REGISTERED_PENDING_ANCHOR",
+        "GENERATED_APPROVAL_UNFILLED",
+        "UNFILLED"
+      ]
+    },
+    "digests": {
+      "$ref": "#/$defs/digests"
+    },
+    "registered_utc": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"
+    },
+    "registrant": {
+      "type": "object",
+      "required": [
+        "kind",
+        "name"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "machine_registration",
+            "machine_generation"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "conditions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "component": {
+      "type": "string",
+      "minLength": 1
+    },
+    "version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "controlling_clause": {
+      "type": "string",
+      "minLength": 1
+    },
+    "conflicts_independence": {
+      "type": "string",
+      "minLength": 1
+    },
+    "binding": {
+      "type": "string",
+      "minLength": 1
+    },
+    "immutability": {
+      "type": "string",
+      "minLength": 1
+    },
+    "required_before": {
+      "type": "string",
+      "minLength": 1
+    },
+    "amendment": {
+      "type": "string",
+      "minLength": 1
+    },
+    "artifact": {
+      "type": "object"
+    },
+    "anchor_parent": {
+      "type": "object",
+      "required": [
+        "commit",
+        "tag"
+      ],
+      "properties": {
+        "commit": {
+          "const": "3def4227285453c253e2c6df969bb3eefc291fa8"
+        },
+        "tag": {
+          "const": "programme-a-freeze-1.2-a1"
+        }
+      }
+    },
+    "prerequisites": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "$defs": {
+    "digests": {
+      "type": "object",
+      "additionalProperties": {
+        "anyOf": [
+          {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          {
+            "$ref": "#/$defs/digests"
+          }
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "anchor": {
+    "a1_counters": {
+      "A1_AUTONOMOUS_RUNS": 0,
+      "A1_CANDIDATE_IDENTITIES_OBSERVED": 0,
+      "A1_ELIGIBILITY_DECISIONS": 0,
+      "A1_ENTROPY_GENERATED": "NO",
+      "A1_MEMBERSHIP_RETRIEVED": "NO",
+      "A1_OUTCOMES": 0,
+      "A1_PERMUTATION_GENERATED": "NO",
+      "A1_SELECTED_RDGS": 0,
+      "A1_VENDOR_API_CALLS": 0
+    },
+    "anchored_validator": "SEALABLE_BUT_REGISTRATIONS_INCOMPLETE",
+    "commit": "3def4227285453c253e2c6df969bb3eefc291fa8",
+    "freeze_1": true,
+    "freeze_1_1": true,
+    "gates": {
+      "G0_ANCHOR": "OPEN",
+      "G1_SNAPSHOT": "OPEN",
+      "G2_REGISTRY": "CLOSED",
+      "G3_ENTROPY": "CLOSED",
+      "G4_SCREENING": "CLOSED",
+      "G5_EXECUTION": "CLOSED"
+    },
+    "protected": true,
+    "tag": "programme-a-freeze-1.2-a1"
+  },
+  "decision": "SEALABLE_MACHINE_PACKAGE_HUMANS_UNFILLED",
+  "effective_gates": {
+    "G0_ANCHOR": "OPEN",
+    "G1_SNAPSHOT": "HOLD: no retrieval authorised in this task; no gate crossed",
+    "G2_REGISTRY": "CLOSED: R05/R06 unfilled; R16 approvals unfilled",
+    "G3_ENTROPY": "CLOSED: R03/R04/R05/R06 unfilled; R07 machine registered",
+    "G4_SCREENING": "CLOSED: G3 closed; R08 installation and sealing intake conditional; R17 machine registered",
+    "G5_EXECUTION": "CLOSED: R09/R10 future; Freeze-4 apparatus absent"
+  },
+  "errors": [],
+  "human_roles": {
+    "R03": "UNFILLED",
+    "R04": "UNFILLED",
+    "R05": "UNFILLED",
+    "R06": "UNFILLED"
+  },
+  "open_defects": [],
+  "records": {
+    "R07": "REGISTERED_PENDING_ANCHOR",
+    "R08": "CONDITIONALLY_REGISTERED_PENDING_ANCHOR",
+    "R16": "GENERATED_APPROVAL_UNFILLED",
+    "R17": "REGISTERED_PENDING_ANCHOR",
+    "RT-A1-RUNTIME": "REGISTERED_PENDING_ANCHOR",
+    "SEAL-TOOL": "CONDITIONALLY_REGISTERED_PENDING_ANCHOR"
+  },
+  "schema": "firstcall.programmeA.a1_registrations_validation.v1"
+}

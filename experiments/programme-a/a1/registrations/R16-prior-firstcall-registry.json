@@ -1,0 +1,54 @@
+{
+  "schema": "firstcall.programmeA.a1_registration_record.v1",
+  "component_id": "R16",
+  "component": "PRIOR_FIRSTCALL_REGISTRY",
+  "status": "GENERATED_APPROVAL_UNFILLED",
+  "artifact": {
+    "projection": "experiments/programme-a/a1/registrations/R16-prior-firstcall-projection.json",
+    "generator": "experiments/programme-a/a1/prior_firstcall_projector.py (anchored, unchanged) at provenance cutoff 13ff44c37a96882553ffb9103a5596787555e0f3",
+    "result": {
+      "status": "DRAFT_REQUIRES_TWO_ADJUDICATOR_APPROVAL",
+      "paths": 313,
+      "positive_grammar_designations": 0,
+      "unrecognized_designations": 0
+    },
+    "registry_entries": [
+      "Postmark (named mandatory exclusion)",
+      "Resend (named mandatory exclusion)",
+      "CF-001/Acme local fixtures (named mandatory exclusion)",
+      "MULTI-002 Stripe target (named mandatory exclusion)"
+    ],
+    "not_done": "no comparison with A1 (membership unseen); no outcome values read; overlap with A1 is determined only when a released RDG is screened for predicate E6",
+    "flagged_for_approval": [
+      "experiments/multi-001/candidates.json (plausible target-list file by path name; no grammar designation)"
+    ]
+  },
+  "version": "projector 1.2.1",
+  "digests": {
+    "projection": "799c9f0bd305842b6acbaee8546564b9370117179cf5cd61424b3b56323fe6b2",
+    "projector": "c5c68a7a9a584fcecc91af082680baf6cbf3fbc86e2a89b1d981bef89a7875eb"
+  },
+  "registered_utc": "2026-09-19T00:11:22Z",
+  "controlling_clause": "Freeze-1.1 §5, §8.4; roles.json R15/R16; gate G2_REGISTRY",
+  "prerequisites": [
+    "R05",
+    "R06"
+  ],
+  "required_before": "G2_REGISTRY",
+  "conflicts_independence": "approval by R05 and R06 independently (forms/R16-registry-approval.form.json)",
+  "registrant": {
+    "kind": "machine_generation",
+    "name": "anchored projector; approvals: UNFILLED"
+  },
+  "approvals": {
+    "ADJ-1": null,
+    "ADJ-2": null
+  },
+  "binding": "Binding only when committed, annotated-tagged programme-a-freeze-1.2.1-pre-reveal and pushed; G1 remains on HOLD in this task.",
+  "immutability": "the projection is reproducible byte-for-byte from the anchored projector and cutoff commit; approvals are append-only records",
+  "anchor_parent": {
+    "commit": "3def4227285453c253e2c6df969bb3eefc291fa8",
+    "tag": "programme-a-freeze-1.2-a1"
+  },
+  "amendment": "Freeze 1.2.1"
+}

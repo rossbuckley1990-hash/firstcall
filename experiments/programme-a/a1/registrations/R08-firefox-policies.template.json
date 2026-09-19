@@ -1,0 +1,46 @@
+{
+  "policies": {
+    "DisableAppUpdate": true,
+    "AppAutoUpdate": false,
+    "DisableTelemetry": true,
+    "DisableFirefoxStudies": true,
+    "DisablePocket": true,
+    "DisableFirefoxAccounts": true,
+    "DisableFormHistory": true,
+    "OfferToSaveLogins": false,
+    "PasswordManagerEnabled": false,
+    "SearchSuggestEnabled": false,
+    "FirefoxSuggest": {
+      "WebSuggestions": false,
+      "SponsoredSuggestions": false,
+      "ImproveSuggest": false,
+      "Locked": true
+    },
+    "ExtensionSettings": {
+      "*": {
+        "installation_mode": "blocked"
+      }
+    },
+    "NoDefaultBookmarks": true,
+    "DisplayBookmarksToolbar": "never",
+    "RequestedLocales": [
+      "en-GB"
+    ],
+    "SanitizeOnShutdown": true,
+    "Cookies": {
+      "Behavior": "reject-tracker-and-partition-foreign",
+      "Locked": true
+    },
+    "EnableTrackingProtection": {
+      "Value": true,
+      "Locked": true
+    },
+    "Homepage": {
+      "URL": "about:blank",
+      "Locked": true,
+      "StartPage": "none"
+    },
+    "DontCheckDefaultBrowser": true,
+    "PrivateBrowsingModeAvailability": 2
+  }
+}

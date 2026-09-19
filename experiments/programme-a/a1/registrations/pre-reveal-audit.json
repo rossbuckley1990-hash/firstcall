@@ -1,0 +1,199 @@
+{
+  "schema": "firstcall.programmeA.a1_pre_reveal_audit.v1",
+  "anchor": {
+    "commit": "3def4227285453c253e2c6df969bb3eefc291fa8",
+    "tag": "programme-a-freeze-1.2-a1",
+    "branch": "v0.2-real-agent"
+  },
+  "defects": [
+    {
+      "id": "D8A",
+      "status": "RESOLVED_PROSPECTIVELY_PENDING_ANCHOR"
+    },
+    {
+      "id": "D8B",
+      "status": "RESOLVED_PROSPECTIVELY_PENDING_ANCHOR"
+    },
+    {
+      "id": "D8A-PATH",
+      "status": "RESOLVED_PROSPECTIVELY_PENDING_ANCHOR"
+    }
+  ],
+  "human_roles": {
+    "R03": {
+      "requirement": "independent natural person; not R01, R02, R05, R06, R10",
+      "ross_permitted": false,
+      "reason": "Ross holds R01 and R02 (anchored)",
+      "status": "UNFILLED",
+      "form": "forms/R03-entropy-custodian.form.json"
+    },
+    "R04": {
+      "requirement": "independent natural person; not R01, R02, R03, R05, R06",
+      "ross_permitted": false,
+      "reason": "Ross holds R01 and R02",
+      "status": "UNFILLED",
+      "form": "forms/R04-entropy-witness.form.json"
+    },
+    "R05": {
+      "requirement": "natural person; not R03, R04, R06; no model-generated codes",
+      "ross_permitted": true,
+      "reason": "roles.json lists no conflict between R05/R06 and R01/R02; permitted for ONE adjudicator slot only, with disclosure (protocol author, snapshot custodian, saw rejected drafts, knows historical outcomes). Holding it bars Ross from R09 operator.",
+      "status": "UNFILLED",
+      "form": "forms/R05-R06-adjudicator.form.json"
+    },
+    "R06": {
+      "requirement": "natural person distinct from R05; not R03, R04",
+      "ross_permitted": "only if he does not hold R05 (one slot at most)",
+      "status": "UNFILLED",
+      "form": "forms/R05-R06-adjudicator.form.json"
+    },
+    "self_registration": "the frozen mechanism does not forbid self-registration, but each human record must be made and signed by the person (attestations). Nothing was registered on Ross's behalf.",
+    "not_eligible_for_any_human_role": [
+      "Claude or any other model instance",
+      "duplicated model sessions",
+      "fictional or placeholder people"
+    ]
+  },
+  "ross_permitted_roles": {
+    "held": [
+      "R01 protocol custodian",
+      "R02 source/snapshot custodian"
+    ],
+    "may_additionally_hold": [
+      "R05 or R06 (one slot, with disclosures)",
+      "R10 verifier/apparatus reviewer (conflict only with R03)",
+      "R09 operator only if not an adjudicator"
+    ],
+    "may_not_hold": [
+      "R03",
+      "R04"
+    ]
+  },
+  "zero_information": {
+    "A1_SNAPSHOT_RETRIEVED": "NO",
+    "A1_MEMBERSHIP_OBSERVED": "NO",
+    "A1_CANDIDATE_IDENTITIES_OBSERVED": 0,
+    "A1_ENTROPY_GENERATED": "NO",
+    "A1_PERMUTATION_GENERATED": "NO",
+    "A1_SELECTED_RDGS": 0,
+    "A1_ELIGIBILITY_DECISIONS": 0,
+    "A1_VENDOR_API_CALLS": 0,
+    "A1_AUTONOMOUS_RUNS": 0,
+    "A1_OUTCOMES": 0,
+    "network_use_in_this_task": [
+      "pypi.org / files.pythonhosted.org: PyYAML 6.0.3 metadata and sdist (hash-verified); no A1 data"
+    ],
+    "network_use_in_this_takeover": [],
+    "prior_dependency_network_evidence": "Cached IDNA metadata/source archive also discovered locally; previous PyYAML disclosure was incomplete as a dependency acquisition inventory."
+  },
+  "prior_audit_preserved": [
+    {
+      "id": "D8",
+      "title": "E2 lead text/code contradiction in the anchored amendment",
+      "finding": "a1_evidence._norm_url (anchored) keeps leads whose host is not a DNS host (e.g. 'https://{x.com' -> 'https://{x.com/', 'https://ex ample.com', 'https://-x.com', underscore labels) and does not resolve dot segments ('/a/../b') or normalise percent-escapes ('%7E'), while the anchored text (amendment §9, decision-protocol.json E2) says 'absolute http(s) URLs with a DNS host only' and malformed values are dropped, and Freeze-1.1 URI rules require dot-segment resolution and unreserved decoding.",
+      "evidence": "synthetic strings only (no A1 data), reproduced by test_registrations.D8Tests",
+      "precedence_consequence": "the amendment states that if its text and machine files disagree it may not be used. This contradiction must therefore be resolved by a prospective amendment before the affected methodology is used.",
+      "impact": "E2 starting links only (G4). Garbage leads fail to load and consume a page slot; duplicate un-normalised leads can consume two slots. No effect on G, primary entries, permutation, selection or estimand.",
+      "why_before_G1": "once A1 membership is visible, choosing which lead rule wins could be influenced by which RDGs it affects; resolving it blind requires doing so before G1",
+      "proposed_resolution_not_applied": "Freeze 1.2.1 (prospective): state which rule is authoritative. Recommended: the text rule — drop leads whose host fails a1_frame.key_host validation, apply RFC 3986 dot-segment removal and Freeze-1.1 percent normalisation — implemented as a new frozen lead normaliser; R17 re-registered against it.",
+      "status": "OPEN — blocks crossing G1 under the amendment's own precedence clause"
+    }
+  ],
+  "authoritative_readiness": "registrations-validation.json (regenerated); prior gate notes below are discovery history",
+  "prior_requirements_by_gate": {
+    "MUST_BEFORE_G1": [
+      {
+        "item": "D8 resolution (Freeze 1.2.1)",
+        "status": "OPEN"
+      },
+      {
+        "item": "RT-A1-RUNTIME (the 'registered runtime' named in amendment §5)",
+        "status": "REGISTERED_PENDING_ANCHOR"
+      },
+      {
+        "item": "R02 snapshot custodian, R12 frame extractor, R18 pinned PSL",
+        "status": "ANCHORED"
+      },
+      {
+        "item": "anchoring of these registration records",
+        "status": "PENDING (not committed in this task)"
+      }
+    ],
+    "MUST_BEFORE_G2": [
+      {
+        "item": "R15 projector",
+        "status": "ANCHORED"
+      },
+      {
+        "item": "R16 registry projection",
+        "status": "GENERATED (reproducible)"
+      },
+      {
+        "item": "R16 approvals by R05 and R06",
+        "status": "UNFILLED"
+      },
+      {
+        "item": "R05, R06 adjudicators",
+        "status": "UNFILLED"
+      }
+    ],
+    "MUST_BEFORE_G3": [
+      {
+        "item": "R03 entropy custodian",
+        "status": "UNFILLED"
+      },
+      {
+        "item": "R04 entropy witness",
+        "status": "UNFILLED"
+      },
+      {
+        "item": "R05, R06",
+        "status": "UNFILLED"
+      },
+      {
+        "item": "R07 translation",
+        "status": "CONDITIONALLY_REGISTERED_PENDING_ANCHOR (custodian acceptance of fail-closed null mechanism)"
+      },
+      {
+        "item": "R13 permutation generator",
+        "status": "ANCHORED"
+      },
+      {
+        "item": "RT-A1-RUNTIME",
+        "status": "REGISTERED_PENDING_ANCHOR"
+      }
+    ],
+    "CAN_WAIT_UNTIL_G4": [
+      {
+        "item": "R17 spec parser",
+        "status": "CONDITIONALLY_REGISTERED_PENDING_ANCHOR (re-registration if D8 amendment changes E2)"
+      },
+      {
+        "item": "R08 browser profile",
+        "status": "CONDITIONALLY_REGISTERED_PENDING_ANCHOR (per-adjudicator installation attestations)"
+      },
+      {
+        "item": "R11 decision protocol, R14 screening engine",
+        "status": "ANCHORED"
+      },
+      {
+        "item": "record-sealing / block-exchange tool (hash-seal each adjudicator's block records before exchange)",
+        "status": "NOT BUILT (membership-independent; should be registered before G4)"
+      }
+    ],
+    "CAN_WAIT_UNTIL_G5": [
+      {
+        "item": "R09 execution scheduler/operator",
+        "status": "FUTURE_STAGE"
+      },
+      {
+        "item": "R10 verifier/apparatus reviewer",
+        "status": "FUTURE_STAGE"
+      },
+      {
+        "item": "Freeze-4 per-RDG journey mappings, runner, verifier, classifier",
+        "status": "FUTURE_STAGE"
+      }
+    ]
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "form": "Prior-FIRSTCALL registry approval (R16), one per adjudicator, independently",
+  "status": "TEMPLATE_UNFILLED",
+  "fields": {
+    "adjudicator_slot": "R05 | R06",
+    "projection_sha256": "799c9f0bd305842b6acbaee8546564b9370117179cf5cd61424b3b56323fe6b2",
+    "decision": "APPROVE | BLOCK",
+    "per_path_confirmations": "every in-scope path classification confirmed, including experiments/multi-001/candidates.json",
+    "registered_utc": null,
+    "signature": null
+  },
+  "rule": "both approve => G2 may open; any BLOCK or ambiguity blocks the registry (Freeze-1.1 §5, §8.4)"
+}

@@ -1,0 +1,33 @@
+{
+  "form": "A1 adjudicator registration (R05 ADJ-1 / R06 ADJ-2)",
+  "status": "TEMPLATE_UNFILLED",
+  "fields": {
+    "slot": "R05 | R06",
+    "full_name": null,
+    "public_contact": null,
+    "registered_utc": null,
+    "languages_read": "informational only (R07 forbids relying on them)",
+    "signature": null,
+    "signature_method": "annotated tag or signed commit made by the registrant personally"
+  },
+  "attestations_all_required_true": [
+    "I am a natural person registering myself; this record was not created on my behalf by any model or other person",
+    "I have read the anchored Freeze-1.2 A1 amendment (commit 3def4227285453c253e2c6df969bb3eefc291fa8) and the role's duties in roles.json",
+    "I will code every predicate personally; no model-generated or third-party codes",
+    "I will not communicate with the other adjudicator about any RDG until both records for its block are sealed by hash",
+    "I have no access to Programme A outcomes, draw order, priorities or the other adjudicator's codes before sealing",
+    "I will examine only the sealed primary entry of each released RDG; I will not substitute another entry",
+    "I will use only the frozen E1/E2 leads, the R08 browser profile, the frozen vocabulary and budgets; no search, guessed URLs, login, API calls or automation",
+    "I hold no entropy custodian (R03) or witness (R04) role and am not the other adjudicator",
+    "I accept that no replacement is possible after any packet is opened"
+  ],
+  "disclosures_required": {
+    "is_protocol_author": null,
+    "is_capture_or_snapshot_custodian": null,
+    "saw_quarantined_drafts_or_rejected_names": null,
+    "knows_historical_firstcall_outcomes": null,
+    "viewed_A1_frame_before_registration": null,
+    "other_conflicts": []
+  },
+  "required_before": "G2_REGISTRY (registry approval) and G3_ENTROPY"
+}

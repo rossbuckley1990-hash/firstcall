@@ -1,0 +1,13 @@
+{
+  "status": "TEMPLATE_UNFILLED",
+  "fields": {
+    "custodian_full_name": null,
+    "registered_utc": null,
+    "signature": null,
+    "separate_authenticated_intake": null,
+    "participants_have_no_store_access": null,
+    "external_checkpoint_custody": null
+  },
+  "required_before": "G4_SCREENING",
+  "note": "No deployed human isolation is claimed by synthetic tool tests."
+}
