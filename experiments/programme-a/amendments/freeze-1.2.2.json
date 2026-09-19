@@ -1,0 +1,46 @@
+{
+  "schema": "firstcall.programmeA.freeze122.v1",
+  "title": "Freeze 1.2.2: disclosed clerical assistance in human registration records",
+  "parent_commit": "7e6b2367e1fb4ff5e8af6e8d157d3d52089701a8",
+  "protocol_anchor": {"commit": "a436bf5d4bc5b4f8dfed8a80fdf8a557eb398e00", "tag": "programme-a-freeze-1.2.1-pre-reveal"},
+  "tag": "programme-a-freeze-1.2.2-registration-assistance",
+  "status": "BINDING_ONLY_ON_COMMIT_TAG_PUSH",
+  "prospective": "Adopted before any human registration exists and before G1; A1 wholly unrevealed.",
+  "defect": {
+    "id": "H1",
+    "summary": "The frozen attestation forbids any model or person creating the record, which also forbids clerical drafting/formatting/JSON help. That is not the independence property the protocol needs: human origin and ownership of every personal fact, disclosure, conflict statement and attestation.",
+    "superseded_attestation": "I am a natural person registering myself; this record was not created on my behalf by any model or other person",
+    "superseded_in": [
+      "experiments/programme-a/a1/registrations/forms/R03-entropy-custodian.form.json",
+      "experiments/programme-a/a1/registrations/forms/R04-entropy-witness.form.json",
+      "experiments/programme-a/a1/registrations/forms/R05-R06-adjudicator.form.json"
+    ],
+    "superseded_reading": "experiments/programme-a/a1/registrations/pre-reveal-audit.json human_roles.self_registration 'each human record must be made and signed by the person': 'made' now means personally supplied/confirmed, reviewed, attested, signed, committed and anchored by the registrant, with any clerical assistance disclosed"
+  },
+  "replacement_attestations": [
+    "I am a natural person registering myself.",
+    "I personally supplied or explicitly confirmed every personal fact, disclosure answer, conflict statement and independence statement in this record; no model or other person chose any of them for me.",
+    "I personally reviewed this complete final record before attesting, and I make this attestation and signature personally.",
+    "Any drafting, formatting or mechanical JSON assistance used in preparing this record is truthfully disclosed in drafting_assistance."
+  ],
+  "drafting_assistance": {
+    "field": "drafting_assistance",
+    "required": true,
+    "keys": ["used", "types", "description"],
+    "types_allowed": ["MODEL_DRAFTING", "MODEL_FORMATTING", "HUMAN_CLERICAL", "OTHER_TOOL"],
+    "rule": "used=false: types=[] and description=''. used=true: types is a non-empty list of distinct allowed values and description is non-empty text identifying the assistant(s) and what they did. Assistance is limited to drafting, formatting and mechanical JSON construction."
+  },
+  "prohibited": "No model or other person may choose or decide any answer to a conflict, disclosure or independence attestation, or make the attestation, signature, commit or anchoring tag for the registrant.",
+  "unchanged": [
+    "all other attestations, fields, disclosures and required_before of the frozen forms (forms remain byte-identical)",
+    "roles, role conflicts, independence requirements and gate prerequisites (roles.json byte-identical)",
+    "personal review, typed signature, personal commit and annotated-tag anchoring on origin",
+    "sampling, RDG construction, estimand, eligibility, documentary adjudication, R07/R08/R16/R17, entropy, execution, outcome taxonomy and analysis"
+  ],
+  "operative_validator": "experiments/programme-a/a1/registrations/validate_humans.py",
+  "record_controlling_protocol": {"amendment": "freeze-1.2.2", "tag": "programme-a-freeze-1.2.2-registration-assistance"},
+  "zero_information": {"snapshot_retrieved": false, "membership_observed": false, "candidate_identities_observed": 0,
+                       "entropy": "NONE", "permutation": "NONE", "selected_rdgs": 0, "eligibility_decisions": 0,
+                       "vendor_api_calls": 0, "autonomous_runs": 0, "outcomes": 0, "human_registrations": 0},
+  "G1": "HOLD_NO_RETRIEVAL_AUTHORISED"
+}

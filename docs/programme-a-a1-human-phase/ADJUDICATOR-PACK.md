@@ -84,34 +84,40 @@ Fixed exclusions: Postmark, Resend, CF-001/Acme fixtures and the MULTI-002 Strip
 
 ## 6. How you register and sign yourself
 
-You create your own record. Nobody may do it for you.
+Freeze 1.2.2 (`docs/programme-a-freeze-1.2.2-registration-assistance.md`) governs this. Help with
+drafting, formatting or typing the JSON is allowed, whether from a person or an AI tool, but you must
+disclose it in `drafting_assistance`. Everything that matters stays yours:
+
+- you supply, or explicitly confirm, every personal fact, disclosure answer, conflict statement and
+  independence statement;
+- no person or AI may choose any of those answers for you;
+- you personally review the complete final record, make the attestation, type your signature, and
+  make the commit yourself.
 
 1. The repository administrator gives you write access to the project repository on GitHub.
 2. In the GitHub web page for branch `v0.2-real-agent`, choose **Add file → Create new file** and
    name it `experiments/programme-a/a1/registrations/humans/R06-registration.json`.
-3. Paste the blank record below and personally type every `<...>` value and every disclosure yourself.
-   No other person, model or AI may fill in your registration record for you. The frozen attestation
-   says the record "was not created on my behalf by any model or other person". Set each disclosure honestly. If any statement is not
-   true for you, stop and tell the Protocol Custodian (R01); do not register. For `registered_utc`, use the current UTC time
-   just before you commit. It must not be later than your commit.
-4. Commit it yourself with the message `programme-a: register R06 adjudicator (self-registration)`.
-   The commit made from your own account, together with your typed signature, is your signature.
-   Do not ask anyone, or any AI tool, to write or commit it for you. The Protocol Custodian (R01)
-   then anchors it with an annotated tag and pushes it; nobody may edit the file afterwards. A mistake needs a new,
-   separately reviewed procedure, never an edit.
+3. Paste the blank record below and complete every `<...>` with your own answers. If any statement is
+   not true for you, stop and tell the Protocol Custodian (R01); do not register. For `registered_utc`,
+   use the current UTC time just before you commit. It must not be later than your commit.
+4. Read the complete final record yourself. Commit it from your own account with the message
+   `programme-a: register R06 adjudicator (self-registration)`. That commit, together with your typed
+   signature, is your signature. The commit must be yours: it must not name an AI as author or
+   co-author. The Protocol Custodian (R01) then anchors it with an annotated tag and pushes it; nobody may edit
+   the file afterwards. A mistake needs a new, separately reviewed procedure, never an edit.
 
 ```json
 {
   "schema": "firstcall.programmeA.a1_human_registration.v1",
   "form": "A1 adjudicator registration (R05 ADJ-1 / R06 ADJ-2)",
-  "id": "adj-r06",
+  "id": "<an id you choose: lowercase letters, digits, hyphens>",
   "role": "R06",
   "kind": "human",
   "status": "FILLED",
   "full_name": "<your full legal name>",
   "signature": "<type your full name again>",
   "independence_attestation": "I confirm that every statement in attestations_all_required_true is true for me.",
-  "controlling_protocol": {"commit": "a436bf5d4bc5b4f8dfed8a80fdf8a557eb398e00", "tag": "programme-a-freeze-1.2.1-pre-reveal"},
+  "controlling_protocol": {"amendment": "freeze-1.2.2", "tag": "programme-a-freeze-1.2.2-registration-assistance"},
   "fields": {
     "slot": "R06",
     "full_name": "<your full legal name>",
@@ -122,7 +128,10 @@ You create your own record. Nobody may do it for you.
     "signature_method": "annotated tag or signed commit made by the registrant personally"
   },
   "attestations_all_required_true": [
-    "I am a natural person registering myself; this record was not created on my behalf by any model or other person",
+    "I am a natural person registering myself.",
+    "I personally supplied or explicitly confirmed every personal fact, disclosure answer, conflict statement and independence statement in this record; no model or other person chose any of them for me.",
+    "I personally reviewed this complete final record before attesting, and I make this attestation and signature personally.",
+    "Any drafting, formatting or mechanical JSON assistance used in preparing this record is truthfully disclosed in drafting_assistance.",
     "I have read the anchored Freeze-1.2 A1 amendment (commit 3def4227285453c253e2c6df969bb3eefc291fa8) and the role's duties in roles.json",
     "I will code every predicate personally; no model-generated or third-party codes",
     "I will not communicate with the other adjudicator about any RDG until both records for its block are sealed by hash",
@@ -132,20 +141,21 @@ You create your own record. Nobody may do it for you.
     "I hold no entropy custodian (R03) or witness (R04) role and am not the other adjudicator",
     "I accept that no replacement is possible after any packet is opened"
   ],
-  "attestations_confirmed": true,
+  "attestations_confirmed": <true only after you have read every statement and each is true for you>,
   "disclosures_required": {
     "is_protocol_author": <true|false>,
     "is_capture_or_snapshot_custodian": <true|false>,
     "saw_quarantined_drafts_or_rejected_names": <true|false|"UNSURE">,
     "knows_historical_firstcall_outcomes": <true|false>,
     "viewed_A1_frame_before_registration": <true|false>,
-    "other_conflicts": []
+    "other_conflicts": [<your own statements, or leave empty>]
   },
-  "required_before": "G2_REGISTRY (registry approval) and G3_ENTROPY"
+  "required_before": "G2_REGISTRY (registry approval) and G3_ENTROPY",
+  "drafting_assistance": {"used": <true|false>, "types": [<none, or any of "MODEL_DRAFTING", "MODEL_FORMATTING", "HUMAN_CLERICAL", "OTHER_TOOL">], "description": "<empty if none; otherwise who or what helped and how>"}
 }
 ```
 
-The R05 holder uses the same record with `"id": "adj-r05"`, `"role": "R05"`, `"slot": "R05"` and the
-file name `R05-registration.json`. You may add `"supplementary_statements": ["..."]` for extra
-disclosures. `experiments/programme-a/a1/registrations/validate_humans.py` checks the record against
-the frozen form. It rejects anything incomplete, altered, unanchored, or conflicting with another role.
+The R05 holder uses the same record with `"role": "R05"`, `"slot": "R05"` and the file name
+`R05-registration.json`. You may add `"supplementary_statements": ["..."]` for extra disclosures.
+`experiments/programme-a/a1/registrations/validate_humans.py` checks the record against the frozen form
+as amended by Freeze 1.2.2. It rejects anything incomplete, altered, unanchored, or conflicting with another role.

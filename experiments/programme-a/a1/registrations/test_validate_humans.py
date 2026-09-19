@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Hostile tests for validate_humans. Synthetic people and throwaway git repositories only."""
+import hashlib
 import json
 import os
 import shutil
@@ -15,7 +16,9 @@ import validate_humans as vh  # noqa: E402
 
 REAL = HERE.parents[3]
 ORIGIN = "refs/remotes/origin/main"
-BASE_T, REG_T, COMMIT_T = "2026-09-20T00:00:00Z", "2026-09-20T00:30:00Z", "2026-09-20T01:00:00Z"
+BASE_T, AMEND_T, REG_T, COMMIT_T = ("2026-09-20T00:00:00Z", "2026-09-20T00:10:00Z",
+                                     "2026-09-20T00:30:00Z", "2026-09-20T01:00:00Z")
+AMENDMENT = json.loads((REAL / vh.AMENDMENT_REL).read_bytes())
 PEOPLE = {"R03": ("Synthetic Carol Person", "carol@example.invalid"), "R04": ("Synthetic Dan Person", "dan@example.invalid"),
           "R05": ("Synthetic Alice Person", "alice@example.invalid"), "R06": ("Synthetic Bob Person", "bob@example.invalid")}
 
@@ -30,10 +33,15 @@ class Repo:
             shutil.copy(REAL / vh.A1_REL / "registrations/forms" / f, forms / f)
         self.git("init", "-q", "-b", "main")
         self.commit("base", BASE_T)
-        self.ctl = self.git("rev-parse", "HEAD").strip()
+        self.ctl = self.git("rev-parse", "HEAD").strip()           # stands in for the 1.2.1 protocol commit
         self.tag("ctl"); self.tag("programme-a-freeze-1.2-a1")
+        amendment = self.root / vh.AMENDMENT_REL
+        amendment.parent.mkdir(parents=True)
+        shutil.copy(REAL / vh.AMENDMENT_REL, amendment)
+        self.commit("Freeze 1.2.2 amendment", AMEND_T)
+        self.amend = self.git("rev-parse", "HEAD").strip()
+        self.tag(AMENDMENT["tag"])
         self.push()
-        self.controlling = {"commit": self.ctl, "tag": "ctl"}
 
     def git(self, *args, when=COMMIT_T, name="Synthetic Fixture", email="fixture@example.invalid"):
         env = dict(os.environ, GIT_AUTHOR_DATE=when, GIT_COMMITTER_DATE=when, GIT_AUTHOR_NAME=name,
@@ -71,10 +79,10 @@ class Repo:
             self.push()
 
     def validate(self):
-        return vh.validate_humans(self.root, controlling=self.controlling, origin_ref=ORIGIN)
+        return vh.validate_humans(self.root, protocol_commit=self.ctl, origin_ref=ORIGIN)
 
 
-def record(role, controlling, name=None, contact=None):
+def record(role, name=None, contact=None):
     form = json.loads((REAL / vh.A1_REL / "registrations/forms" / vh.FORMS[role]).read_bytes())
     person, mail = PEOPLE[role]
     name, contact = name or person, contact or mail
@@ -84,9 +92,10 @@ def record(role, controlling, name=None, contact=None):
         fields["languages_read"] = "English"
     doc = {"schema": vh.SCHEMA, "form": form["form"], "id": "syn-" + role.lower(), "role": role, "kind": "human",
            "status": "FILLED", "full_name": name, "signature": name, "independence_attestation": vh.INDEPENDENCE,
-           "controlling_protocol": controlling, "fields": fields,
-           "attestations_all_required_true": list(form["attestations_all_required_true"]),
-           "attestations_confirmed": True, "required_before": form["required_before"]}
+           "controlling_protocol": AMENDMENT["record_controlling_protocol"], "fields": fields,
+           "attestations_all_required_true": vh.effective_attestations(form, AMENDMENT),
+           "attestations_confirmed": True, "required_before": form["required_before"],
+           "drafting_assistance": {"used": False, "types": [], "description": ""}}
     if "disclosures_required" in form:
         doc["disclosures_required"] = {k: ([] if k == "other_conflicts" else False) for k in form["disclosures_required"]}
     return doc
@@ -97,10 +106,9 @@ class HumanValidatorTests(unittest.TestCase):
         self.tmp = tempfile.TemporaryDirectory()
         self.addCleanup(self.tmp.cleanup)
         self.repo = Repo(self.tmp.name)
-        self.ctl = self.repo.controlling
 
     def rec(self, role="R05", **kw):
-        return record(role, self.ctl, **kw)
+        return record(role, **kw)
 
     def rejected(self, doc=None, contains="", **kw):
         if doc is not None:
@@ -178,20 +186,24 @@ class HumanValidatorTests(unittest.TestCase):
 
     def test_timestamps(self):
         for value, why in (("2026-09-20 00:30", "UTC timestamp"), ("2026-02-31T00:00:00Z", "impossible"),
-                           ("2026-09-20T02:00:00Z", "outside"), ("2026-09-19T23:00:00Z", "outside")):
+                           ("2026-09-20T02:00:00Z", "outside"), ("2026-09-19T23:00:00Z", "outside"),
+                           ("2026-09-20T00:05:00Z", "outside")):   # after protocol, before Freeze 1.2.2
             with self.subTest(value=value):
                 self.setUp()
                 d = self.rec(); d["fields"]["registered_utc"] = value
                 self.rejected(d, why)
 
     def test_controlling_protocol(self):
-        d = self.rec(); d["controlling_protocol"] = {"commit": "0" * 40, "tag": "ctl"}
+        d = self.rec(); d["controlling_protocol"] = {"commit": vh.PRE_REVEAL_COMMIT, "tag": vh.PRE_REVEAL_TAG}
         self.rejected(d, "controlling protocol")
 
     def test_record_not_on_controlling_protocol(self):
         self.repo.git("checkout", "-q", "--orphan", "stray")
-        self.repo.register(self.rec(), message="stray root")
-        self.rejected(None, "controlling protocol commit")
+        self.repo.register(self.rec(), message="stray root", push=False)
+        self.repo.git("checkout", "-q", "main")      # origin then holds both histories, amendment included
+        self.repo.git("merge", "-q", "--allow-unrelated-histories", "-m", "merge stray", "stray")
+        self.repo.push()
+        self.rejected(None, "record not committed on top of the controlling protocol commit")
 
     # -- conflicts and duplicates ----------------------------------------------------------------
     def test_one_human_in_conflicting_roles(self):
@@ -388,6 +400,121 @@ class HumanValidatorTests(unittest.TestCase):
         d.update(full_name="Ross Buckley", signature="Ross Buckley")
         d["fields"].update(full_name="Ross Buckley", signature="Ross Buckley")
         self.rejected(d, "must disclose")
+
+    # -- Freeze 1.2.2: disclosed clerical assistance ----------------------------------------------
+    def test_frozen_forms_byte_identical_and_amendment_replaces_exactly_one_statement(self):
+        pins = json.loads((REAL / "experiments/programme-a/amendments/freeze-1.2.1.json").read_bytes())
+        for f in set(vh.FORMS.values()):
+            rel = f"{vh.A1_REL}/registrations/forms/{f}"
+            self.assertEqual(hashlib.sha256((REAL / rel).read_bytes()).hexdigest(), pins["registered_file_sha256"][rel])
+            form = json.loads((REAL / rel).read_bytes())
+            old, new = form["attestations_all_required_true"], vh.effective_attestations(form, AMENDMENT)
+            superseded = AMENDMENT["defect"]["superseded_attestation"]
+            self.assertIn(superseded, old)
+            self.assertNotIn(superseded, new)
+            self.assertEqual([x for x in old if x != superseded], [x for x in new if x in old])
+            self.assertEqual(len(new), len(old) - 1 + len(AMENDMENT["replacement_attestations"]))
+        self.assertEqual(sorted(AMENDMENT["defect"]["superseded_in"]),
+                         sorted(f"{vh.A1_REL}/registrations/forms/{f}" for f in set(vh.FORMS.values())))
+
+    def test_superseded_attestation_and_old_protocol_rejected(self):
+        form = json.loads((REAL / vh.A1_REL / "registrations/forms" / vh.FORMS["R05"]).read_bytes())
+        d = self.rec(); d["attestations_all_required_true"] = list(form["attestations_all_required_true"])
+        self.rejected(d, "as amended by Freeze 1.2.2")
+        self.setUp()
+        d = self.rec(); d["controlling_protocol"] = {"commit": vh.PRE_REVEAL_COMMIT, "tag": vh.PRE_REVEAL_TAG}
+        self.rejected(d, "controlling protocol version differs")
+        for i in range(len(AMENDMENT["replacement_attestations"])):
+            with self.subTest(dropped=i):
+                self.setUp()
+                d = self.rec(); d["attestations_all_required_true"].remove(AMENDMENT["replacement_attestations"][i])
+                self.rejected(d, "as amended by Freeze 1.2.2")
+        self.setUp()
+        d = self.rec(); d["attestations_all_required_true"][1] += " (except conflicts)"
+        self.rejected(d, "as amended by Freeze 1.2.2")
+
+    def test_drafting_assistance_disclosure(self):
+        ok = [{"used": False, "types": [], "description": ""},
+              {"used": True, "types": ["MODEL_DRAFTING", "MODEL_FORMATTING"],
+               "description": "Claude Code (Anthropic) drafted and formatted the JSON; every value supplied by the registrant"},
+              {"used": True, "types": ["HUMAN_CLERICAL"], "description": "A colleague typed the JSON from my handwritten answers"},
+              {"used": True, "types": ["OTHER_TOOL"], "description": "A JSON formatter"}]
+        for value in ok:
+            with self.subTest(ok=value["types"]):
+                self.setUp()
+                d = self.rec(); d["drafting_assistance"] = value
+                self.repo.register(d)
+                r = self.repo.validate()
+                self.assertEqual((r["errors"], r["roles"]["R05"]), ([], "REGISTERED"))
+        bad = [({"used": False, "types": ["MODEL_DRAFTING"], "description": ""}, "used=false requires"),
+               ({"used": False, "types": [], "description": "Claude"}, "used=false requires"),
+               ({"used": True, "types": [], "description": "x"}, "used=true requires"),
+               ({"used": True, "types": ["MODEL_DECIDED_ANSWERS"], "description": "x"}, "used=true requires"),
+               ({"used": True, "types": ["model_drafting"], "description": "x"}, "used=true requires"),
+               ({"used": True, "types": ["MODEL_DRAFTING", "MODEL_DRAFTING"], "description": "x"}, "used=true requires"),
+               ({"used": True, "types": ["MODEL_DRAFTING"], "description": ""}, "drafting_assistance.description"),
+               ({"used": True, "types": ["MODEL_DRAFTING"], "description": " padded"}, "drafting_assistance.description"),
+               ({"used": "yes", "types": [], "description": ""}, "used must be boolean"),
+               ({"used": None, "types": [], "description": ""}, "used must be boolean"),
+               ({"used": True, "types": "MODEL_DRAFTING", "description": "x"}, "types a list"),
+               ({"used": False, "types": []}, "exactly keys"),
+               ({"used": False, "types": [], "description": "", "decided_by": "model"}, "exactly keys"),
+               (None, "exactly keys"), (True, "exactly keys")]
+        for value, why in bad:
+            with self.subTest(bad=value):
+                self.setUp()
+                d = self.rec(); d["drafting_assistance"] = value
+                self.rejected(d, why)
+        self.setUp()
+        d = self.rec(); d.pop("drafting_assistance")
+        self.rejected(d, "envelope keys")
+
+    def test_assistance_disclosure_does_not_relax_human_identity_or_authorship(self):
+        assisted = {"used": True, "types": ["MODEL_DRAFTING"], "description": "Claude drafted the JSON"}
+        for mutate, who, message, why in (
+                (lambda d: d.update(kind="model"), {}, "m", "kind must be 'human'"),
+                (lambda d: d.update(full_name="Claude", signature="Claude") or
+                 d["fields"].update(full_name="Claude", signature="Claude"), {}, "m", "AI/model/tool identity"),
+                (lambda d: None, {"name": "Claude"}, "m", "commit shows AI/model/tool"),
+                (lambda d: None, {}, "register\n\nCo-authored-by: Claude <noreply@anthropic.com>", "commit shows AI/model/tool"),
+                (lambda d: d.update(signature="Someone Else"), {}, "m", "typed signature"),
+                (lambda d: d.update(attestations_confirmed=False), {}, "m", "not confirmed")):
+            with self.subTest(why=why, who=who):
+                self.setUp()
+                d = self.rec(); d["drafting_assistance"] = assisted; mutate(d)
+                self.rejected(d, why, message=message, who=who)
+
+    def test_commit_message_may_mention_disclosed_assistance(self):
+        d = self.rec(); d["drafting_assistance"] = {"used": True, "types": ["MODEL_FORMATTING"],
+                                                    "description": "An AI model formatted the JSON"}
+        self.repo.register(d, message="register R05; JSON formatting by an AI model assistant, disclosed in record")
+        self.assertEqual(self.repo.validate()["roles"]["R05"], "REGISTERED")
+
+    def test_amendment_anchor_required(self):
+        cases = {
+            "tag missing": lambda r: r.git("tag", "-d", AMENDMENT["tag"]),
+            "lightweight tag": lambda r: (r.git("tag", "-d", AMENDMENT["tag"]), r.git("tag", AMENDMENT["tag"], r.amend)),
+            "tag not on protocol": lambda r: (r.git("tag", "-d", AMENDMENT["tag"]),
+                                              r.git("checkout", "-q", "--orphan", "stray"), r.commit("stray"),
+                                              r.tag(AMENDMENT["tag"]), r.git("checkout", "-q", "main")),
+            "tag not on origin": lambda r: (r.git("tag", "-d", AMENDMENT["tag"]), r.git("checkout", "-q", "-b", "side"),
+                                            r.commit("side"), r.tag(AMENDMENT["tag"]), r.git("checkout", "-q", "main")),
+        }
+        for label, breaker in cases.items():
+            with self.subTest(label=label):
+                self.setUp()
+                self.repo.register(self.rec())
+                breaker(self.repo)
+                self.rejected(None, "Freeze 1.2.2")
+        self.setUp()
+        self.repo.register(self.rec())
+        p = self.repo.root / vh.AMENDMENT_REL
+        p.write_bytes(p.read_bytes().replace(b'"OTHER_TOOL"', b'"OTHER_TOOL", "MODEL_DECIDED_ANSWERS"'))
+        self.rejected(None, "amendment bytes differ")
+        self.setUp()
+        self.repo.register(self.rec())
+        (self.repo.root / vh.AMENDMENT_REL).unlink()
+        self.rejected(None, "amendment missing")
 
     def test_combine_forgives_only_the_humans_present_error_when_valid(self):
         pre = {"errors": [vh.PRE_REVEAL_HUMANS_ERROR + ": ['R05-registration.json']", "R17 parser digest mismatch"]}

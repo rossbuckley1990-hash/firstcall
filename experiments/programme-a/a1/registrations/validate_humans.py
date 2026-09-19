@@ -15,8 +15,16 @@ A record counts as REGISTERED only when all of these hold:
 - it validates against its frozen form (forms/*.form.json) and the envelope below;
 - exactly one commit in the whole repository ever touched its path, and that commit added it;
 - the working-tree bytes equal that commit's bytes (append-only: no overwrite, replacement or deletion);
-- the adding commit descends from the controlling pre-reveal commit;
+- the adding commit descends from the Freeze 1.2.2 amendment commit (annotated tag on origin), which itself
+  descends from the Freeze 1.2.1 pre-reveal protocol commit;
 - an annotated tag's peeled commit contains those bytes and is on the origin branch.
+
+Freeze 1.2.2 (experiments/programme-a/amendments/freeze-1.2.2.json) replaces only the forms' first attestation
+("... not created on my behalf by any model or other person") with its replacement attestations, and adds the
+required drafting_assistance disclosure. Disclosed clerical/model drafting, formatting or JSON help is
+permitted. Personal facts, disclosure answers, conflict and independence statements must be supplied or
+confirmed by the registrant, who personally reviews, attests, signs, commits and tags. That last part is an
+attestation; code cannot verify it.
 
 Signature: the frozen forms allow "annotated tag or signed commit made by the registrant personally".
 Here that means a typed signature equal to the full name, plus the annotated-tag anchor. This is not
@@ -42,6 +50,7 @@ import validate_a1  # noqa: E402  (anchored; pure role_conflicts / gate_status /
 SCHEMA = "firstcall.programmeA.a1_human_registration.v1"
 PRE_REVEAL_COMMIT = "a436bf5d4bc5b4f8dfed8a80fdf8a557eb398e00"
 PRE_REVEAL_TAG = "programme-a-freeze-1.2.1-pre-reveal"
+AMENDMENT_REL = "experiments/programme-a/amendments/freeze-1.2.2.json"
 ORIGIN_REF = "refs/remotes/origin/v0.2-real-agent"
 FORMS = {"R03": "R03-entropy-custodian.form.json", "R04": "R04-entropy-witness.form.json",
          "R05": "R05-R06-adjudicator.form.json", "R06": "R05-R06-adjudicator.form.json"}
@@ -52,9 +61,10 @@ INDEPENDENCE = "I confirm that every statement in attestations_all_required_true
 # Heuristic, fail-closed screen. The binding safeguard is kind == "human" plus the personal attestation.
 NON_HUMAN = re.compile(r"\b(claude|anthropic|openai|chatgpt|gpt(-?\d[\w.]*)?|codex|gemini|copilot|llama|"
                        r"mistral|bard|bot|assistant|agent|model|llm)\b|\[bot\]|noreply@anthropic\.com", re.I)
+CO_AUTHOR = re.compile(r"^\s*co-authored-by\s*:", re.I)
 ENVELOPE = {"schema", "form", "id", "role", "kind", "status", "full_name", "signature", "independence_attestation",
             "controlling_protocol", "fields", "attestations_all_required_true", "attestations_confirmed",
-            "required_before"}
+            "required_before", "drafting_assistance"}
 OPTIONAL = {"supplementary_statements"}
 # The frozen form leaves every disclosure null and untyped. Only this one may truthfully be uncertain:
 # Freeze 1.1 disclaims pristine ignorance of rejected names. Exact string only; other disclosures stay boolean.
@@ -111,8 +121,49 @@ def _designated(roles_doc):
             for r in roles_doc["roles"] if r["id"] in ("R01", "R02") and r.get("holder")}
 
 
-def check_record(doc, form, roles_doc, controlling):
-    """Content validation against the frozen form. Returns the role. Raises Invalid."""
+def load_amendment(root):
+    """Freeze 1.2.2 as committed in this working tree: (spec, bytes). Raises Invalid if absent/malformed."""
+    p = Path(root) / AMENDMENT_REL
+    if not p.is_file() or p.is_symlink():
+        raise Invalid("Freeze 1.2.2 amendment missing")
+    data = p.read_bytes()
+    spec = _strict_json(data)
+    try:
+        spec["defect"]["superseded_attestation"], spec["replacement_attestations"], spec["tag"]
+        spec["drafting_assistance"]["types_allowed"], spec["record_controlling_protocol"]
+    except (KeyError, TypeError):
+        raise Invalid("Freeze 1.2.2 amendment malformed") from None
+    return spec, data
+
+
+def effective_attestations(form, amendment):
+    """Frozen form attestations with the single superseded statement replaced (Freeze 1.2.2)."""
+    old, new = form["attestations_all_required_true"], amendment["replacement_attestations"]
+    superseded = amendment["defect"]["superseded_attestation"]
+    if old.count(superseded) != 1:
+        raise Invalid("frozen form does not carry the superseded attestation exactly once")
+    i = old.index(superseded)
+    return old[:i] + list(new) + old[i + 1:]
+
+
+def check_assistance(value, amendment):
+    spec = amendment["drafting_assistance"]
+    if not isinstance(value, dict) or set(value) != set(spec["keys"]):
+        raise Invalid("drafting_assistance must have exactly keys " + ", ".join(spec["keys"]))
+    used, types, description = value["used"], value["types"], value["description"]
+    if type(used) is not bool or not isinstance(types, list) or not isinstance(description, str):
+        raise Invalid("drafting_assistance: used must be boolean, types a list, description text")
+    if not used:
+        if types or description:
+            raise Invalid("drafting_assistance: used=false requires types=[] and description=''")
+        return
+    if not types or len(set(types)) != len(types) or any(t not in spec["types_allowed"] for t in types):
+        raise Invalid("drafting_assistance: used=true requires distinct types from " + ", ".join(spec["types_allowed"]))
+    _text(description, "drafting_assistance.description")
+
+
+def check_record(doc, form, roles_doc, amendment):
+    """Content validation against the frozen form as amended by Freeze 1.2.2. Returns the role. Raises Invalid."""
     if not isinstance(doc, dict):
         raise Invalid("record must be a JSON object")
     keys = set(doc)
@@ -142,8 +193,9 @@ def check_record(doc, form, roles_doc, controlling):
         raise Invalid("typed signature must equal full_name")
     if doc["independence_attestation"] != INDEPENDENCE:
         raise Invalid("independence attestation text differs")
-    if doc["controlling_protocol"] != controlling:
+    if doc["controlling_protocol"] != amendment["record_controlling_protocol"]:
         raise Invalid("controlling protocol version differs")
+    check_assistance(doc["drafting_assistance"], amendment)
     fields = doc["fields"]
     if not isinstance(fields, dict) or set(fields) != set(form["fields"]):
         raise Invalid("fields must match the frozen form exactly")
@@ -160,8 +212,8 @@ def check_record(doc, form, roles_doc, controlling):
             _text(v, "fields." + k)
     if fields["full_name"] != name or fields["signature"] != doc["signature"]:
         raise Invalid("fields.full_name/signature differ from record")
-    if doc["attestations_all_required_true"] != form["attestations_all_required_true"]:
-        raise Invalid("attestations differ from the frozen form")
+    if doc["attestations_all_required_true"] != effective_attestations(form, amendment):
+        raise Invalid("attestations differ from the frozen form as amended by Freeze 1.2.2")
     if doc["attestations_confirmed"] is not True:
         raise Invalid("attestations not confirmed")
     if doc["required_before"] != form["required_before"]:
@@ -196,12 +248,34 @@ def check_record(doc, form, roles_doc, controlling):
     return role
 
 
+def _authorship(text, identity_lines):
+    """Identity lines plus co-author trailers only. Free message text may truthfully mention disclosed
+    drafting assistance (Freeze 1.2.2); the commit and tag themselves must be the registrant's own act."""
+    lines = text.splitlines()
+    return "\n".join(lines[:identity_lines] + [x for x in lines[identity_lines:] if CO_AUTHOR.match(x)])
+
+
 def _commit_time(root, commit):
     return datetime.fromtimestamp(int(_git(root, "show", "-s", "--format=%ct", commit).stdout), timezone.utc)
 
 
 def _ancestor(root, a, b):
     return _git(root, "merge-base", "--is-ancestor", a, b, check=False).returncode == 0
+
+
+def check_amendment_anchor(root, amendment, amendment_bytes, protocol_commit, origin_ref):
+    """The Freeze 1.2.2 tag: annotated, on origin, on top of the pre-reveal protocol, carrying these bytes."""
+    tag = amendment["tag"]
+    if _git(root, "cat-file", "-t", "refs/tags/" + tag, check=False).stdout.strip() != b"tag":
+        raise Invalid("Freeze 1.2.2 annotated tag missing")
+    commit = _git(root, "rev-parse", tag + "^{commit}").stdout.decode().strip()
+    if not _ancestor(root, protocol_commit, commit):
+        raise Invalid("Freeze 1.2.2 is not on top of the pre-reveal protocol commit")
+    if not _ancestor(root, commit, origin_ref):
+        raise Invalid("Freeze 1.2.2 tag is not on the origin branch")
+    if _git(root, "show", f"{commit}:{AMENDMENT_REL}", check=False).stdout != amendment_bytes:
+        raise Invalid("Freeze 1.2.2 amendment bytes differ from the tagged amendment")
+    return commit
 
 
 def check_anchor(root, rel, data, doc, controlling, origin_ref):
@@ -229,7 +303,7 @@ def check_anchor(root, rel, data, doc, controlling, origin_ref):
     if registered > _commit_time(root, commit) or registered < _commit_time(root, controlling["commit"]):
         raise Invalid("registered_utc outside [controlling commit, record commit]")
     ident = _git(root, "show", "-s", "--format=%an <%ae>%n%cn <%ce>%n%B", commit).stdout.decode("utf-8", "replace")
-    if NON_HUMAN.search(ident):
+    if NON_HUMAN.search(_authorship(ident, 2)):
         raise Invalid("record commit shows AI/model/tool authorship")
     tags = []
     for line in _git(root, "for-each-ref", "--format=%(objecttype) %(refname:short)", "refs/tags").stdout.decode().splitlines():
@@ -241,7 +315,7 @@ def check_anchor(root, rel, data, doc, controlling, origin_ref):
                 _git(root, "show", f"{peeled}:{rel}", check=False).stdout == data:
             tagger = _git(root, "for-each-ref", "--format=%(taggername) <%(taggeremail)>%0a%(contents)",
                           "refs/tags/" + name).stdout.decode("utf-8", "replace")
-            if NON_HUMAN.search(tagger):
+            if NON_HUMAN.search(_authorship(tagger, 1)):
                 raise Invalid("anchoring tag shows AI/model/tool authorship")
             tags.append({"tag": name, "peeled": peeled})
     if not tags:
@@ -249,9 +323,8 @@ def check_anchor(root, rel, data, doc, controlling, origin_ref):
     return {"commit": commit, "anchors": sorted(tags, key=lambda t: t["tag"])}
 
 
-def validate_humans(root=ROOT, *, controlling=None, origin_ref=ORIGIN_REF):
+def validate_humans(root=ROOT, *, protocol_commit=PRE_REVEAL_COMMIT, origin_ref=ORIGIN_REF):
     root = Path(root)
-    controlling = controlling or {"commit": PRE_REVEAL_COMMIT, "tag": PRE_REVEAL_TAG}
     roles_doc = json.loads((root / A1_REL / "roles.json").read_bytes())
     forms = {r: json.loads((root / A1_REL / "registrations/forms" / f).read_bytes()) for r, f in FORMS.items()}
     errors, records, humans = [], {}, root / HUMANS_REL
@@ -270,9 +343,13 @@ def validate_humans(root=ROOT, *, controlling=None, origin_ref=ORIGIN_REF):
                 doc = _strict_json(data)
                 if not isinstance(doc, dict) or doc.get("role") not in FORMS:
                     raise Invalid("record role must be one of R03-R06")
-                role = check_record(doc, forms[doc["role"]], roles_doc, controlling)
+                amendment, amendment_bytes = load_amendment(root)
+                role = check_record(doc, forms[doc["role"]], roles_doc, amendment)
                 if FILENAME.fullmatch(p.name).group(1) != role:
                     raise Invalid("filename disagrees with the record's role")
+                controlling = {"commit": check_amendment_anchor(root, amendment, amendment_bytes,
+                                                                protocol_commit, origin_ref),
+                               "tag": amendment["tag"]}
                 evidence = check_anchor(root, rel, data, doc, controlling, origin_ref)
             except Invalid as exc:
                 errors.append(f"{rel}: {exc}")

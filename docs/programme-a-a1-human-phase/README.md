@@ -82,15 +82,18 @@ Recommended allocation: the R01/R02 holder takes R05. An adjudicator who will se
 should register before G1 if practical, so that the disclosure `viewed_A1_frame_before_registration`
 is `false`. The frozen rules do not require this ordering.
 
-Each registrant must personally create, sign and anchor their own record. No other person, model or
-agent may do this.
+Freeze 1.2.2 (`docs/programme-a-freeze-1.2.2-registration-assistance.md`) governs registration records.
+Disclosed drafting, formatting or JSON assistance is allowed. Each registrant personally supplies or
+confirms every personal fact, disclosure answer, conflict statement and independence statement, and
+no person or model may choose any of them. The registrant personally reviews the complete final
+record, attests, signs, commits and anchors it.
 
 1. Read Freeze 1.2 (`docs/programme-a-freeze-1.2-a1-amendment.md`), `roles.json` R05, and the form
    `experiments/programme-a/a1/registrations/forms/R05-R06-adjudicator.form.json`.
-2. Personally create `experiments/programme-a/a1/registrations/humans/R05-registration.json` from the
-   frozen blank form. Type every variable value yourself. Do not use or copy
-   `R05-MODEL-DRAFT-NON-OPERATIVE.md`: it is a withdrawn, non-operative, model-drafted notice. The frozen
-   attestation requires that the record was "not created on my behalf by any model or other person".
+2. Create `experiments/programme-a/a1/registrations/humans/R05-registration.json` from the frozen blank
+   form as amended by Freeze 1.2.2 (template: `ADJUDICATOR-PACK.md` §6). Disclose any drafting help in
+   `drafting_assistance`. Do not use or copy `R05-MODEL-DRAFT-NON-OPERATIVE.md`: it is a withdrawn,
+   non-operative notice.
 3. Sign and anchor it personally. Form `signature_method` is "annotated tag or signed commit made by the
    registrant personally". Without a signing key, the typed signature plus your own annotated tag is
    the method. Do not add AI co-author trailers; the validator rejects AI/model/tool authorship.
@@ -105,7 +108,8 @@ agent may do this.
 
 Validator: `experiments/programme-a/a1/registrations/validate_humans.py` (additive tooling). It
 implements `roles.json` §registration_mechanism: a schema-valid record committed under an annotated
-tag on origin fills the slot. It never rewrites `roles.json`. Verified records become an in-memory
+tag on origin fills the slot, for records made under Freeze 1.2.2 (whose own annotated tag must be on
+origin, on top of the pre-reveal protocol). It never rewrites `roles.json`. Verified records become an in-memory
 overlay passed to the frozen `validate_a1.role_conflicts` and `validate_a1.gate_status`. Use
 `--with-pre-reveal` to also run the Freeze 1.2.1 validator. That validator flags any `humans/` record
 by design, and only that error is forgiven, and only when every record verifies. Not yet covered
