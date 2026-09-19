@@ -7,9 +7,9 @@ steps 9–12, `roles.json` R03/R04, `a1_permutation.py` (R13), forms R03/R04.
 ## Who
 
 - **C, entropy custodian (R03):** an independent person with no other study role. They must not
-  be Ross (R01/R02), either adjudicator, or the apparatus reviewer (R10). They generate the random
+  hold R01 or R02, either adjudicator seat, or the apparatus reviewer (R10). They generate the random
   numbers once, keep them private, release blocks of 6 one at a time, and compute selection mechanically.
-- **D, entropy witness (R04):** an independent person, not Ross, not C, not an adjudicator. They
+- **D, entropy witness (R04):** an independent person, not the R01/R02 holder, not C, not an adjudicator. They
   watch the single generation, check the inputs, and sign the log.
 
 Both register themselves with forms `R03-entropy-custodian.form.json` and `R04-entropy-witness.form.json`.
@@ -47,13 +47,13 @@ attend, and never receive the random numbers or the order.
 3. **Any error aborts the cohort.** An exception, a short tape, a failed write or a second invocation
    ends it. Do not retry and do not reroll (Freeze 1.1 §8.5). C and D record the failure in the log.
 4. **Commit before interpretation.** C and D both sign a generation log: UTC time, interpreter hash,
-   `G_sha256`, `G_size`, `tape_sha256`, "one call, no retries", both names. R01 (Ross) commits and pushes
+   `G_sha256`, `G_size`, `tape_sha256`, "one call, no retries", both names. The Protocol Custodian (R01) commits and pushes
    the log under an annotated tag. It contains only hashes, never the tape.
 5. **Order and blocks (C alone, after step 4 is on origin).** C computes
    `p.permutation(G, tape, tape_sha256)`. A tie aborts the cohort. C then releases block 1 in
    `p.presentation_order(...)`, and releases each later block only after the previous one is sealed by
    both adjudicators. Selection is computed mechanically from the sealed statuses.
-6. **Secrecy.** C tells nobody (Ross, adjudicators, D) the tape, priorities or order until the
+6. **Secrecy.** C tells nobody (R01/R02, adjudicators, D) the tape, priorities or order until the
    sample is sealed. Then the tape is revealed and anyone can check it against `tape_sha256`.
 
 No hash can prove the operating system's randomness was honest. The witness and the prior commitment

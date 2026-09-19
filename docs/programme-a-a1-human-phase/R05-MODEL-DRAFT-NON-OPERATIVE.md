@@ -3,8 +3,9 @@
 **NON-OPERATIVE.** **MODEL-DRAFTED.** **MUST NOT BE USED AS A HUMAN REGISTRATION.**
 **MUST NOT BE COPIED INTO A HUMAN REGISTRATION.**
 
-This file previously held a proposed R05 registration record drafted by an AI model (commit
-`cce6b417f8b6e36355c11e3450783b1b7f4c70b9`, retained there only for audit). That draft is withdrawn.
+A proposed R05 registration record drafted by an AI model was published in this directory under an
+earlier filename at commit `cce6b417f8b6e36355c11e3450783b1b7f4c70b9`. It is retained in git history only
+for audit. That draft is withdrawn, and this generic notice replaces it.
 
 Why: every frozen human registration form requires the registrant to attest:
 

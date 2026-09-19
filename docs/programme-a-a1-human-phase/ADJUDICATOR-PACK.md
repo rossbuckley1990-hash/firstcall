@@ -86,18 +86,18 @@ Fixed exclusions: Postmark, Resend, CF-001/Acme fixtures and the MULTI-002 Strip
 
 You create your own record. Nobody may do it for you.
 
-1. Ross gives you write access to the project repository on GitHub.
+1. The repository administrator gives you write access to the project repository on GitHub.
 2. In the GitHub web page for branch `v0.2-real-agent`, choose **Add file → Create new file** and
    name it `experiments/programme-a/a1/registrations/humans/R06-registration.json`.
 3. Paste the blank record below and personally type every `<...>` value and every disclosure yourself.
    No other person, model or AI may fill in your registration record for you. The frozen attestation
    says the record "was not created on my behalf by any model or other person". Set each disclosure honestly. If any statement is not
-   true for you, stop and tell Ross; do not register. For `registered_utc`, use the current UTC time
+   true for you, stop and tell the Protocol Custodian (R01); do not register. For `registered_utc`, use the current UTC time
    just before you commit. It must not be later than your commit.
 4. Commit it yourself with the message `programme-a: register R06 adjudicator (self-registration)`.
    The commit made from your own account, together with your typed signature, is your signature.
-   Do not ask anyone, or any AI tool, to write or commit it for you. Ross then anchors it with an
-   annotated tag and pushes it; nobody may edit the file afterwards. A mistake needs a new,
+   Do not ask anyone, or any AI tool, to write or commit it for you. The Protocol Custodian (R01)
+   then anchors it with an annotated tag and pushes it; nobody may edit the file afterwards. A mistake needs a new,
    separately reviewed procedure, never an edit.
 
 ```json

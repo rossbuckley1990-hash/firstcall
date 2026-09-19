@@ -18,33 +18,33 @@ R08 attestations are made per adjudicator about their own installation.
 
 Pairwise, for one person holding both roles:
 
-|      | R01/R02 (Ross) | R03 | R04 | R05 | R06 |
+|      | R01/R02 | R03 | R04 | R05 | R06 |
 | --- | --- | --- | --- | --- | --- |
 | R03  | PROHIBITED | — | PROHIBITED | PROHIBITED | PROHIBITED |
 | R04  | PROHIBITED | PROHIBITED | — | PROHIBITED | PROHIBITED |
 | R05  | CONDITIONAL | PROHIBITED | PROHIBITED | — | PROHIBITED |
 | R06  | CONDITIONAL | PROHIBITED | PROHIBITED | PROHIBITED | — |
 
-Ross (already R01 protocol custodian and R02 snapshot custodian):
+The designated holder of R01 (Protocol Custodian) and R02 (Source/Snapshot Custodian):
 
-| Role / act | Ross | Rule |
+| Role / act | R01/R02 holder | Rule |
 | --- | --- | --- |
 | R03 entropy custodian | PROHIBITED | R03 conflicts with R01, R02 |
 | R04 entropy witness | PROHIBITED | R04 conflicts with R01, R02 |
 | R05 adjudicator 1 | CONDITIONAL | no frozen conflict with R01/R02; conditions below |
 | R06 adjudicator 2 | CONDITIONAL | as R05; never both |
 | R05 and R06 together | PROHIBITED | R05/R06 conflict |
-| R16 approval | CONDITIONAL | only as the R05/R06 holder, one approval, his own |
-| R08 attestation | CONDITIONAL | only for his own installation, only if an adjudicator |
+| R16 approval | CONDITIONAL | only as the R05/R06 holder, one approval, their own |
+| R08 attestation | CONDITIONAL | only for their own installation, only if an adjudicator |
 | Seal-store custodian (Freeze 1.2.1 sealing intake) | PROHIBITED if adjudicator | an adjudicator with store access could read the other's codes before sealing; this breaks the R05/R06 attestation "no access to ... the other adjudicator's codes" |
 | R09 operator (future) | PROHIBITED if adjudicator | R09 operator is not R05/R06 |
 | R10 reviewer (future) | ALLOWED | conflicts only with R03 |
 
-Conditions on Ross as an adjudicator (all come from the frozen R05/R06 form):
+Conditions on the R01/R02 holder as an adjudicator (all come from the frozen R05/R06 form):
 1. Complete the disclosures truthfully: protocol author (yes), snapshot custodian (yes), saw quarantined
    drafts or rejected names, knows historical FIRSTCALL outcomes, viewed the A1 frame before registration.
 2. Never receive the tape, priorities, draw order or the other adjudicator's codes before a block is sealed.
-   As R01 he commits only the published SHA256 commitments and post-reveal ledgers.
+   As R01 they commit only the published SHA256 commitments and post-reveal ledgers.
 3. Do not act as seal-store custodian or R09 operator.
 
 ## 2. Minimum number of distinct humans: 4
@@ -53,14 +53,14 @@ Proof. R03, R04, R05 and R06 are pairwise in conflict:
 R03–R04 (R04 is not R03), R03–R05, R03–R06, R04–R05, R04–R06 and R05–R06.
 They form a 4-clique in the conflict graph, so four different people are needed.
 All four seats are mandatory for G3 (`G3_ENTROPY requires R03, R04, R05, R06`), so no smaller set can
-reach entropy. Two humans cannot suffice: Ross cannot take R03 or R04, so Human B would have to hold
+reach entropy. Two humans cannot suffice: the R01/R02 holder cannot take R03 or R04, so Human B would have to hold
 both R03 and R04, which is prohibited, and would also have to hold both R05 and R06.
 
 Sufficiency. The following allocation satisfies every frozen conflict:
 
 | Human | Roles |
 | --- | --- |
-| A = Ross Buckley | R01, R02 (held); R05 adjudicator 1 (+ his R16 approval, his R08 attestation) |
+| A = R01/R02 holder | R01, R02 (designated); R05 Adjudicator 1 (+ their R16 approval, their R08 attestation) |
 | B = unidentified independent human | R06 adjudicator 2 (+ their R16 approval, their R08 attestation) |
 | C = unidentified independent human | R03 entropy custodian |
 | D = unidentified independent human | R04 entropy witness |
@@ -68,26 +68,28 @@ Sufficiency. The following allocation satisfies every frozen conflict:
 Seal-store custodian: must be neither R05 nor R06. The frozen protocol does not name it. The natural
 holder is C (R03), who already holds block release and computes selection after each block seal.
 Whether seal custody counts as an "apparatus" role under R03's conflict list is not settled by frozen
-text. Treat it as CONDITIONAL, and have Ross (R01) record the choice before G4. D (R04) is an equally
-permitted fallback. Future: the R09 operator may be D, never Ross or B. The R10 reviewer may be Ross,
-B or D, never C. So four humans suffice through G5 as well.
+text. Treat it as CONDITIONAL, and have the Protocol Custodian (R01) record the choice before G4. D (R04)
+is an equally permitted fallback. Future: the R09 operator may be D, never A or B. The R10 reviewer may
+be A, B or D, never C. So four humans suffice through G5 as well.
 
-A stronger-independence alternative: five humans, with Ross holding no adjudicator seat. The frozen
-rules do not require it, but it removes the protocol author from coding. It is Ross's choice; it is
-not recommended here only because it costs a fifth person.
+A stronger-independence alternative: five humans, with the R01/R02 holder holding no adjudicator seat.
+The frozen rules do not require it, but it removes the protocol author from coding. It is the Protocol
+Custodian's choice; it is not recommended here only because it costs a fifth person.
 
-## 3. Ross's assignment and exact registration action
+## 3. Registration action (any adjudicator)
 
-Recommended: Ross = R05. Register before G1 if practical, so that the disclosure
-`viewed_A1_frame_before_registration` is `false`. The frozen rules do not require this ordering.
+Recommended allocation: the R01/R02 holder takes R05. An adjudicator who will see the A1 frame (e.g. R02)
+should register before G1 if practical, so that the disclosure `viewed_A1_frame_before_registration`
+is `false`. The frozen rules do not require this ordering.
 
-Ross must personally review, create, sign and anchor his record. An agent must not do this.
+Each registrant must personally create, sign and anchor their own record. No other person, model or
+agent may do this.
 
 1. Read Freeze 1.2 (`docs/programme-a-freeze-1.2-a1-amendment.md`), `roles.json` R05, and the form
    `experiments/programme-a/a1/registrations/forms/R05-R06-adjudicator.form.json`.
 2. Personally create `experiments/programme-a/a1/registrations/humans/R05-registration.json` from the
    frozen blank form. Type every variable value yourself. Do not use or copy
-   `R05-PROPOSED-FOR-ROSS-REVIEW.md`: it is a withdrawn, non-operative, model-drafted file. The frozen
+   `R05-MODEL-DRAFT-NON-OPERATIVE.md`: it is a withdrawn, non-operative, model-drafted notice. The frozen
    attestation requires that the record was "not created on my behalf by any model or other person".
 3. Sign and anchor it personally. Form `signature_method` is "annotated tag or signed commit made by the
    registrant personally". Without a signing key, the typed signature plus your own annotated tag is
@@ -127,10 +129,10 @@ No comparison with A1 is possible or permitted. Approvals are anchored like regi
 
 Frozen gate requirements (`roles.json` gates), with status at the pre-reveal anchor:
 
-**MUST HAPPEN BEFORE G1:** nothing further. G1 requires G0 (anchored), R02 (Ross, anchored), R12
+**MUST HAPPEN BEFORE G1:** nothing further. G1 requires G0 (anchored), R02 (designated, anchored), R12
 (operative `a1_frame_121.py`, anchored in Freeze 1.2.1) and R18 (pinned PSL, anchored). No human
 registration is a G1 prerequisite. G1 is legitimately crossable now; the HOLD is a task-level
-choice, not a frozen rule. Recommended but not required: Ross registers R05 first (see §3).
+choice, not a frozen rule. Recommended but not required: an R02 holder who takes R05 registers first (see §3).
 
 **CAN HAPPEN BEFORE OR AFTER G1, BUT BEFORE G2** (G2 does not depend on G1):
 R05 and R06 registrations anchored (their first gate is G2), then both R16 approvals anchored, then G2.
