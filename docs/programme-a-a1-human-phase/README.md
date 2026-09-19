@@ -85,9 +85,10 @@ Ross must personally review, create, sign and anchor his record. An agent must n
 
 1. Read Freeze 1.2 (`docs/programme-a-freeze-1.2-a1-amendment.md`), `roles.json` R05, and the form
    `experiments/programme-a/a1/registrations/forms/R05-R06-adjudicator.form.json`.
-2. Review the proposed record in `R05-PROPOSED-FOR-ROSS-REVIEW.md`. Correct anything untrue, set
-   `registered_utc` to the current UTC time, and save it as
-   `experiments/programme-a/a1/registrations/humans/R05-registration.json`.
+2. Personally create `experiments/programme-a/a1/registrations/humans/R05-registration.json` from the
+   frozen blank form. Type every variable value yourself. Do not use or copy
+   `R05-PROPOSED-FOR-ROSS-REVIEW.md`: it is a withdrawn, non-operative, model-drafted file. The frozen
+   attestation requires that the record was "not created on my behalf by any model or other person".
 3. Sign and anchor it personally. Form `signature_method` is "annotated tag or signed commit made by the
    registrant personally". Without a signing key, the typed signature plus your own annotated tag is
    the method. Do not add AI co-author trailers; the validator rejects AI/model/tool authorship.

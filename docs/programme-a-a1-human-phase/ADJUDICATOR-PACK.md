@@ -89,7 +89,9 @@ You create your own record. Nobody may do it for you.
 1. Ross gives you write access to the project repository on GitHub.
 2. In the GitHub web page for branch `v0.2-real-agent`, choose **Add file → Create new file** and
    name it `experiments/programme-a/a1/registrations/humans/R06-registration.json`.
-3. Paste the record below, fill every `<...>`, and set each disclosure honestly. If any statement is not
+3. Paste the blank record below and personally type every `<...>` value and every disclosure yourself.
+   No other person, model or AI may fill in your registration record for you. The frozen attestation
+   says the record "was not created on my behalf by any model or other person". Set each disclosure honestly. If any statement is not
    true for you, stop and tell Ross; do not register. For `registered_utc`, use the current UTC time
    just before you commit. It must not be later than your commit.
 4. Commit it yourself with the message `programme-a: register R06 adjudicator (self-registration)`.
@@ -113,7 +115,7 @@ You create your own record. Nobody may do it for you.
   "fields": {
     "slot": "R06",
     "full_name": "<your full legal name>",
-    "public_contact": "<an email address you will use for this study>",
+    "public_contact": "<the public contact you choose to publish; the frozen form does not require an email address>",
     "registered_utc": "<YYYY-MM-DDTHH:MM:SSZ>",
     "languages_read": "<informational only>",
     "signature": "<type your full name again>",
@@ -134,7 +136,7 @@ You create your own record. Nobody may do it for you.
   "disclosures_required": {
     "is_protocol_author": <true|false>,
     "is_capture_or_snapshot_custodian": <true|false>,
-    "saw_quarantined_drafts_or_rejected_names": <true|false>,
+    "saw_quarantined_drafts_or_rejected_names": <true|false|"UNSURE">,
     "knows_historical_firstcall_outcomes": <true|false>,
     "viewed_A1_frame_before_registration": <true|false>,
     "other_conflicts": []
