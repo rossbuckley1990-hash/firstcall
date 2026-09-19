@@ -325,6 +325,70 @@ class HumanValidatorTests(unittest.TestCase):
         r = self.rejected(None, "typed signature")
         self.assertEqual(r["records"], {})
 
+    # -- UNSURE: only saw_quarantined_drafts_or_rejected_names ----------------------------------
+    UNSURE_FIELD = "saw_quarantined_drafts_or_rejected_names"
+
+    def with_disclosure(self, key, value, role="R05"):
+        d = self.rec(role)
+        d["disclosures_required"][key] = value
+        return d
+
+    def test_unsure_field_accepts_true_false_and_exact_unsure(self):
+        self.assertEqual(vh.UNSURE_ALLOWED, frozenset({self.UNSURE_FIELD}))
+        for value in (True, False, "UNSURE"):
+            with self.subTest(value=value):
+                self.setUp()
+                self.repo.register(self.with_disclosure(self.UNSURE_FIELD, value))
+                r = self.repo.validate()
+                self.assertEqual((r["errors"], r["roles"]["R05"]), ([], "REGISTERED"))
+
+    def test_unsure_field_rejects_everything_else(self):
+        for value in ("unsure", "Unsure", "UNSURE ", " UNSURE", "", "maybe", "NO", "true", None, 0, 1, [], {}, ["UNSURE"]):
+            with self.subTest(value=value):
+                self.setUp()
+                self.rejected(self.with_disclosure(self.UNSURE_FIELD, value), "true or false")
+        self.setUp()
+        d = self.rec(); d["disclosures_required"].pop(self.UNSURE_FIELD)
+        self.rejected(d, "disclosures must match")
+
+    def test_unsure_rejected_in_every_other_boolean_disclosure(self):
+        form = json.loads((REAL / vh.A1_REL / "registrations/forms" / vh.FORMS["R05"]).read_bytes())
+        others = [k for k in form["disclosures_required"] if k not in (self.UNSURE_FIELD, "other_conflicts")]
+        self.assertEqual(len(others), 4)
+        for key in others + ["other_conflicts"]:
+            with self.subTest(key=key):
+                self.setUp()
+                why = ("other_conflicts must be a list" if key == "other_conflicts"
+                       else f"disclosure {key} must be answered true or false")
+                r = self.rejected(self.with_disclosure(key, "UNSURE"), why)
+                self.assertFalse(any(why + ' or "UNSURE"' in e for e in r["errors"]))
+                self.assertNotIn(key, vh.UNSURE_ALLOWED)
+
+    def test_unsure_changes_no_role_gate_or_conflict_semantics(self):
+        results = {}
+        for value in (True, "UNSURE"):
+            self.setUp()
+            for role in ("R05", "R06", "R03", "R04"):
+                d = self.rec(role)
+                if role in ("R05", "R06"):
+                    d["disclosures_required"][self.UNSURE_FIELD] = value
+                self.repo.register(d)
+            r = self.repo.validate()
+            results[value] = (r["errors"], r["roles"], r["gates"])
+        self.assertEqual(results[True], results["UNSURE"])
+        self.setUp()                                   # conflicts still enforced with UNSURE present
+        self.repo.register(self.with_disclosure(self.UNSURE_FIELD, "UNSURE", "R05"))
+        name, contact = PEOPLE["R05"]
+        d = self.rec("R06", name=name, contact="other-" + contact)
+        d["disclosures_required"][self.UNSURE_FIELD] = "UNSURE"
+        self.repo.register(d)
+        self.rejected(None, "role conflict")
+        self.setUp()                                   # designated custodian disclosure rule unchanged
+        d = self.with_disclosure(self.UNSURE_FIELD, "UNSURE")
+        d.update(full_name="Ross Buckley", signature="Ross Buckley")
+        d["fields"].update(full_name="Ross Buckley", signature="Ross Buckley")
+        self.rejected(d, "must disclose")
+
     def test_combine_forgives_only_the_humans_present_error_when_valid(self):
         pre = {"errors": [vh.PRE_REVEAL_HUMANS_ERROR + ": ['R05-registration.json']", "R17 parser digest mismatch"]}
         ok, bad = {"decision": "HUMAN_RECORDS_VALID", "errors": []}, {"decision": "HUMAN_RECORDS_INVALID", "errors": ["x"]}

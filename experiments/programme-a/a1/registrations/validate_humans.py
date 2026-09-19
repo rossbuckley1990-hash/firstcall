@@ -56,6 +56,9 @@ ENVELOPE = {"schema", "form", "id", "role", "kind", "status", "full_name", "sign
             "controlling_protocol", "fields", "attestations_all_required_true", "attestations_confirmed",
             "required_before"}
 OPTIONAL = {"supplementary_statements"}
+# The frozen form leaves every disclosure null and untyped. Only this one may truthfully be uncertain:
+# Freeze 1.1 disclaims pristine ignorance of rejected names. Exact string only; other disclosures stay boolean.
+UNSURE_ALLOWED = frozenset({"saw_quarantined_drafts_or_rejected_names"})
 
 
 class Invalid(Exception):
@@ -179,8 +182,11 @@ def check_record(doc, form, roles_doc, controlling):
                     raise Invalid("other_conflicts must be a list")
                 for x in v:
                     _text(x, "other_conflicts")
+            elif k in UNSURE_ALLOWED and v == "UNSURE":
+                continue
             elif type(v) is not bool:
-                raise Invalid(f"disclosure {k} must be answered true or false")
+                raise Invalid(f"disclosure {k} must be answered true or false"
+                              + (' or "UNSURE"' if k in UNSURE_ALLOWED else ""))
         held = [rid for rid, holder in _designated(roles_doc).items() if holder == validate_a1.norm(name)]
         if held:
             text = " ".join(d["other_conflicts"])
